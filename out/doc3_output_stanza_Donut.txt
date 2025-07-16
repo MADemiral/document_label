@@ -1,0 +1,13 @@
+📄 FILE: doc/doc3.png
+
+📝 OCR Text:
+bc42023010670886
+
+🔑 Keywords (Stanza NER):
+
+
+📚 Summary (Groq LLM):
+This document appears to be a random sequence of numbers and does not contain any meaningful content. Therefore, it is not possible to provide a summary.
+
+🏷️ Suggested Labels (Groq):
+["Kripto Para", "BlockChain", "Kod"]

@@ -1,0 +1,13 @@
+📄 FILE: doc/doc2.png
+
+📝 OCR Text:
+. amac
+
+🔑 Keywords (Stanza NER):
+
+
+📚 Summary (Groq LLM):
+Belirtili bir doküman bulunamadı. Lütfen dokümanınızı gönderin.
+
+🏷️ Suggested Labels (Groq):
+["amaç", "hedef", "niyet"]
