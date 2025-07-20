@@ -5,6 +5,7 @@ import time
 import logging
 import yake
 import stanza
+import spacy
 from PyPDF2 import PdfReader
 from groq import Groq
 from keybert import KeyBERT
@@ -37,7 +38,17 @@ logging.info("KeyBERT model loaded.")
 logging.info("Loading Stanza Turkish pipeline...")
 stanza.download('tr', verbose=False)
 nlp_tr = stanza.Pipeline(lang='tr', processors='tokenize,ner', use_gpu=False)
-logging.info("Stanza Turkish pipeline ready.\n")
+logging.info("Stanza Turkish pipeline ready.")
+
+logging.info("Loading spaCy Turkish model...")
+try:
+    nlp_spacy = spacy.load("xx_ent_wiki_sm")
+except OSError:
+    logging.info("Downloading spaCy model...")
+    from spacy.cli import download
+    download("xx_ent_wiki_sm")
+    nlp_spacy = spacy.load("xx_ent_wiki_sm")
+logging.info("spaCy Turkish model loaded.\n")
 
 # -------------------------------
 # Helper: Clean PDF text
@@ -84,7 +95,6 @@ def extract_keybert_keywords(text, top_n=10):
 
     try:
         start = time.time()
-        # Extract 1-gram and 2-gram keywords separately, then merge
         keywords_1 = kw_model.extract_keywords(
             cleaned_text,
             keyphrase_ngram_range=(1, 1),
@@ -109,16 +119,36 @@ def extract_keybert_keywords(text, top_n=10):
         return []
 
 # -------------------------------
-# Step 4: Named Entities (Stanza)
+# Step 4a: Named Entities (Stanza)
 # -------------------------------
 def extract_stanza_entities(text):
     try:
         doc = nlp_tr(text)
-        # Return unique entities' text
         return list({ent.text for sentence in doc.sentences for ent in sentence.ents})
     except Exception as e:
         logging.error(f"Stanza failed: {e}")
         return []
+
+# -------------------------------
+# Step 4b: Named Entities (spaCy)
+# -------------------------------
+def extract_spacy_entities(text):
+    try:
+        doc = nlp_spacy(text)
+        return list({ent.text for ent in doc.ents})
+    except Exception as e:
+        logging.error(f"spaCy failed: {e}")
+        return []
+
+# -------------------------------
+# Step 4c: Combine entities from both
+# -------------------------------
+def extract_combined_entities(text):
+    stanza_ents = extract_stanza_entities(text)
+    spacy_ents = extract_spacy_entities(text)
+    combined = list(set(stanza_ents + spacy_ents))
+    logging.info(f"Extracted {len(combined)} combined entities (Stanza + spaCy)")
+    return combined
 
 # -------------------------------
 # Step 5: Rule-based Patterns
@@ -159,17 +189,15 @@ def call_groq_chat(messages, retries=3, delay=1):
             )
             raw_content = response.choices[0].message.content.strip()
 
-            # Remove markdown fences if present
             if raw_content.startswith("```") and raw_content.endswith("```"):
                 raw_content = '\n'.join(raw_content.split('\n')[1:-1]).strip()
 
-            # Extract JSON array from response text
             json_start = raw_content.find('[')
             json_end = raw_content.rfind(']') + 1
             if json_start != -1 and json_end != -1:
                 json_str = raw_content[json_start:json_end]
             else:
-                json_str = raw_content  # fallback
+                json_str = raw_content
 
             return json.loads(json_str)
         except Exception as e:
@@ -179,7 +207,7 @@ def call_groq_chat(messages, retries=3, delay=1):
     return []
 
 # -------------------------------
-# Step 6: Tag Suggestion via Groq
+# Step 6a: Tag Suggestion via Groq
 # -------------------------------
 def get_groq_labels(text):
     prompt_system = (
@@ -194,6 +222,38 @@ def get_groq_labels(text):
     return call_groq_chat(messages)
 
 # -------------------------------
+# Step 6b: Summarize with Groq
+# -------------------------------
+def summarize_text_with_groq(text):
+    prompt_system = (
+        "You are a helpful assistant that summarizes Turkish business documents. "
+        "Create a concise summary (max 5-7 sentences) of the document below in Turkish. "
+        "Do not include emojis, filler, or repetition. Just return plain summary text."
+    )
+    messages = [
+        {"role": "system", "content": prompt_system},
+        {"role": "user", "content": text}
+    ]
+    client = Groq(api_key=GROQ_API_KEY)
+    for attempt in range(3):
+        try:
+            response = client.chat.completions.create(
+                model="llama3-70b-8192",
+                messages=messages
+            )
+            content = response.choices[0].message.content.strip()
+            # Remove markdown formatting if exists
+            if content.startswith("```") and content.endswith("```"):
+                content = '\n'.join(content.split('\n')[1:-1]).strip()
+            return content
+        except Exception as e:
+            logging.warning(f"Groq summary attempt {attempt+1} failed: {e}")
+            time.sleep(2 ** attempt)
+    logging.error("Groq summary failed after 3 retries.")
+    return ""
+
+
+# -------------------------------
 # Step 7: Critical Keywords via Groq
 # -------------------------------
 def get_groq_keywords(text):
@@ -202,13 +262,11 @@ def get_groq_keywords(text):
         "Extract the most critical and repeated keywords from the document below. "
         "Include full dates, full telephone numbers, full bank account numbers, and company names. "
         "Return ONLY a valid JSON array of strings with no extra text or formatting."
-        "*DO NOT REPEAT THE SAME KEYWORD MULTIPLE TIMES. DO NOT WRITE UNNECESSARY KEYWORDS.*"
     )
     messages = [
         {"role": "system", "content": prompt_system},
         {"role": "user", "content": text}
     ]
-    # If text is too long, process in chunks and merge results
     if len(text) > 3000:
         chunks = chunk_text(text)
         keywords = []
@@ -217,7 +275,7 @@ def get_groq_keywords(text):
                 {"role": "system", "content": prompt_system},
                 {"role": "user", "content": chunk}
             ])
-        return list(set(keywords))  # unique
+        return list(set(keywords))
     else:
         return call_groq_chat(messages)
 
@@ -232,15 +290,20 @@ def process_pdf(pdf_path, output_json):
         logging.warning("Empty PDF. Skipping.")
         return
 
+    summary = summarize_text_with_groq(text)
+
     result = {
         "file": pdf_path,
+        "summary": summary,
         "text": text,
         "yake_keywords": extract_yake_keywords(text),
         "keybert_keywords": extract_keybert_keywords(text),
         "structured_keywords": extract_structured_keywords(text),
         "stanza_entities": extract_stanza_entities(text),
-        "groq_labels": get_groq_labels(text),
-        "groq_critical_keywords": get_groq_keywords(text)
+        "spacy_entities": extract_spacy_entities(text),
+        "combined_entities": extract_combined_entities(text),
+        "groq_labels": get_groq_labels(text),            # Full text
+        "groq_critical_keywords": get_groq_keywords(text)  # Full text
     }
 
     os.makedirs(os.path.dirname(output_json), exist_ok=True)
@@ -248,6 +311,7 @@ def process_pdf(pdf_path, output_json):
         json.dump(result, f, ensure_ascii=False, indent=2)
 
     logging.info(f"Output saved to: {output_json}")
+
 
 # -------------------------------
 # Entry Point
@@ -257,7 +321,6 @@ if __name__ == "__main__":
         ("doc/pdf_doc1.pdf", "out/pdf_doc1_output.json"),
         ("doc/pdf_doc2.pdf", "out/pdf_doc2_output.json")
     ]
-    # Use parallel processing for faster execution
     with ThreadPoolExecutor(max_workers=2) as executor:
         futures = [executor.submit(process_pdf, pdf, out) for pdf, out in pdf_files]
         for future in futures:
