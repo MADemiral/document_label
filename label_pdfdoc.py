@@ -40,7 +40,7 @@ stanza.download('tr', verbose=False)
 nlp_tr = stanza.Pipeline(lang='tr', processors='tokenize,ner', use_gpu=False)
 logging.info("Stanza Turkish pipeline ready.")
 
-logging.info("Loading spaCy Turkish model...")
+logging.info("Loading spaCy model...")
 try:
     nlp_spacy = spacy.load("xx_ent_wiki_sm")
 except OSError:
@@ -48,7 +48,7 @@ except OSError:
     from spacy.cli import download
     download("xx_ent_wiki_sm")
     nlp_spacy = spacy.load("xx_ent_wiki_sm")
-logging.info("spaCy Turkish model loaded.\n")
+logging.info("spaCy model loaded.\n")
 
 # -------------------------------
 # Helper: Clean PDF text
