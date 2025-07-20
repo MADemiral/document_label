@@ -2,6 +2,7 @@ import os
 import json
 import re
 import time
+import logging
 import yake
 import stanza
 from PyPDF2 import PdfReader
@@ -9,25 +10,44 @@ from groq import Groq
 from keybert import KeyBERT
 from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
+from concurrent.futures import ThreadPoolExecutor
+
+# -------------------------------
+# Setup logging
+# -------------------------------
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
 
 # -------------------------------
 # Environment Setup
 # -------------------------------
 load_dotenv()
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+if not GROQ_API_KEY:
+    logging.error("GROQ_API_KEY is missing from environment variables.")
+    exit(1)
 
 # -------------------------------
 # Model Loading
 # -------------------------------
-print("Loading KeyBERT model...")
+logging.info("Loading KeyBERT model...")
 sentence_model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
 kw_model = KeyBERT(model=sentence_model)
-print("KeyBERT model loaded.")
+logging.info("KeyBERT model loaded.")
 
-print("Loading Stanza Turkish pipeline...")
-stanza.download('tr')
+logging.info("Loading Stanza Turkish pipeline...")
+stanza.download('tr', verbose=False)
 nlp_tr = stanza.Pipeline(lang='tr', processors='tokenize,ner', use_gpu=False)
-print("Stanza Turkish pipeline ready.\n")
+logging.info("Stanza Turkish pipeline ready.\n")
+
+# -------------------------------
+# Helper: Clean PDF text
+# -------------------------------
+def clean_pdf_text(text):
+    # Normalize whitespace
+    text = re.sub(r'\s+', ' ', text)
+    # Fix hyphenation across lines
+    text = re.sub(r'(?<=\w)-\s+(?=\w)', '', text)
+    return text.strip()
 
 # -------------------------------
 # Step 1: Read PDF Text
@@ -40,9 +60,10 @@ def extract_text_from_pdf(pdf_path):
             page_text = page.extract_text()
             if page_text:
                 text += page_text + "\n"
-        return text.strip()
+        cleaned_text = clean_pdf_text(text)
+        return cleaned_text
     except Exception as e:
-        print(f"Failed to read PDF {pdf_path}: {e}")
+        logging.error(f"Failed to read PDF {pdf_path}: {e}")
         return ""
 
 # -------------------------------
@@ -58,23 +79,33 @@ def extract_yake_keywords(text, language="tr", max_keywords=10):
 def extract_keybert_keywords(text, top_n=10):
     cleaned_text = ' '.join(text.split()[:512])  # Limit word count
     if len(cleaned_text.split()) < 20:
-        print("Text too short for KeyBERT.")
+        logging.warning("Text too short for KeyBERT.")
         return []
 
     try:
         start = time.time()
-        keywords = kw_model.extract_keywords(
+        # Extract 1-gram and 2-gram keywords separately, then merge
+        keywords_1 = kw_model.extract_keywords(
             cleaned_text,
-            keyphrase_ngram_range=(1, 2),
+            keyphrase_ngram_range=(1, 1),
             stop_words=None,
-            top_n=top_n,
+            top_n=top_n // 2,
             use_mmr=True,
             diversity=0.7
         )
-        print(f"KeyBERT extracted in {time.time() - start:.2f}s")
-        return [kw for kw, _ in keywords]
+        keywords_2 = kw_model.extract_keywords(
+            cleaned_text,
+            keyphrase_ngram_range=(2, 2),
+            stop_words=None,
+            top_n=top_n // 2,
+            use_mmr=True,
+            diversity=0.7
+        )
+        keywords = list(set([kw for kw, _ in keywords_1] + [kw for kw, _ in keywords_2]))
+        logging.info(f"KeyBERT extracted {len(keywords)} keywords in {time.time() - start:.2f}s")
+        return keywords
     except Exception as e:
-        print(f"KeyBERT failed: {e}")
+        logging.error(f"KeyBERT failed: {e}")
         return []
 
 # -------------------------------
@@ -83,91 +114,122 @@ def extract_keybert_keywords(text, top_n=10):
 def extract_stanza_entities(text):
     try:
         doc = nlp_tr(text)
+        # Return unique entities' text
         return list({ent.text for sentence in doc.sentences for ent in sentence.ents})
     except Exception as e:
-        print(f"Stanza failed: {e}")
+        logging.error(f"Stanza failed: {e}")
         return []
 
 # -------------------------------
 # Step 5: Rule-based Patterns
 # -------------------------------
+date_pattern = r'(\d{1,2}\s*(Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık)\s*\d{4})'
+phone_pattern = r'(\+?\d[\d\s.-]{7,}\d)'
+
 def extract_structured_keywords(text):
-    return {
-        "Tarih": list(set(re.findall(r"\d{2}[./-]\d{2}[./-]\d{4}", text))),
-        "Tutar": list(set(re.findall(r"\d[\d.,]*\s*(?:TL|₺)", text))),
-        "Şirket Adı": list(set(re.findall(r"[A-ZÇĞİÖŞÜ][a-zçğıöşü]+\s+(?:A\.Ş\.|LTD|Ltd\.|Anonim|Şirketi)", text))),
-        "Belge Türü": list(set(re.findall(r"(Teklif|Fatura|Sözleşme|Şartname|Yazışma)", text, re.IGNORECASE))),
-        "Sektör": list(set(re.findall(r"(Tekstil|İnşaat|Gıda|Yazılım|Enerji|Taşımacılık)", text, re.IGNORECASE)))
-    }
+    try:
+        return {
+            "Tarih": list(set(re.findall(r"\d{2}[./-]\d{2}[./-]\d{4}", text) + [d[0] for d in re.findall(date_pattern, text)])),
+            "Telefon": list(set(re.findall(phone_pattern, text))),
+            "Tutar": list(set(re.findall(r"\d[\d.,]*\s*(?:TL|₺)", text))),
+            "Şirket Adı": list(set(re.findall(r"[A-ZÇĞİÖŞÜ][a-zçğıöşü]+\s+(?:A\.Ş\.|LTD|Ltd\.|Anonim|Şirketi)", text))),
+            "Belge Türü": list(set(re.findall(r"(Teklif|Fatura|Sözleşme|Şartname|Yazışma)", text, re.IGNORECASE))),
+            "Sektör": list(set(re.findall(r"(Tekstil|İnşaat|Gıda|Yazılım|Enerji|Taşımacılık)", text, re.IGNORECASE)))
+        }
+    except Exception as e:
+        logging.error(f"Regex extraction failed: {e}")
+        return {}
+
+# -------------------------------
+# Helper: Chunk text for Groq
+# -------------------------------
+def chunk_text(text, max_len=3000):
+    return [text[i:i+max_len] for i in range(0, len(text), max_len)]
+
+# -------------------------------
+# Groq API call with retries & cleanup
+# -------------------------------
+def call_groq_chat(messages, retries=3, delay=1):
+    client = Groq(api_key=GROQ_API_KEY)
+    for attempt in range(retries):
+        try:
+            response = client.chat.completions.create(
+                model="llama3-70b-8192",
+                messages=messages
+            )
+            raw_content = response.choices[0].message.content.strip()
+
+            # Remove markdown fences if present
+            if raw_content.startswith("```") and raw_content.endswith("```"):
+                raw_content = '\n'.join(raw_content.split('\n')[1:-1]).strip()
+
+            # Extract JSON array from response text
+            json_start = raw_content.find('[')
+            json_end = raw_content.rfind(']') + 1
+            if json_start != -1 and json_end != -1:
+                json_str = raw_content[json_start:json_end]
+            else:
+                json_str = raw_content  # fallback
+
+            return json.loads(json_str)
+        except Exception as e:
+            logging.warning(f"Groq API attempt {attempt+1} failed: {e}")
+            time.sleep(delay * (2 ** attempt))
+    logging.error("Groq API failed after retries.")
+    return []
 
 # -------------------------------
 # Step 6: Tag Suggestion via Groq
 # -------------------------------
 def get_groq_labels(text):
-    client = Groq(api_key=GROQ_API_KEY)
-    try:
-        response = client.chat.completions.create(
-            model="llama3-70b-8192",
-            messages=[
-                {"role": "system", "content": (
-                    "You're a professional Turkish tagging assistant. "
-                    "Given the document below, extract 3–7 relevant topic tags. "
-                    "Return only a JSON array of strings. Use concise Turkish tags.")},
-                {"role": "user", "content": f"Document:\n{text}"}
-            ]
-        )
-        return json.loads(response.choices[0].message.content.strip())
-    except Exception as e:
-        print(f"Groq labels failed: {e}")
-        return []
+    prompt_system = (
+        "You're a professional Turkish tagging assistant. "
+        "Given the document below, extract 3–7 relevant topic tags. "
+        "Return only a JSON array of strings. Use concise Turkish tags, no extra text."
+    )
+    messages = [
+        {"role": "system", "content": prompt_system},
+        {"role": "user", "content": f"Document:\n{text}"}
+    ]
+    return call_groq_chat(messages)
 
 # -------------------------------
 # Step 7: Critical Keywords via Groq
 # -------------------------------
 def get_groq_keywords(text):
-    client = Groq(api_key=GROQ_API_KEY)
-    try:
-        response = client.chat.completions.create(
-            model="llama3-70b-8192",
-            messages=[
-                {"role": "system", "content": (
-                    "You are a document analysis assistant. "
-                    "Extract the most critical and repeated keywords from the document below. "
-                    "Include full dates, full telephone numbers, full bank account numbers, and company names. "
-                    "Return ONLY a valid JSON array of strings with no extra text or formatting. "
-                    "Do NOT include explanations or markdown code fences.")},
-                {"role": "user", "content": text}
-            ]
-        )
-        raw_content = response.choices[0].message.content.strip()
-
-        if raw_content.startswith("```") and raw_content.endswith("```"):
-            raw_content = '\n'.join(raw_content.split('\n')[1:-1]).strip()
-
-        json_start = raw_content.find('[')
-        json_end = raw_content.rfind(']') + 1
-        if json_start != -1 and json_end != -1:
-            json_str = raw_content[json_start:json_end]
-        else:
-            json_str = raw_content  # fallback
-
-        return json.loads(json_str)
-    except Exception as e:
-        print(f"Groq keywords failed: {e}")
-        print(f"Response was:\n{raw_content}")
-        return []
-
-
+    prompt_system = (
+        "You are a document analysis assistant. "
+        "Extract the most critical and repeated keywords from the document below. "
+        "Include full dates, full telephone numbers, full bank account numbers, and company names. "
+        "Return ONLY a valid JSON array of strings with no extra text or formatting."
+        "*DO NOT REPEAT THE SAME KEYWORD MULTIPLE TIMES. DO NOT WRITE UNNECESSARY KEYWORDS.*"
+    )
+    messages = [
+        {"role": "system", "content": prompt_system},
+        {"role": "user", "content": text}
+    ]
+    # If text is too long, process in chunks and merge results
+    if len(text) > 3000:
+        chunks = chunk_text(text)
+        keywords = []
+        for chunk in chunks:
+            keywords += call_groq_chat([
+                {"role": "system", "content": prompt_system},
+                {"role": "user", "content": chunk}
+            ])
+        return list(set(keywords))  # unique
+    else:
+        return call_groq_chat(messages)
 
 # -------------------------------
 # Step 8: Main Processing Function
 # -------------------------------
 def process_pdf(pdf_path, output_json):
-    print(f"\nProcessing: {pdf_path}")
+    logging.info(f"Processing: {pdf_path}")
     text = extract_text_from_pdf(pdf_path)
 
     if not text:
-        print("Empty PDF. Skipping.")
+        logging.warning("Empty PDF. Skipping.")
         return
 
     result = {
@@ -185,11 +247,18 @@ def process_pdf(pdf_path, output_json):
     with open(output_json, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
 
-    print(f"Output saved to: {output_json}")
+    logging.info(f"Output saved to: {output_json}")
 
 # -------------------------------
 # Entry Point
 # -------------------------------
 if __name__ == "__main__":
-    process_pdf("doc/pdf_doc1.pdf", "out/pdf_doc1_output.json")
-    process_pdf("doc/pdf_doc2.pdf", "out/pdf_doc2_output.json")
+    pdf_files = [
+        ("doc/pdf_doc1.pdf", "out/pdf_doc1_output.json"),
+        ("doc/pdf_doc2.pdf", "out/pdf_doc2_output.json")
+    ]
+    # Use parallel processing for faster execution
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        futures = [executor.submit(process_pdf, pdf, out) for pdf, out in pdf_files]
+        for future in futures:
+            future.result()

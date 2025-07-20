@@ -1,6 +1,6 @@
 {
   "file": "doc/pdf_doc1.pdf",
-  "text": "8400,00 TL5200,00 TL \n%15\nÖDEME BİLGİSİ\nHesap Adı: CEREN DERTSİZ\nHesap No: 123 465 7890 \nÖdeme Vadesi: 3 Temmuz 2030ARA TOPLAM  :\nVERGİLER  :\nTOPLAM FİYAT :Fatura No: 002\nDüzenlenme Tarihi: 3 Temmuz 2030FATURA\nALICI BİLGİLERİ Helin Kınay-Günay İç TasarımAtatürk Mah. Gazi Bulvarı No: 12\n10100 Karesi/Balıkesir\n+0 212 123 24 25\nmerhaba@harikasite.web.tr\nAÇIKLAMA MİKTAR KDV BİRİM FİYATI TOPLAM\nMERMER\nGRANİT\nFAYANS\nSERAMİK\nEPOKSİ25\n5\n5\n1\n3100,00 TL\n125,00 TL\n250,00 TL\n150,00 TL\n150,00 TL250,00 TL\n625,00 TL\n125,00 TL\n150,00 TL\n450,00 TL1\n1\n1\n1\n1Atatürk Mah. Gazi Bulvarı No: 12\n10100 Karesi/Balıkesir\nmerhaba@harikasite.web.tr\n*Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nCurabitur sem orci, faucibus eget turpis sed, euismod\negestas arcu. Proin hendrerit bibendum neque vel varius.\nBİZİ TERCİH ETTİĞİNİZ İÇİN TEŞEKKÜR EDERİZ.",
+  "text": "8400,00 TL5200,00 TL %15 ÖDEME BİLGİSİ Hesap Adı: CEREN DERTSİZ Hesap No: 123 465 7890 Ödeme Vadesi: 3 Temmuz 2030ARA TOPLAM : VERGİLER : TOPLAM FİYAT :Fatura No: 002 Düzenlenme Tarihi: 3 Temmuz 2030FATURA ALICI BİLGİLERİ Helin Kınay-Günay İç TasarımAtatürk Mah. Gazi Bulvarı No: 12 10100 Karesi/Balıkesir +0 212 123 24 25 merhaba@harikasite.web.tr AÇIKLAMA MİKTAR KDV BİRİM FİYATI TOPLAM MERMER GRANİT FAYANS SERAMİK EPOKSİ25 5 5 1 3100,00 TL 125,00 TL 250,00 TL 150,00 TL 150,00 TL250,00 TL 625,00 TL 125,00 TL 150,00 TL 450,00 TL1 1 1 1 1Atatürk Mah. Gazi Bulvarı No: 12 10100 Karesi/Balıkesir merhaba@harikasite.web.tr *Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sem orci, faucibus eget turpis sed, euismod egestas arcu. Proin hendrerit bibendum neque vel varius. BİZİ TERCİH ETTİĞİNİZ İÇİN TEŞEKKÜR EDERİZ.",
   "yake_keywords": [
     "Temmuz",
     "Hesap",
@@ -14,61 +14,70 @@
     "FİYAT"
   ],
   "keybert_keywords": [
-    "tl5200 00",
-    "hesap adı",
-    "web",
-    "2030fatura alici",
-    "kınay",
-    "toplam vergi",
-    "merhaba harikasite",
     "karesi balıkesir",
+    "temmuz",
     "epoksi",
-    "sit"
+    "toplam vergi",
+    "tl5200 00",
+    "dolor sit",
+    "2030fatura alici",
+    "vergi",
+    "7890",
+    "dolor"
   ],
   "structured_keywords": {
-    "Tarih": [],
+    "Tarih": [
+      "3 Temmuz 2030"
+    ],
+    "Telefon": [
+      "25 5 5 1 3100",
+      "123 465 7890",
+      "1 1 1 1 1",
+      "+0 212 123 24 25"
+    ],
     "Tutar": [
+      "3100,00 TL",
+      "8400,00 TL",
       "150,00 TL",
-      "450,00 TL",
-      "250,00 TL",
       "625,00 TL",
       "5200,00 TL",
-      "8400,00 TL",
-      "3100,00 TL",
+      "450,00 TL",
+      "250,00 TL",
       "125,00 TL"
     ],
     "Şirket Adı": [],
     "Belge Türü": [
-      "FATURA",
-      "Fatura"
+      "Fatura",
+      "FATURA"
     ],
     "Sektör": []
   },
   "stanza_entities": [
-    "00 TL250",
     "Helin Kınay",
+    "Günay İç TasarımAtatürk Mah",
+    "Gazi Bulvarı No",
+    "00 TL5200",
     "Proin hendrerit",
+    "3 Temmuz",
+    "00 TL",
+    "Lorem ipsum dolor sit amet",
     "00 TL1",
     "Curabitur",
-    "3 Temmuz",
-    "Günay İç TasarımAtatürk Mah",
-    "Lorem ipsum dolor sit amet",
-    "00 TL5200",
-    "Gazi Bulvarı No",
-    "00 TL"
+    "00 TL250"
   ],
   "groq_labels": [
-    "Fatura",
-    "Ödeme Bilgileri",
-    "İnşaat Malzemeleri"
+    "fatura",
+    "ödeme",
+    "hesap"
   ],
   "groq_critical_keywords": [
     "CEREN DERTSİZ",
     "123 465 7890",
     "+0 212 123 24 25",
-    "Atatürk Mah. Gazi Bulvarı No: 12",
-    "10100 Karesi/Balıkesir",
     "merhaba@harikasite.web.tr",
+    "Atatürk Mah. Gazi Bulvarı No: 12 10100 Karesi/Balıkesir",
+    "Helin Kınay-Günay",
+    "İç Tasarım",
     "3 Temmuz 2030",
     "002"
   ]
