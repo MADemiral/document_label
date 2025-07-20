@@ -1,0 +1,69 @@
+{
+  "file": "doc/pdf_doc2.pdf",
+  "text": "Bu belge, sadece teklif amaçlı düzenlenmiş olup,\nresmi bir fatura yerine geçmez. Hizmet\ntamamlandıktan sonra resmi fatura düzenlenecektir.Ayşe Ünal\nBalkan Sok. No:5 Sarıyer/İstanbul\n0212 123 24 25\nE-posta: merhaba@harikasite.web.tr\nVergi Dairesi: Sarıyer VD\nVergi No: 9876563218\nAjans Tümer\nIlgaz Sok. No:18 Teşvikiye, 34365 İstanbul\n0212 123 24 25\nE-posta: merhaba@harikasite.web.tr\nVergi Dairesi: Şişli VD\nVergi No: 4886563236\nÖdeme Şekli: Havale/EFT\nBanka: Nora Bank\nIBAN: TR12 3456 7890 1234 5678 8001Hizmet Açıklaması \nWeb İçeriği\nYazımı 1 1 2.500,00 2.500,00 Miktar Birim Fiyat  Toplam Tutar\nPROFORMA FATURAAra Toplam: 2.500,00 ₺\nKDV (%18): 450,00 ₺\nGenel Toplam: 2.950,00 ₺Freelance Metin YazarıAYŞE\nÜNAL\nAYŞE ÜNALHİZMETİ ALAN\nÖDEME KOŞULLARIHİZMETİ SAĞLAYAN",
+  "yake_keywords": [
+    "Vergi",
+    "İstanbul",
+    "E-posta",
+    "Dairesi",
+    "Sok",
+    "Sarıyer",
+    "Toplam",
+    "belge",
+    "geçmez",
+    "resmi"
+  ],
+  "keybert_keywords": [
+    "bu belge",
+    "vd vergi",
+    "sadece teklif",
+    "web çeriği",
+    "bank iban",
+    "5678 8001hizmet",
+    "toplam 950",
+    "fiyat toplam",
+    "freelance metin",
+    "şekli havale"
+  ],
+  "structured_keywords": {
+    "Tarih": [],
+    "Tutar": [
+      "2.500,00 ₺",
+      "450,00 ₺",
+      "2.950,00 ₺"
+    ],
+    "Şirket Adı": [],
+    "Belge Türü": [
+      "fatura",
+      "FATURA",
+      "teklif"
+    ],
+    "Sektör": []
+  },
+  "stanza_entities": [
+    "Sarıyer",
+    "Nora Bank\nIBAN",
+    "Şişli VD\nVergi No"
+  ],
+  "groq_labels": [
+    "Fatura",
+    "Ödeme",
+    "Web Hizmeti"
+  ],
+  "groq_critical_keywords": [
+    "Ayşe Ünal",
+    "0212 123 24 25",
+    "merhaba@harikasite.web.tr",
+    "Sarıyer VD",
+    "9876563218",
+    "Ajans Tümer",
+    "0212 123 24 25",
+    "merhaba@harikasite.web.tr",
+    "Şişli VD",
+    "4886563236",
+    "Nora Bank",
+    "TR12 3456 7890 1234 5678 8001",
+    "Freelance Metin Yazarı",
+    "AYŞE ÜNAL"
+  ]
+}

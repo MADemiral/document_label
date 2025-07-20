@@ -1,0 +1,75 @@
+{
+  "file": "doc/pdf_doc1.pdf",
+  "text": "8400,00 TL5200,00 TL \n%15\nÖDEME BİLGİSİ\nHesap Adı: CEREN DERTSİZ\nHesap No: 123 465 7890 \nÖdeme Vadesi: 3 Temmuz 2030ARA TOPLAM  :\nVERGİLER  :\nTOPLAM FİYAT :Fatura No: 002\nDüzenlenme Tarihi: 3 Temmuz 2030FATURA\nALICI BİLGİLERİ Helin Kınay-Günay İç TasarımAtatürk Mah. Gazi Bulvarı No: 12\n10100 Karesi/Balıkesir\n+0 212 123 24 25\nmerhaba@harikasite.web.tr\nAÇIKLAMA MİKTAR KDV BİRİM FİYATI TOPLAM\nMERMER\nGRANİT\nFAYANS\nSERAMİK\nEPOKSİ25\n5\n5\n1\n3100,00 TL\n125,00 TL\n250,00 TL\n150,00 TL\n150,00 TL250,00 TL\n625,00 TL\n125,00 TL\n150,00 TL\n450,00 TL1\n1\n1\n1\n1Atatürk Mah. Gazi Bulvarı No: 12\n10100 Karesi/Balıkesir\nmerhaba@harikasite.web.tr\n*Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nCurabitur sem orci, faucibus eget turpis sed, euismod\negestas arcu. Proin hendrerit bibendum neque vel varius.\nBİZİ TERCİH ETTİĞİNİZ İÇİN TEŞEKKÜR EDERİZ.",
+  "yake_keywords": [
+    "Temmuz",
+    "Hesap",
+    "ÖDEME",
+    "TOPLAM",
+    "VERGİLER",
+    "Mah",
+    "Adı",
+    "CEREN",
+    "Vadesi",
+    "FİYAT"
+  ],
+  "keybert_keywords": [
+    "tl5200 00",
+    "hesap adı",
+    "web",
+    "2030fatura alici",
+    "kınay",
+    "toplam vergi",
+    "merhaba harikasite",
+    "karesi balıkesir",
+    "epoksi",
+    "sit"
+  ],
+  "structured_keywords": {
+    "Tarih": [],
+    "Tutar": [
+      "150,00 TL",
+      "450,00 TL",
+      "250,00 TL",
+      "625,00 TL",
+      "5200,00 TL",
+      "8400,00 TL",
+      "3100,00 TL",
+      "125,00 TL"
+    ],
+    "Şirket Adı": [],
+    "Belge Türü": [
+      "FATURA",
+      "Fatura"
+    ],
+    "Sektör": []
+  },
+  "stanza_entities": [
+    "00 TL250",
+    "Helin Kınay",
+    "Proin hendrerit",
+    "00 TL1",
+    "Curabitur",
+    "3 Temmuz",
+    "Günay İç TasarımAtatürk Mah",
+    "Lorem ipsum dolor sit amet",
+    "00 TL5200",
+    "Gazi Bulvarı No",
+    "00 TL"
+  ],
+  "groq_labels": [
+    "Fatura",
+    "Ödeme Bilgileri",
+    "İnşaat Malzemeleri"
+  ],
+  "groq_critical_keywords": [
+    "CEREN DERTSİZ",
+    "123 465 7890",
+    "+0 212 123 24 25",
+    "Atatürk Mah. Gazi Bulvarı No: 12",
+    "10100 Karesi/Balıkesir",
+    "merhaba@harikasite.web.tr",
+    "3 Temmuz 2030",
+    "002"
+  ]
+}
