@@ -5,11 +5,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-USER = os.getenv("POSTGRES_USER")
-PASSWORD = os.getenv("POSTGRES_PASSWORD")
-DB = os.getenv("POSTGRES_DB")
-HOST = os.getenv("POSTGRES_HOST")
-PORT = os.getenv("POSTGRES_PORT")
+USER = os.getenv("POSTGRES_USER", "user")
+PASSWORD = os.getenv("POSTGRES_PASSWORD", "password")
+DB = os.getenv("POSTGRES_DB", "document_db")
+HOST = os.getenv("POSTGRES_HOST", "localhost")
+PORT = os.getenv("POSTGRES_PORT", "5432")
 
 DATABASE_URL = f"postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB}"
 
