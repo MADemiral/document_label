@@ -36,7 +36,7 @@ def process_pdf(pdf_path):
     print("\n--- Extracted Summary ---")
     print(summary)
 
-    """# 2️⃣ Simulate user confirming document
+    # 2️⃣ Simulate user confirming document
     confirm_url = f"{BASE_URL}/confirm-document"
     confirm_payload = {
         "content": text,
@@ -59,7 +59,7 @@ def process_pdf(pdf_path):
         print("\n--- Semantic Search Results ---")
         print(json.dumps(results, ensure_ascii=False, indent=2))
     except Exception as e:
-        print("Failed to parse search response:", e)"""
+        print("Failed to parse search response:", e)
 
 if __name__ == "__main__":
     pdf_files = ["doc/pdf_doc1.pdf", "doc/pdf_doc2.pdf", "doc/pdf_doc3.pdf"]
