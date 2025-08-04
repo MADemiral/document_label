@@ -36,7 +36,36 @@ services:
       - chroma_data:/chroma/.chroma
     networks:
       - docnet
+  
+  labeling_service:
+    build:
+      context: ./labeling_service
+    container_name: labeling_Service
+    networks:
+      - docnet
 
+  embedding_service:
+    build:
+      context: ./embedding_service
+    container_name: embedding_service
+    networks:
+      - docnet
+    depends_on:
+      - chromadb
+      - postgres
+  
+  api_gateway
+    build:
+      context: ./gateway
+    container_name: api_gateway
+    ports:
+      - "1071:1071"
+    depends_on:
+      - labeling_service
+      - embedding_service
+    networks:
+      - docnet
+      
 networks:
   docnet:
     driver: bridge

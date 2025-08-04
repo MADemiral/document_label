@@ -1,45 +1,19 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from services.label_extraction import extract_labels_and_keywords, summarize_with_groq
+from embedding_service.services.embedding_utils import save_document_embedding, is_duplicate, semantic_search
 from database.operations import create_document, add_label_to_document
-from services.embedding_service import save_document_embedding, is_duplicate
+from embedding_service.services.embedding_utils import save_document_embedding, is_duplicate, semantic_search
 
 app = FastAPI()
 
-class DocumentInput(BaseModel):
-    content: str
+class SearchInput(BaseModel):
+    query: str
+
 
 class ConfirmInput(BaseModel):
     content: str
     summary: str
     labels: list[str]
-
-class SearchInput(BaseModel):
-    query: str
-    
-@app.post("/analyze-document")
-def analyze_document(doc: DocumentInput):
-    try:
-        if not doc.content:
-            raise HTTPException(status_code=400, detail="Content is required")
-
-        result = extract_labels_and_keywords(doc.content)
-        summary = summarize_with_groq(doc.content)
-
-        concat_labels_and_keywords = result["labels"] + result["keywords"]
-
-        return {
-            "labels": concat_labels_and_keywords,
-            "summary": summary
-        }
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Server error: {str(e)}")
-    
-
-
-from services.embedding_service import semantic_search
 
 @app.post("/search")
 def search(data: SearchInput):
@@ -60,6 +34,7 @@ def search(data: SearchInput):
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Server error: {str(e)}")
+    
 
 @app.post("/confirm-document")
 def confirm_document(data: ConfirmInput):
