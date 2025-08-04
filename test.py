@@ -62,7 +62,7 @@ def process_pdf(pdf_path):
         print("Failed to parse search response:", e)
 
 if __name__ == "__main__":
-    pdf_files = ["doc/pdf_doc1.pdf", "doc/pdf_doc2.pdf", "doc/pdf_doc3.pdf"]
+    pdf_files = ["docs/pdf_doc1.pdf", "docs/pdf_doc2.pdf", "docs/pdf_doc3.pdf"]
     for pdf in pdf_files:
         if os.path.exists(pdf):
             process_pdf(pdf)

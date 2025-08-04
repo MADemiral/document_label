@@ -90,6 +90,6 @@ if __name__ == "__main__":
     nlp = stanza.Pipeline(lang='tr', processors='tokenize,ner')
 
     # İstediğin belgeleri işle
-    process_and_save("doc/doc1.png", "out/doc1_output_stanza_Donut.txt")
-    process_and_save("doc/doc2.png", "out/doc2_output_stanza_Donut.txt")
-    process_and_save("doc/doc3.png", "out/doc3_output_stanza_Donut.txt")
+    process_and_save("docs/doc1.png", "out/doc1_output_stanza_Donut.txt")
+    process_and_save("docs/doc2.png", "out/doc2_output_stanza_Donut.txt")
+    process_and_save("docs/doc3.png", "out/doc3_output_stanza_Donut.txt")
