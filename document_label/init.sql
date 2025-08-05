@@ -31,5 +31,4 @@ CREATE TABLE document_labels (
 -- ==============================
 --  INDEXES FOR PERFORMANCE
 -- ==============================
-CREATE INDEX idx_documents_title ON documents(title);
 CREATE INDEX idx_labels_name ON labels(label_name);

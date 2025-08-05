@@ -1,8 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from embedding_service.services.embedding_utils import save_document_embedding, is_duplicate, semantic_search
+from services.embedding_utils import save_document_embedding, is_duplicate, semantic_search
 from database.operations import create_document, add_label_to_document
-from embedding_service.services.embedding_utils import save_document_embedding, is_duplicate, semantic_search
+
 
 app = FastAPI()
 

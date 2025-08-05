@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from labeling_service.services.label_utils import extract_labels_and_keywords, summarize_with_groq
+from services.label_utils import extract_labels_and_keywords, summarize_with_groq
 
 app = FastAPI()
 

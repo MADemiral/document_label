@@ -40,7 +40,7 @@ services:
   labeling_service:
     build:
       context: ./labeling_service
-    container_name: labeling_Service
+    container_name: labeling_service
     networks:
       - docnet
 
@@ -54,7 +54,7 @@ services:
       - chromadb
       - postgres
   
-  api_gateway
+  api_gateway:
     build:
       context: ./gateway
     container_name: api_gateway

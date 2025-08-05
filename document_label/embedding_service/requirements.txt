@@ -5,3 +5,9 @@ python-dotenv
 sqlalchemy
 psycopg2-binary
 loguru
+httpx
+pydantic
+chromadb
+transformers
+sentence-transformers
+
