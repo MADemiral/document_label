@@ -1,0 +1,64 @@
+📄 FILE: doc/doc1.png
+
+📝 OCR Text:
+HIZMETI SAGLAYAN.
+
+Ayge Unal
+
+Balkan Sok. No:5 Sanyer/istanbul
+0212123 24 25
+
+E-posta: merhaba@harikasite.web.tr
+Vergi Dairesi: Saryer VD
+
+Vergi No: 9876563218
+
+HIZMETI ALAN
+
+Ajans Tamer
+
+ligaz Sok. No:18 Tesvikiye, 34365 istanbul
+0212 123 24 25
+
+E-posta: merhaba@harikasite.web.tr
+Vergi Dairesi: Sigli VD
+
+Vergi No: 4886563236
+
+AYsE ||
+UNAL
+
+Freelance Metin Yazari
+
+Hizmet Agiklamast Miktar —BirimFiyat | Toplam Tutar
+Web Igerigi 1 2.500,00 2.500,00
+Yazimi1
+
+‘Ara Toplam: 2.500,00 ODEME KOSULLARI
+
+KDV (%18): 450,00 &
+Genel Toplam: 2.950,00 &
+
+PROFORMA FATURA
+
+Bu belge, sadece teklif amagi dizzenlenmis olup,
+resmi bir fatura yerine gecmez. Hizmet
+tamamlandiktan sonra resmi fatura dizenlenecektir.
+
+Odeme Sekli: Havale/EFT
+Banka: Nora Bank
+
+IBAN: TRI2 3456 7890 1234 5678 8001
+
+AYSE UNAL
+
+🔑 Keywords (Stanza NER):
+UNA, L, Sanyer/istanbul, Ayge Unal, Saryer V, Web Igerigi, Nora Bank
+
+📚 Summary (Groq LLM):
+Proforma fatura, Ajans Tamer'e verilen hizmetin detaylarını gösterir. Hizmet veren AysE ÜnAL, freelance metin yazarıdır. Toplam tutar 2.500,00 TL'dir. KDV (%18) 450,00 TL'dir. Genel toplam 2.950,00 TL'dir. Ödeme şekli havale/EFTtir ve banka bilgileri Nora Bank, IBAN: TRI2 3456 7890 1234 5678 8001'dir.
+
+🏷️ Suggested Labels (Groq):
+Here are the suggested tags:
+
+["fatura", "proforma fatura", "hizmet faturası", "ödeme koşulları", "vergi bilgileri"]

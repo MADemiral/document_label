@@ -1,0 +1,32 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Global styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+
+/* Font Awesome fix - sadece CDN kullanacağız */
+.fas, .fab, .far, .fal, .fad, .fass, .fasr, .fasl {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+}
+
+.fab {
+  font-family: "Font Awesome 6 Brands" !important;
+  font-weight: 400 !important;
+}
+
+.far {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 400 !important;
+}

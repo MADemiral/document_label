@@ -1,0 +1,12 @@
+/dizin_yapisi.txt
+/document_label_service/embedding_service/__pycache__
+.env
+__pycache__/
+/document_label_service/labeling_service/.env
+/document_label_service/labeling_service/__pycache__
+/fr/node_modules
+/fr/.angular/cache
+/document_label_service/database/__pycache__
+/document_label_service/document_label_service
+/api-gateway/.mvn/wrapper
+/api-gateway/target

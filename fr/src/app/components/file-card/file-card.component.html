@@ -1,0 +1,155 @@
+<div class="file-card" 
+     [class.expanded]="isExpanded()"
+     [class.selected]="isSelected"
+     (click)="onCardClick()">
+  
+  <!-- Card Header -->
+  <div class="card-header">
+    <div class="file-info">
+      <div class="file-icon" [class]="getFileIconClass()">
+        <i [class]="getFileIcon()"></i>
+      </div>
+      <div class="file-details">
+        <h3 class="file-title" [title]="fileItem.title">
+          {{ truncatedTitle() }}
+        </h3>
+        <div class="file-meta">
+          <span class="file-id">ID: {{ fileItem.id }}</span>
+          <span class="content-length">{{ contentStats().words }} kelime</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card-actions">
+      <!-- Favorite Button -->
+      <button 
+        class="action-btn favorite-btn"
+        [class.active]="isFavorite"
+        (click)="onFavoriteClick($event)"
+        title="Favorilere ekle">
+        <i class="fas fa-heart"></i>
+      </button>
+      
+      <!-- More Options -->
+      <button 
+        class="action-btn options-btn"
+        (click)="onOptionsClick($event)"
+        title="Seçenekler">
+        <i class="fas fa-ellipsis-v"></i>
+      </button>
+      
+      <!-- Expand/Collapse -->
+      <button 
+        class="action-btn expand-btn"
+        (click)="onExpandClick($event)"
+        [title]="isExpanded() ? 'Daralt' : 'Genişlet'">
+        <i class="fas" [class.fa-chevron-up]="isExpanded()" [class.fa-chevron-down]="!isExpanded()"></i>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Tags Section -->
+  <div class="tags-section" *ngIf="fileItem.tags.length > 0">
+    <div class="tags-container">
+      <span 
+        class="tag"
+        *ngFor="let tag of visibleTags()"
+        (click)="onTagClick(tag, $event)">
+        <i class="fas fa-tag"></i>
+        {{ tag }}
+      </span>
+      <button 
+        class="show-more-tags"
+        *ngIf="fileItem.tags.length > maxVisibleTags"
+        (click)="toggleAllTags($event)">
+        <span *ngIf="!showAllTags()">+{{ fileItem.tags.length - maxVisibleTags }} daha</span>
+        <span *ngIf="showAllTags()">Daha az göster</span>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Keywords Section -->
+  <div class="keywords-section" *ngIf="fileItem.keywords.length > 0 && isExpanded()">
+    <div class="keywords-header">
+      <i class="fas fa-key"></i>
+      <span>Anahtar Kelimeler</span>
+    </div>
+    <div class="keywords-container">
+      <span 
+        class="keyword"
+        *ngFor="let keyword of fileItem.keywords"
+        (click)="onKeywordClick(keyword, $event)">
+        {{ keyword }}
+      </span>
+    </div>
+  </div>
+  
+  <!-- Content Preview -->
+  <div class="content-section" *ngIf="isExpanded()">
+    <div class="content-header">
+      <span>
+        <i class="fas fa-file-alt"></i>
+        İçerik Önizleme
+      </span>
+      <div class="content-stats">
+        <span class="stat">{{ contentStats().characters }} karakter</span>
+        <span class="stat">{{ contentStats().lines }} satır</span>
+      </div>
+    </div>
+    <div class="content-preview" [innerHTML]="highlightedContent()">
+    </div>
+    
+    <!-- Show More Content Button -->
+    <button 
+      class="show-more-content"
+      *ngIf="isContentTruncated()"
+      (click)="toggleFullContent($event)">
+      <span *ngIf="!showFullContent()">Tümünü göster</span>
+      <span *ngIf="showFullContent()">Daha az göster</span>
+      <i class="fas" [class.fa-chevron-down]="!showFullContent()" [class.fa-chevron-up]="showFullContent()"></i>
+    </button>
+  </div>
+  
+  <!-- Card Footer (Actions) -->
+  <div class="card-footer" *ngIf="isExpanded()">
+    <div class="footer-actions">
+      <button 
+        class="footer-btn primary"
+        (click)="onViewClick($event)"
+        title="Dosyayı görüntüle">
+        <i class="fas fa-eye"></i>
+        <span>Görüntüle</span>
+      </button>
+      
+      <button 
+        class="footer-btn secondary"
+        (click)="onEditClick($event)"
+        title="Dosyayı düzenle">
+        <i class="fas fa-edit"></i>
+        <span>Düzenle</span>
+      </button>
+      
+      <button 
+        class="footer-btn secondary"
+        (click)="onCopyClick($event)"
+        title="Bağlantıyı kopyala">
+        <i class="fas fa-copy"></i>
+        <span>Kopyala</span>
+      </button>
+      
+      <button 
+        class="footer-btn secondary"
+        (click)="onShareClick($event)"
+        title="Paylaş">
+        <i class="fas fa-share-alt"></i>
+        <span>Paylaş</span>
+      </button>
+    </div>
+    
+    <div class="footer-info">
+      <span class="last-modified" *ngIf="lastModified">
+        Son güncelleme: {{ lastModified }}
+      </span>
+    </div>
+  </div>
+</div>

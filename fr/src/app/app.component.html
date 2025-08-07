@@ -1,0 +1,114 @@
+<div class="app-container">
+  <!-- Floating particles -->
+  <div class="floating-particles">
+    <div class="particle particle-1"></div>
+    <div class="particle particle-2"></div>
+    <div class="particle particle-3"></div>
+    <div class="particle particle-4"></div>
+    <div class="particle particle-5"></div>
+    <div class="particle particle-6"></div>
+  </div>
+
+  <!-- Gradient orbs -->
+  <div class="gradient-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Header with mode toggle -->
+  <header class="app-header">
+    <div class="header-content">
+      <h1 class="app-title">
+        <i class="fas fa-file-alt"></i>
+        Document Label Service
+      </h1>
+      
+      <!-- Mode Toggle Button -->
+      <div class="header-actions">
+        <button 
+          class="mode-toggle-btn"
+          (click)="toggleSearchMode()"
+          [class.search-active]="isSearchMode()">
+          <i class="fas" 
+             [class.fa-upload]="isSearchMode()" 
+             [class.fa-search]="!isSearchMode()"></i>
+          <span>{{ isSearchMode() ? 'Yükleme Modu' : 'Arama Modu' }}</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-content">
+    <!-- Main content area -->
+    <main class="main-content">
+      
+      <!-- Upload Mode -->
+      <div *ngIf="!isSearchMode()" class="upload-mode">
+        <!-- File Upload Section -->
+        <section class="content-section upload-section">
+          <div class="section-header">
+            <h2>
+              <i class="fas fa-cloud-upload-alt"></i>
+              Dosya Yükle ve Analiz Et
+            </h2>
+            <p>Dökümanınızı yükleyin ve otomatik etiketleme ile özetleme yapın</p>
+          </div>
+          
+          <app-file-upload 
+            (analysisCompleted)="onAnalysisCompleted($event)"
+            (uploadError)="onUploadError($event)">
+          </app-file-upload>
+        </section>
+
+        <!-- Document Analysis Section (Shown after upload) -->
+        <section *ngIf="currentAnalysis()" class="content-section analysis-section">
+          <div class="section-header">
+            <h2>
+              <i class="fas fa-chart-line"></i>
+              Analiz Sonuçları
+            </h2>
+            <p>Döküman analiz edildi, etiketleri düzenleyebilir ve kaydedebilirsiniz</p>
+          </div>
+          
+          <app-document-analysis
+            [analysisResult]="currentAnalysis()!"
+            [originalContent]="originalContent()"
+            (labelsUpdated)="onLabelsUpdated($event)"
+            (saveCompleted)="onSaveCompleted($event)"
+            (closeAnalysis)="onCloseAnalysis()">
+          </app-document-analysis>
+        </section>
+      </div>
+
+      <!-- Search Mode -->
+      <div *ngIf="isSearchMode()" class="search-mode">
+        <!-- Search Section -->
+        <section class="content-section search-section">
+          <div class="section-header">
+            <h2>
+              <i class="fas fa-search"></i>
+              Döküman Ara
+            </h2>
+            <p>Mevcut dökümanlar arasında arama yapın (semantic ve etiket bazlı)</p>
+          </div>
+          
+          <!-- File Search Component -->
+          <app-file-search 
+            [placeholder]="'Döküman ara... (en az 3 karakter)'"
+            [enableAdvancedSearch]="true"
+            (searchResults)="onSearchResults($event)"
+            (searchError)="onSearchError($event)">
+          </app-file-search>
+        </section>
+
+        
+
+        
+      </div>
+
+      
+
+    </main>
+  </div>
+</div>

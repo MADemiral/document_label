@@ -1,0 +1,327 @@
+<!-- file-view.component.html - güzel document viewer -->
+
+<div class="file-view-container" [class.modal-view]="isModal">
+  
+  <!-- Header -->
+  <div class="file-view-header">
+    <div class="header-left">
+      <div class="file-icon">
+        <i [class]="getFileIcon()"></i>
+      </div>
+      <div class="file-info">
+        <h1 class="file-title">{{ documentTitle() }}</h1>
+        <div class="file-meta">
+          <span class="document-id">
+            <i class="fas fa-hashtag"></i>
+            {{ document.title }}
+          </span>
+          <span class="file-size">
+            <i class="fas fa-weight-hanging"></i>
+            {{ formatSize(document.size) }}
+          </span>
+          <span class="content-stats">
+            <i class="fas fa-file-alt"></i>
+            {{ contentStats().words }} kelime, {{ contentStats().characters }} karakter
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="header-right">
+      <!-- Score Badge -->
+      <div class="score-badge" *ngIf="document.score" [class]="getScoreClass()">
+        <i class="fas fa-star"></i>
+        {{ (document.score * 100).toFixed(0) }}%
+      </div>
+      
+      <!-- Search Type Badge -->
+      <div class="search-type-badge" *ngIf="document.search_type">
+        <i class="fas fa-search"></i>
+        {{ getSearchTypeText() }}
+      </div>
+      
+      <!-- Action Buttons -->
+      <div class="action-buttons" *ngIf="showActions">
+        <button 
+          class="action-btn copy-btn"
+          (click)="copyContent()"
+          title="İçeriği kopyala">
+          <i class="fas fa-copy"></i>
+        </button>
+        
+        <button 
+          class="action-btn share-btn"
+          (click)="copyDocumentLink()"
+          title="Link kopyala">
+          <i class="fas fa-link"></i>
+        </button>
+        
+        <button 
+          class="action-btn download-btn"
+          (click)="onDownloadDocument()"
+          title="İndir">
+          <i class="fas fa-download"></i>
+        </button>
+        
+        <button 
+          class="action-btn edit-btn"
+          (click)="onEditDocument()"
+          title="Düzenle">
+          <i class="fas fa-edit"></i>
+        </button>
+        
+        <button 
+          class="action-btn delete-btn"
+          (click)="onDeleteDocument()"
+          title="Sil">
+          <i class="fas fa-trash"></i>
+        </button>
+        
+        <button 
+          class="action-btn close-btn"
+          *ngIf="isModal"
+          (click)="onCloseView()"
+          title="Kapat">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save Message -->
+  <div class="save-message" *ngIf="saveMessage()">
+    {{ saveMessage() }}
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tab-navigation">
+    <button 
+      class="tab-btn"
+      [class.active]="activeTab() === 'content'"
+      (click)="setActiveTab('content')">
+      <i class="fas fa-file-text"></i>
+      İçerik
+    </button>
+    <button 
+      class="tab-btn"
+      [class.active]="activeTab() === 'summary'"
+      (click)="setActiveTab('summary')"
+      *ngIf="document.summary">
+      <i class="fas fa-list-alt"></i>
+      Özet
+    </button>
+    <button 
+      class="tab-btn"
+      [class.active]="activeTab() === 'metadata'"
+      (click)="setActiveTab('metadata')">
+      <i class="fas fa-info-circle"></i>
+      Bilgiler
+    </button>
+  </div>
+
+  <!-- Content Area -->
+  <div class="content-area">
+    
+    <!-- Content Tab -->
+    <div class="content-tab" *ngIf="activeTab() === 'content'">
+      <div class="content-header">
+        <h3>
+          <i class="fas fa-file-text"></i>
+          Döküman İçeriği
+        </h3>
+        <div class="content-actions">
+          <span class="content-stats-detail">
+            {{ contentStats().paragraphs }} paragraf, {{ contentStats().lines }} satır
+          </span>
+          <button 
+            class="toggle-btn"
+            (click)="toggleFullContent()">
+            <i class="fas" [class.fa-expand]="!showFullContent()" [class.fa-compress]="showFullContent()"></i>
+            {{ showFullContent() ? 'Daralt' : 'Genişlet' }}
+          </button>
+        </div>
+      </div>
+      
+      <div class="content-body" [class.full-height]="showFullContent()">
+        <div class="content-text" [innerHTML]="highlightedContent()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Tab -->
+    <div class="summary-tab" *ngIf="activeTab() === 'summary' && document.summary">
+      <div class="summary-header">
+        <h3>
+          <i class="fas fa-list-alt"></i>
+          Döküman Özeti
+        </h3>
+      </div>
+      
+      <div class="summary-body">
+        <div class="summary-text" [innerHTML]="highlightedSummary()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Metadata Tab -->
+    <div class="metadata-tab" *ngIf="activeTab() === 'metadata'">
+      
+      <!-- Labels Section -->
+      <div class="metadata-section">
+        <div class="section-header">
+          <h3>
+            <i class="fas fa-tags"></i>
+            Etiketler
+          </h3>
+          <button 
+            class="edit-btn"
+            *ngIf="!isEditing()"
+            (click)="startEditingLabels()">
+            <i class="fas fa-edit"></i>
+            Düzenle
+          </button>
+        </div>
+        
+        <!-- Labels Display -->
+        <div class="labels-display" *ngIf="!isEditing()">
+          <div class="labels-container">
+            <span 
+              class="label-tag"
+              *ngFor="let label of document.labels; let i = index"
+              [class.highlighted]="getSearchQuery() && label.label_name.toLowerCase().includes(getSearchQuery().toLowerCase())"
+              (click)="onLabelClick(label.label_name)">
+              <i class="fas fa-tag"></i>
+              {{ label.label_name }}
+            </span>
+          </div>
+          <div class="no-labels" *ngIf="!document.labels || document.labels.length === 0">
+            <i class="fas fa-info-circle"></i>
+            Bu dökümanın henüz etiketi bulunmuyor.
+          </div>
+        </div>
+        
+        <!-- Labels Editing -->
+        <div class="labels-editing" *ngIf="isEditing()">
+          <div class="editable-labels">
+            <div 
+              class="editable-label"
+              *ngFor="let label of editableLabels(); let i = index">
+              <span class="label-text">{{ label }}</span>
+              <button 
+                class="remove-label"
+                (click)="removeLabel(i)"
+                title="Etiketi kaldır">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="add-label-section">
+            <input
+              type="text"
+              class="label-input"
+              [value]="newLabelInput()"
+              (input)="onNewLabelInput($event)"
+              placeholder="Yeni etiket ekle..."
+            />
+            <button 
+              class="add-label-btn"
+              (click)="addLabel()"
+              [disabled]="!newLabelInput().trim()">
+              <i class="fas fa-plus"></i>
+              Ekle
+            </button>
+          </div>
+          
+          <div class="label-actions">
+            <button 
+              class="save-labels-btn"
+              (click)="saveLabels()"
+              [disabled]="isLoading() || !hasUnsavedChanges()">
+              <i class="fas fa-save" *ngIf="!isLoading()"></i>
+              <i class="fas fa-spinner fa-spin" *ngIf="isLoading()"></i>
+              {{ isLoading() ? 'Kaydediliyor...' : 'Kaydet' }}
+            </button>
+            <button 
+              class="cancel-labels-btn"
+              (click)="cancelEditingLabels()">
+              <i class="fas fa-times"></i>
+              İptal
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Date Information -->
+      <div class="metadata-section">
+        <div class="section-header">
+          <h3>
+            <i class="fas fa-calendar-alt"></i>
+            Tarih Bilgileri
+          </h3>
+        </div>
+        
+        <div class="date-info-grid">
+          <div class="date-item" *ngIf="document.created_at">
+            <i class="fas fa-calendar-plus"></i>
+            <div class="date-details">
+              <span class="date-label">Oluşturulma Tarihi</span>
+              <span class="date-value">{{ formattedCreatedDate() }}</span>
+            </div>
+          </div>
+          
+          <div class="date-item" *ngIf="document.uploaded_at">
+            <i class="fas fa-upload"></i>
+            <div class="date-details">
+              <span class="date-label">Yüklenme Tarihi</span>
+              <span class="date-value">{{ formattedUploadDate() }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Technical Information -->
+      <div class="metadata-section">
+        <div class="section-header">
+          <h3>
+            <i class="fas fa-cog"></i>
+            Teknik Bilgiler
+          </h3>
+        </div>
+        
+        <div class="tech-info-grid">
+          <div class="tech-item">
+            <span class="tech-label">Döküman ID</span>
+            <span class="tech-value">{{ document.document_id }}</span>
+          </div>
+          
+          <div class="tech-item" *ngIf="document.file_type">
+            <span class="tech-label">Dosya Tipi</span>
+            <span class="tech-value">{{ document.file_type.toUpperCase() }}</span>
+          </div>
+          
+          <div class="tech-item" *ngIf="document.size">
+            <span class="tech-label">Boyut</span>
+            <span class="tech-value">{{ formatSize(document.size) }}</span>
+          </div>
+          
+          <div class="tech-item">
+            <span class="tech-label">Karakter Sayısı</span>
+            <span class="tech-value">{{ contentStats().characters.toLocaleString('tr-TR') }}</span>
+          </div>
+          
+          <div class="tech-item">
+            <span class="tech-label">Kelime Sayısı</span>
+            <span class="tech-value">{{ contentStats().words.toLocaleString('tr-TR') }}</span>
+          </div>
+          
+          <div class="tech-item">
+            <span class="tech-label">Paragraf Sayısı</span>
+            <span class="tech-value">{{ contentStats().paragraphs.toLocaleString('tr-TR') }}</span>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>

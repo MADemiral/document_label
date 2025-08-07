@@ -1,0 +1,158 @@
+<div class="analysis-container">
+  <!-- Analysis Header -->
+  <div class="analysis-header">
+    <div class="header-content">
+      <div class="title-section">
+        <div class="title-icon">
+          <i class="fas fa-file-alt"></i>
+        </div>
+        <div class="title-info">
+          <h3>Döküman Analiz Sonucu</h3>
+          <p class="file-name">{{ analysisResult.fileName }}</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button 
+          (click)="toggleEditMode()"
+          [disabled]="isSaving()"
+          class="btn btn-secondary"
+          [class.active]="isEditing()">
+          <i class="fas" [class.fa-edit]="!isEditing()" [class.fa-times]="isEditing()"></i>
+          {{ isEditing() ? 'İptal' : 'Düzenle' }}
+        </button>
+        
+        <button 
+          (click)="saveAnalysis()"
+          [disabled]="isSaving() || !isEditing()"
+          class="btn btn-primary">
+          <i class="fas" [class.fa-save]="!isSaving()" [class.fa-spinner]="isSaving()" [class.fa-spin]="isSaving()"></i>
+          {{ isSaving() ? 'Kaydediliyor...' : 'Kaydet' }}
+        </button>
+        
+        <button 
+          (click)="handleCloseAnalysis()"
+          class="btn btn-close"
+          title="Analizi kapat">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+    
+    <!-- File Info Stats -->
+    <div class="file-stats">
+      <div class="stat-item">
+        <i class="fas fa-calendar"></i>
+        <span>{{ analysisResult.analysisDate | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+      <div *ngIf="analysisResult.fileMetadata" class="stat-item">
+        <i class="fas fa-weight"></i>
+        <span>{{ (analysisResult.fileMetadata.size / 1024 / 1024).toFixed(2) }} MB</span>
+      </div>
+      <div class="stat-item">
+        <i class="fas fa-tags"></i>
+        <span>{{ editableLabels().length }} etiket</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analysis Content -->
+  <div class="analysis-content">
+    
+    <!-- Labels Section -->
+    <div class="section labels-section">
+      <div class="section-header">
+        <h4>
+          <i class="fas fa-tags"></i>
+          Etiketler ve Anahtar Kelimeler
+        </h4>
+        <div *ngIf="isEditing()" class="edit-badge">
+          <i class="fas fa-edit"></i>
+          Düzenleme Modu
+        </div>
+      </div>
+
+      <!-- Add New Label Form -->
+      <div *ngIf="isEditing()" class="add-label-section">
+        <div class="add-label-form">
+          <div class="input-wrapper">
+            <input
+              type="text"
+              [(ngModel)]="newLabelInput"
+              (keypress)="onLabelInputKeyPress($event)"
+              placeholder="Yeni etiket ekle..."
+              class="label-input">
+            <button
+              (click)="addLabel()"
+              [disabled]="!newLabelInput().trim() || editableLabels().includes(newLabelInput().trim())"
+              class="add-btn">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          <div *ngIf="editableLabels().includes(newLabelInput().trim()) && newLabelInput().trim()" 
+               class="error-msg">
+            <i class="fas fa-exclamation-triangle"></i>
+            Bu etiket zaten mevcut
+          </div>
+        </div>
+      </div>
+
+      <!-- Labels Display -->
+      <div class="labels-display">
+        <div *ngIf="editableLabels().length === 0" class="empty-labels">
+          <div class="empty-icon">
+            <i class="fas fa-tag"></i>
+          </div>
+          <p>{{ isEditing() ? 'Etiket eklemek için yukarıdaki formu kullanın' : 'Henüz etiket bulunmuyor' }}</p>
+        </div>
+
+        <div class="labels-grid">
+          <div 
+            *ngFor="let label of editableLabels(); let i = index; trackBy: trackByIndex"
+            class="label-chip {{ getLabelColorClass(i) }}"
+            [class.editable]="isEditing()">
+            
+            <span class="label-text">{{ label }}</span>
+            
+            <button
+              *ngIf="isEditing()"
+              (click)="removeLabel(i)"
+              class="remove-btn"
+              title="Kaldır">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="section summary-section">
+      <div class="section-header">
+        <h4>
+          <i class="fas fa-file-text"></i>
+          Döküman Özeti
+        </h4>
+        <div class="summary-length">
+          {{ analysisResult.summary.length }} karakter
+        </div>
+      </div>
+      
+      <div class="summary-content">
+        <p class="summary-text">{{ analysisResult.summary }}</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Edit Mode Footer -->
+  <div *ngIf="isEditing()" class="edit-footer">
+    <div class="edit-info">
+      <i class="fas fa-info-circle"></i>
+      Değişikliklerinizi kaydetmeyi unutmayın
+    </div>
+    <div class="edit-stats">
+      {{ editableLabels().length }} etiket • Son güncelleme: {{ analysisResult.analysisDate | date:'HH:mm' }}
+    </div>
+  </div>
+</div>
