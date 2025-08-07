@@ -3,6 +3,7 @@
 -- ==============================
 CREATE TABLE documents (
     document_id SERIAL PRIMARY KEY,
+    title TEXT,
     content TEXT,
     uploaded_at TIMESTAMP DEFAULT NOW(),
     created_at TIMESTAMP DEFAULT NOW(),
