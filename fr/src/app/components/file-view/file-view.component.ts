@@ -145,7 +145,7 @@ export class FileViewComponent implements OnInit {
 
   ngOnInit() {
     if (this.document?.labels) {
-      this.editableLabels.set([...this.document.labels.map(label => label.label_name)]);
+      this.editableLabels.set(this.document.labels.map(label => label.label_name));
     }
   }
 
@@ -185,12 +185,12 @@ export class FileViewComponent implements OnInit {
 
   startEditingLabels(): void {
     this.isEditing.set(true);
-    this.editableLabels.set([...this.document.labels].map(label => label.label_name));
+    this.editableLabels.set(this.document.labels.map(label => label.label_name));
   }
 
   cancelEditingLabels(): void {
     this.isEditing.set(false);
-    this.editableLabels.set([...this.document.labels].map(label => label.label_name));
+    this.editableLabels.set(this.document.labels.map(label => label.label_name));
     this.newLabelInput.set('');
   }
 
@@ -226,13 +226,10 @@ export class FileViewComponent implements OnInit {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Update document labels
-      this.document.labels = this.editableLabels().map((labelName, idx) => {
-        const existing = this.document.labels.find(label => label.label_name === labelName);
-        return {
-          label_id: existing ? existing.label_id : 0,
-          label_name: labelName
-        };
-      });
+      this.document.labels = this.editableLabels().map((labelName, idx) => ({
+        label_id: idx, // You may want to generate or fetch the correct id
+        label_name: labelName
+      }));
       this.isEditing.set(false);
       this.showTemporaryMessage('✅ Etiketler güncellendi!');
       
@@ -318,31 +315,6 @@ export class FileViewComponent implements OnInit {
     }
     
     return `${sizeValue.toFixed(1)} ${units[unitIndex]}`;
-  }
-
-  /**
-   * Get search query as string, handling both string and object inputs
-   */
-  getSearchQuery(): string {
-    if (typeof this.searchQuery === 'string') {
-      return this.searchQuery;
-    }
-    
-    // If it's an object, try to extract the search string
-    if (this.searchQuery && typeof this.searchQuery === 'object') {
-      // Common patterns for search query objects
-      if ('query' in this.searchQuery) {
-        return (this.searchQuery as any).query || '';
-      }
-      if ('searchQuery' in this.searchQuery) {
-        return (this.searchQuery as any).searchQuery || '';
-      }
-      if ('value' in this.searchQuery) {
-        return (this.searchQuery as any).value || '';
-      }
-    }
-    
-    return '';
   }
 
   private truncateText(text: string, maxLength: number): string {

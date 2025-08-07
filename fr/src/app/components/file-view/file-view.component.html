@@ -13,7 +13,7 @@
         <div class="file-meta">
           <span class="document-id">
             <i class="fas fa-hashtag"></i>
-            {{ document.title }}
+            {{ document.document_id }}
           </span>
           <span class="file-size">
             <i class="fas fa-weight-hanging"></i>
@@ -188,13 +188,13 @@
             <span 
               class="label-tag"
               *ngFor="let label of document.labels; let i = index"
-              [class.highlighted]="getSearchQuery() && label.label_name.toLowerCase().includes(getSearchQuery().toLowerCase())"
+              [class.highlighted]="searchQuery && label.label_name.toLowerCase().includes(searchQuery.toLowerCase())"
               (click)="onLabelClick(label.label_name)">
               <i class="fas fa-tag"></i>
               {{ label.label_name }}
             </span>
           </div>
-          <div class="no-labels" *ngIf="!document.labels || document.labels.length === 0">
+          <div class="no-labels" *ngIf="document.labels.length === 0">
             <i class="fas fa-info-circle"></i>
             Bu dökümanın henüz etiketi bulunmuyor.
           </div>

@@ -175,6 +175,7 @@ export class FileSearchComponent implements OnInit, OnDestroy {
     this.searchQuery.set(query);
     this.activeSuggestionIndex.set(-1);
     
+    if(this.searchType() === 'label') {
     // Karakter uyarısı göster
     if (query.trim().length > 0 && query.trim().length < this.minQueryLength) {
       this.showCharacterHint.set(true);
@@ -190,6 +191,7 @@ export class FileSearchComponent implements OnInit, OnDestroy {
       this.suggestions.set([]);
       this.showSuggestions.set(false);
     }
+  }
     
     // Boş ise tüm dosyaları göster
     if (query.trim().length === 0) {
@@ -298,8 +300,7 @@ export class FileSearchComponent implements OnInit, OnDestroy {
       return;
     }
     
-    // Semantic arama yap (manuel girilen text için)
-    this.searchType.set('semantic');
+  
     
     console.log(`🔍 Manual search: "${query}" - performing SEMANTIC search`);
     
@@ -333,29 +334,31 @@ export class FileSearchComponent implements OnInit, OnDestroy {
             const searchTime = Date.now() - startTime;
             this.searchTime.set(searchTime);
             
-            console.log(`📄 Found ${response.results.length} documents in ${searchTime}ms`);
-            
             // Convert API results to display format - MODEL'E UYGUN
             const documents = response.results.map((result, index) => ({
               document_id: result.document_id,
-              content: result.content_preview || '',
+              content: result.content || '',
               summary: result.summary || '',
-              labels: result.labels.map(label => ({ label_name: label })) || [],
-              score: result.score || 0,
+              
+              // FIX: Labels doğru şekilde çevir - API'de zaten {label_name, label_id} formatında
+              labels: result.labels || [], // Direkt kullan, çevirme yapmaya gerek yok!
+              
+              title: result.title || 'Untitled Document',
               search_type: searchType,
               
               // Frontend display için ek alanlar
               id: `doc_${result.document_id}`,
               name: this.generateDocumentName(result, index),
-              file_type: this.inferFileType(result.content_preview || ''),
-              size: (result.content_preview || '').length,
+              file_type: this.inferFileType(result.content || ''),
+              size: (result.content || '').length,
               lastModified: this.formatDate(new Date().toISOString()),
               
               // Search highlight için
-              highlightedContent: this.highlightSearchTerms(result.content_preview || '', query),
+              highlightedContent: this.highlightSearchTerms(result.content || '', query),
               highlightedSummary: this.highlightSearchTerms(result.summary || '', query)
             }));
             
+            console.log('📄 Documents:', documents);
             this.documents.set(documents);
             this.totalResults.set(documents.length);
             
@@ -378,7 +381,7 @@ export class FileSearchComponent implements OnInit, OnDestroy {
           }
         });
       } else {
-        this.apiService.searchDocumentsSemantic(query, 20).subscribe({
+        this.apiService.searchDocumentsSemantic({query:query, limit: 20}).subscribe({
           next: (response) => {
             const searchTime = Date.now() - startTime;
             this.searchTime.set(searchTime);
@@ -388,9 +391,19 @@ export class FileSearchComponent implements OnInit, OnDestroy {
             // Convert API results to display format - MODEL'E UYGUN
             const documents = response.results.map((result, index) => ({
               document_id: result.document_id,
-              content: result.content_preview || '',
+              title: result.title || 'Untitled Document',
+              content: result.content || '',
               summary: result.summary || '',
-              labels: result.labels.map(label => ({ label_name: label })) || [],
+              
+              // FIX: Semantic search'te labels nasıl geliyor kontrol et
+              labels: Array.isArray(result.labels) 
+                ? result.labels.map((label: any) => 
+                    typeof label === 'string' 
+                      ? { label_name: label, label_id: null }
+                      : label
+                  )
+                : [],
+                
               score: result.score || 0,
               search_type: searchType,
               
@@ -473,6 +486,7 @@ export class FileSearchComponent implements OnInit, OnDestroy {
       // Backend'den gelen documents'ı display format'a çevir
       const documents = response.documents.map((doc: any, index: number) => ({
         // Backend model alanları
+        title: doc.title || 'Untitled Document',
         document_id: doc.document_id,
         content: doc.content || '',
         summary: doc.summary || '',
@@ -668,8 +682,7 @@ export class FileSearchComponent implements OnInit, OnDestroy {
     this.selectedDocument.set(viewData);
     this.showFileView.set(true);
     
-    // Disable body scroll when modal is open
-    document.body.style.overflow = 'hidden';
+  
   }
   
   /**
@@ -1101,7 +1114,28 @@ export class FileSearchComponent implements OnInit, OnDestroy {
    * Visible labels helper (show only first 3 labels)
    */
   getVisibleLabels(document: any): string[] {
-    return document.labels?.map((label: { label_name: any; }) => label.label_name).slice(0, 3) || [];
+    try {
+      if (!document?.labels || !Array.isArray(document.labels)) {
+        return [];
+      }
+      
+      // API'den gelen format: {label_name: "TÜBİTAK", label_id: 29}
+      return document.labels
+        .slice(0, 3)
+        .map((label: any) => {
+          if (typeof label === 'string') {
+            return label;
+          } else if (label && typeof label === 'object' && label.label_name) {
+            return label.label_name;
+          }
+          return '';
+        })
+        .filter((labelName: string) => labelName.trim().length > 0);
+        
+    } catch (error) {
+      console.warn('getVisibleLabels error:', error);
+      return [];
+    }
   }
 
   /**
@@ -1115,13 +1149,22 @@ export class FileSearchComponent implements OnInit, OnDestroy {
   /**
    * Label click handler
    */
-  onLabelClick(label: string, event: Event): void {
+  onLabelClick(labelData: string | { label_name: string }, event: Event): void {
     event.stopPropagation();
-    // Add the label to search query or filter by label
-    this.searchQuery.set(label);
+    
+    // Label name'i güvenli şekilde al
+    const labelName = typeof labelData === 'string' 
+      ? labelData 
+      : labelData.label_name;
+      
+    console.log('🏷️ Label clicked:', labelName);
+    
+    // Search with the label
+    this.searchQuery.set(labelName);
+    this.searchType.set('label');
     this.performManualSearch();
   }
-
+  
   /**
    * Handle sort change event
    */

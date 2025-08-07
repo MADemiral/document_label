@@ -69,6 +69,7 @@
         class="search-type-select"
         [value]="searchType()"
         (change)="onSearchTypeChange($event)">
+     
         <option value="semantic">Anlamsal</option>
         <option value="label">Etiket</option>
       </select>
@@ -274,11 +275,11 @@
           <div class="card-labels" *ngIf="document.labels?.length > 0">
             <span 
               class="label-tag"
-              *ngFor="let label of getVisibleLabels(document); let i = index"
-              [class.highlighted]="isLabelHighlighted(label)"
-              (click)="onLabelClick(label, $event)">
+              *ngFor="let labelName of getVisibleLabels(document); let i = index"
+              [class.highlighted]="isLabelHighlighted(labelName)"
+              (click)="onLabelClick(labelName, $event)">
               <i class="fas fa-tag"></i>
-              {{ label }}
+              {{ labelName }}
             </span>
             <span class="more-labels" *ngIf="document.labels.length > 3">
               +{{ document.labels.length - 3 }} daha

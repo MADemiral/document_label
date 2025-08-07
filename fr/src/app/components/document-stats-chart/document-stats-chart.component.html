@@ -1,0 +1,39 @@
+<!-- document-stats-chart.component.html -->
+<div class="stats-chart-container" [style.width.px]="size" [style.height.px]="size">
+  <div class="chart-title" *ngIf="title">
+    <h3>{{ title }}</h3>
+    <div class="document-info" *ngIf="documentStats">
+      <span class="doc-id">ID: {{ documentStats.documentId }}</span>
+    </div>
+  </div>
+  
+  <div class="canvas-container">
+    <canvas 
+      #backgroundCanvas 
+      class="background-canvas">
+    </canvas>
+    <canvas 
+      #statsCanvas 
+      class="stats-canvas">
+    </canvas>
+  </div>
+  
+  <div class="stats-legend" *ngIf="documentStats">
+    <div class="legend-item">
+      <span class="legend-label">Kelime:</span>
+      <span class="legend-value">{{ documentStats.wordCount }}</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-label">Karakter:</span>
+      <span class="legend-value">{{ documentStats.characterCount }}</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-label">Etiket:</span>
+      <span class="legend-value">{{ documentStats.labelCount }}</span>
+    </div>
+    <div class="legend-item" *ngIf="documentStats.searchScore">
+      <span class="legend-label">Skor:</span>
+      <span class="legend-value">{{ (documentStats.searchScore * 100) | number:'1.1-1' }}%</span>
+    </div>
+  </div>
+</div>
