@@ -8,7 +8,7 @@ This project automates the extraction, summarization, and tagging of document im
 
 ## Features
 
-- **Text Extraction**: Uses Python libraries (e.g. `pdfplumber`, `PyMuPDF`, or `textract`) to extract raw text from documents.
+- **Text Extraction**: Uses Python libraries to extract raw text from documents.
 - **Summarization & Tagging via Groq**: Leverages Groq's `llama3-70b-8192` model to generate Turkish summaries and suggest relevant labels.
 - **Vector Search with ChromaDB**: Stores document embeddings for semantic search and retrieval.
 - **Structured Storage with PostgreSQL**: Saves metadata, summaries, and labels in a relational database.
