@@ -6,9 +6,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def create_document(content, summary=None):
+def create_document(content, title=None, summary=None):
     session = SessionLocal()
-    doc = Document(content=content, summary=summary)
+    doc = Document(content=content, title=title, summary=summary)
     session.add(doc)
     session.commit()
     session.refresh(doc)
@@ -103,23 +103,11 @@ def search_documents_by_label(label_name: str):
     """Search documents by label name"""
     session = SessionLocal()
     try:
-        # Join documents with labels through document_labels
-        raw_query = text("""
-            SELECT DISTINCT d.* 
-            FROM documents d
-            JOIN document_labels dl ON d.document_id = dl.document_id
-            JOIN labels l ON dl.label_id = l.label_id
-            WHERE LOWER(l.label_name) LIKE LOWER(:label_name)
-        """)
-        
-        result = session.execute(raw_query, {'label_name': f'%{label_name}%'})
-        
-        documents = []
-        for row in result:
-            doc = session.query(Document).filter_by(document_id=row.document_id).first()
-            if doc:
-                documents.append(doc)
-        
+        label = session.query(Label).filter_by(label_name=label_name).first()
+        if not label:
+            return []
+
+        documents = session.query(Document).join(Document.labels).filter(Label.label_id == label.label_id).options(joinedload(Document.labels)).all()
         return documents
         
     except Exception as e:
@@ -155,7 +143,7 @@ def search_documents_by_label_db(label_name: str, limit: int = 10):
         if not label:
             return []
 
-        documents = session.query(Document).join(Document.labels).filter(Label.label_id == label.label_id).all()
+        documents = session.query(Document).join(Document.labels).filter(Label.label_id == label.label_id).options(joinedload(Document.labels)).all()
         return documents
     except Exception as e:
         logger.error(f"Error searching documents by label: {e}")

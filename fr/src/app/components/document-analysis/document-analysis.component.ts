@@ -1,12 +1,10 @@
 import { Component, Input, Output, EventEmitter, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ApiService } from '../../service/api.service';
-import { 
-  DocumentAnalysisResult, 
-  ConfirmDocumentRequest, 
-  ConfirmDocumentResponse 
-} from '../../interfaces/document-analysis.interface';
+import { ApiService, ConfirmDocumentResponse } from '../../service/api.service';
+
+import { ConfirmDocumentRequest } from '../../interfaces/document-analysis/document-analysis-request.interface';
+import { DocumentAnalysisResult } from '../../interfaces/document-analysis/document-analysis-response.interface';
 
 @Component({
   selector: 'app-document-analysis',

@@ -5,7 +5,8 @@ import { Subject, EMPTY, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, catchError, takeUntil } from 'rxjs/operators';
 import { ApiService } from '../../service/api.service';
 import { FileViewComponent, DocumentViewData } from '../file-view/file-view.component';
-import type { LabelSuggestion, LabelSuggestionsResponse, CombinedSearchResponse } from '../../service/api.service';
+import { LabelSuggestion, LabelSuggestionsResponse } from '../../interfaces/file-search/file-search-response.interface';
+
 
 @Component({
   selector: 'app-file-search',

@@ -52,6 +52,7 @@ class SearchInput(BaseModel):
     limit: Optional[int] = 10
 
 class ConfirmInput(BaseModel):
+    title: str
     content: str
     summary: str
     labels: List[str]
@@ -63,11 +64,6 @@ class LabelSuggestionInput(BaseModel):
 
 class AnalyzeInput(BaseModel):
     content: str
-
-class CombinedSearchInput(BaseModel):
-    query: str
-    search_type: Optional[str] = "both"  # "semantic", "label", "both"
-    limit: Optional[int] = 10
 
 @app.get("/")
 def read_root():
@@ -220,12 +216,13 @@ def confirm_document(data: ConfirmInput):
             return {
                 "status": "duplicate_skipped",
                 "message": "A similar document already exists. Skipping save.",
+                "title": data.title,
                 "labels": data.labels,
                 "summary": data.summary
             }
 
         # Save document to PostgreSQL
-        document = create_document(content=data.content, summary=data.summary)
+        document = create_document(title=data.title, content=data.content, summary=data.summary)
 
         # Save labels and link to document
         for label in data.labels:
@@ -234,6 +231,7 @@ def confirm_document(data: ConfirmInput):
         # Save embedding with metadata to ChromaDB
         save_document_embedding(
             document_id=document.document_id,
+            title=data.title,
             content=data.content,
             summary=data.summary,
             labels=data.labels
@@ -252,41 +250,29 @@ def confirm_document(data: ConfirmInput):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Save error: {str(e)}")
 @app.post("/semantic-search")
-def semantic_search(query: str, limit: int = 10):
-    """Semantic search implementation with fallback"""
+async def semantic_search(search_input: SearchInput):
     try:
-        # Try embedding search first
-        results = embedding_semantic_search(query, limit=limit)
+        results = embedding_semantic_search(search_input.query, top_k=search_input.limit)
         
-        # If embedding search fails, return mock data
-        if not results:
-            return [{
-                "document_id": f"mock-{i}",
-                "content": f"Mock document {i} containing '{query}'",
-                "summary": f"Mock summary for document {i}",
-                "labels": [query.lower()],
-                "score": 0.8 - (i * 0.1)
-            } for i in range(min(3, limit))]
-        
-        return results
-        
+        return {
+            "results": results,
+            "total": len(results)
+        }
     except Exception as e:
         print(f"Semantic search error: {e}")
-        # Return mock data as fallback
-        return [{
-            "document_id": "fallback-1",
-            "content": f"Fallback document containing '{query}'",
-            "summary": f"Fallback summary for {query}",
-            "labels": [query.lower()],
-            "score": 0.5
-        }]
+        # Fallback response
+        return {
+            "results": [],
+            "total": 0,
+            "error": str(e)
+        }
 
 @app.post("/search-documents-by-label")
-def search_documents_by_label(label_name: str, limit: int = 10):
+def search_documents_by_label(search_input: SearchInput):
     """Search documents by label name"""
     try:
-        documents = search_documents_by_label_db(label_name, limit)
-        return {"documents": documents}
+        documents = search_documents_by_label_db(search_input.query, search_input.limit)
+        return {"results": documents}
     except Exception as e:
         import traceback
         traceback.print_exc()

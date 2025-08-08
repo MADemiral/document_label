@@ -3,34 +3,13 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, retry, timeout } from 'rxjs/operators';
 
-// Request interfaces
-export interface AnalyzeDocumentRequest {
-  content: string;
-}
+import { LabelSuggestionRequest, SearchDocumentRequest } from '../interfaces/file-search/file-search-request.interface';
+import { LabelSuggestionsResponse, SearchDocumentQuery, SearchDocumentResponse, SearchDocumentResponseByLabel } from '../interfaces/file-search/file-search-response.interface';
+import { AnalyzeDocumentRequest, ConfirmDocumentRequest } from '../interfaces/document-analysis/document-analysis-request.interface';
 
-export interface ConfirmDocumentRequest {
-  content: string;
-  title: string;
-  summary: string;
-  labels: string[];
-  fileName?: string;
-}
 
-export interface SearchDocumentRequest {
-  query: string;
-  limit?: number;
-}
 
-export interface LabelSuggestionRequest {
-  query: string;
-  limit?: number;
-}
 
-export interface CombinedSearchRequest {
-  query: string;
-  search_type?: 'semantic' | 'label' | 'both';
-  limit?: number;
-}
 
 // Response interfaces
 export interface AnalyzeDocumentResponse {
@@ -47,40 +26,11 @@ export interface ConfirmDocumentResponse {
   message: string;
 }
 
-export interface SearchResult {
-  document_id: string;
-  title?: string;
-  summary: string;
-  labels: string[];
-  score: number;
-  content_preview: string;
-  search_type?: string;
-}
 
-export interface SearchDocumentResponse {
-  results: SearchResult[];
-  total: number;
-}
 
-export interface LabelSuggestion {
-  id: string;
-  name: string;
-  category: string;
-  count: number;
-}
 
-export interface LabelSuggestionsResponse {
-  suggestions: LabelSuggestion[];
-  total: number;
-  message?: string;
-}
 
-export interface CombinedSearchResponse {
-  results: SearchResult[];
-  total: number;
-  search_type: string;
-  query?: string;
-}
+
 
 export interface HealthCheckResponse {
   status: string;
@@ -187,8 +137,8 @@ export class ApiService {
       
       // Fallback mock data
       return {
-        documents: this.getMockDocuments(),
-        total: this.getMockDocuments().length
+        documents: [],
+        total: 0
       };
     }
   }
@@ -199,24 +149,22 @@ export class ApiService {
    * Search documents by semantic content
    */
   searchDocumentsSemantic(
-    query: string, 
-    limit: number = 10
-  ): Observable<SearchDocumentResponse> {
-    if (!query || typeof query !== 'string' || query.trim().length < 3) {
+    request: SearchDocumentQuery  ): Observable<SearchDocumentResponse> {
+    if (!request.query || typeof request.query !== 'string' || request.query.trim().length < 3) {
       console.log('API: Query too short for semantic search, returning empty');
       return of({ 
         results: [], 
         total: 0 
       });
     }
-    console.log(`🔍 API: Semantic search - query: "${query}", limit: ${limit}`)
-    const request: SearchDocumentRequest = {
-      query,
-      limit
+    console.log(`🔍 API: Semantic search - query: "${request.query}", limit: ${request.limit}`)
+    const searchRequest: SearchDocumentRequest = {
+      query: request.query,
+      limit: request.limit
     };
     return this.http.post<SearchDocumentResponse>(
-      `${this.baseUrl}/search`,
-      request,
+      `${this.baseUrl}/semantic-search`,
+      searchRequest,
       this.httpOptions
     ).pipe(
       retry(2),
@@ -224,7 +172,7 @@ export class ApiService {
       catchError(error => {
         console.error('Semantic search error:', error);
         return of({ 
-          results: this.getMockSearchResponse(query, 'semantic', limit).results, 
+          results: [], 
           total: 0 
         });
       })
@@ -237,12 +185,11 @@ export class ApiService {
   searchDocumentsByLabel(
     query: string, 
     limit: number = 10
-  ): Observable<SearchDocumentResponse> {
+  ): Observable<SearchDocumentResponseByLabel> {
     if (!query || typeof query !== 'string' || query.trim().length < 3) {
       console.log('API: Query too short for label search, returning empty');
       return of({ 
         results: [], 
-        total: 0 
       });
     }
     console.log(`🔍 API: Label search - query: "${query}", limit: ${limit}`);
@@ -252,7 +199,7 @@ export class ApiService {
       limit
     };
     
-    return this.http.post<SearchDocumentResponse>(
+    return this.http.post<SearchDocumentResponseByLabel>(
       `${this.baseUrl}/search-documents-by-label`,
       request,
       this.httpOptions
@@ -262,8 +209,7 @@ export class ApiService {
       catchError(error => {
         console.error('Label search error:', error);
         return of({ 
-          results: this.getMockSearchResponse(query, 'label', limit).results, 
-          total: 0 
+          results: [] 
         });
       })
     );
@@ -299,7 +245,7 @@ export class ApiService {
       catchError(error => {
         console.error('Label suggestions error:', error);
         return of({ 
-          suggestions: this.getMockSuggestions(query, limit), 
+          suggestions: [], 
           total: 0, 
           message: 'Using mock data' 
         });
@@ -359,131 +305,7 @@ export class ApiService {
     }
   }
 
-  // ==================== MOCK DATA METHODS ====================
-
-  /**
-   * Get mock search response for combined search
-   */
-  private getMockSearchResponse(query: string, searchType: string, limit: number): CombinedSearchResponse {
-    const mockResults = this.getMockSearchResults(query, searchType).slice(0, limit);
-    
-    return {
-      results: mockResults.map(doc => ({
-        document_id: doc.id,
-        summary: doc.summary,
-        labels: doc.labels,
-        score: 0.8,
-        content_preview: doc.content,
-        search_type: searchType
-      })),
-      total: mockResults.length,
-      search_type: searchType,
-      query
-    };
-  }
-
-  /**
-   * Get mock documents for fallback
-   */
-  private getMockDocuments(): any[] {
-    return [
-      {
-        id: 'doc_1',
-        name: 'Sözleşme Dökümanı.pdf',
-        content: 'Bu bir sözleşme dökümanıdır...',
-        labels: ['sözleşme', 'yasal', 'döküman'],
-        summary: 'Şirket sözleşme dökümanı',
-        created_at: '2024-01-15T10:30:00Z',
-        file_type: 'pdf',
-        size: 245760
-      },
-      {
-        id: 'doc_2',
-        name: 'Finansal Rapor.xlsx',
-        content: 'Q4 2023 finansal analiz raporu...',
-        labels: ['finans', 'rapor', 'analiz'],
-        summary: 'Çeyreklik finansal durum raporu',
-        created_at: '2024-01-10T14:15:00Z',
-        file_type: 'xlsx',
-        size: 189440
-      },
-      {
-        id: 'doc_3',
-        name: 'Toplantı Notları.docx',
-        content: 'Aylık proje toplantısı notları...',
-        labels: ['toplantı', 'notlar', 'proje'],
-        summary: 'Proje ilerlemesi ve aksiyonlar',
-        created_at: '2024-01-08T09:00:00Z',
-        file_type: 'docx',
-        size: 87552
-      },
-      {
-        id: 'doc_4',
-        name: 'Teknik Spesifikasyon.pdf',
-        content: 'Sistem teknik gereksinimleri...',
-        labels: ['teknik', 'spesifikasyon', 'sistem'],
-        summary: 'Proje teknik detayları',
-        created_at: '2024-01-05T16:45:00Z',
-        file_type: 'pdf',
-        size: 312320
-      },
-      {
-        id: 'doc_5',
-        name: 'Müşteri Sunumu.pptx',
-        content: 'Ürün tanıtım sunumu...',
-        labels: ['sunum', 'müşteri', 'ürün'],
-        summary: 'Ürün özellikleri ve avantajları',
-        created_at: '2024-01-03T11:20:00Z',
-        file_type: 'pptx',
-        size: 156672
-      }
-    ];
-  }
-
-  /**
-   * Get mock search results
-   */
-  private getMockSearchResults(query: string, searchType: string): any[] {
-    const allDocs = this.getMockDocuments();
-    
-    return allDocs.filter(doc => 
-      doc.name.toLowerCase().includes(query.toLowerCase()) ||
-      doc.content.toLowerCase().includes(query.toLowerCase()) ||
-      doc.labels.some((label: string) => label.toLowerCase().includes(query.toLowerCase())) ||
-      doc.summary.toLowerCase().includes(query.toLowerCase())
-    );
-  }
-
-  /**
-   * Get mock suggestions
-   */
-  private getMockSuggestions(query: string, limit: number): LabelSuggestion[] {
-    const allLabels = [
-      { name: 'sözleşme', count: 15 },
-      { name: 'finans', count: 12 },
-      { name: 'rapor', count: 28 },
-      { name: 'toplantı', count: 18 },
-      { name: 'proje', count: 35 },
-      { name: 'teknik', count: 8 },
-      { name: 'sistem', count: 14 },
-      { name: 'müşteri', count: 22 },
-      { name: 'ürün', count: 19 },
-      { name: 'analiz', count: 11 }
-    ];
-    
-    return allLabels
-      .filter(label => label.name.includes(query.toLowerCase()))
-      .slice(0, limit)
-      .map(label => ({
-        id: `label_${label.name}`,
-        name: label.name,
-        category: 'label',
-        count: label.count
-      }));
-  }
-
-  // ==================== UTILITY METHODS ====================
-
+  
   /**
    * Validate query
    */

@@ -1,7 +1,8 @@
 import { Component, Output, EventEmitter, signal, ViewChild, ElementRef, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../service/api.service';
-import { DocumentAnalysisResult, ApiAnalysisResponse } from '../../interfaces/document-analysis.interface';
+import { DocumentAnalysisResult } from '../../interfaces/document-analysis/document-analysis-response.interface';
+
 
 // PDF.js types
 declare global {

@@ -57,15 +57,18 @@ def semantic_search(query: str, top_k=3):
     
     if results["ids"] and len(results["ids"][0]) > 0:
         for i in range(len(results["ids"][0])):
+            metadata = results["metadatas"][0][i]
             document_data = {
-                "document_id": int(results["metadatas"][0][i]["document_id"]),
-                "title": results["metadatas"][0][i]["title"],
+                "document_id": int(metadata["document_id"]),
+                "title": metadata.get("title", "Untitled Document"),  # Default değer ekle
                 "content": results["documents"][0][i],
-                "summary": results["metadatas"][0][i]["summary"],
-                "labels": results["metadatas"][0][i]["labels"].split(", ") if results["metadatas"][0][i]["labels"] else [],
-                "score": 1 - results["distances"][0][i],  # Distance'ı similarity score'a çevir
-                "search_type": "semantic"
+                "summary": metadata.get("summary", ""),  # Default değer ekle
+                "labels": metadata.get("labels", "").split(", ") if metadata.get("labels") else [],
+                "score": results["distances"][0][i],  # Distance'ı similarity score'a çevir
             }
             documents.append(document_data)
-    
+            #dökümanları sıralama
+
+            documents.sort(key=lambda x: x["score"], reverse=True)
+
     return documents

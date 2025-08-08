@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { DocumentAnalysisComponent } from './components/document-analysis/document-analysis.component';
 import { FileSearchComponent } from './components/file-search/file-search.component';
-import { DocumentAnalysisResult, ConfirmDocumentResponse } from './interfaces/document-analysis.interface';
+import { ConfirmDocumentResponse, DocumentAnalysisResult } from './interfaces/document-analysis/document-analysis-response.interface';
 
 @Component({
   selector: 'app-root',
