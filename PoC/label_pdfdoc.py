@@ -318,8 +318,10 @@ def process_pdf(pdf_path, output_json):
 # -------------------------------
 if __name__ == "__main__":
     pdf_files = [
+
         ("docs/pdf_doc1.pdf", "outputs/pdf_doc1_output.json"),
         ("docs/pdf_doc2.pdf", "outputs/pdf_doc2_output.json")
+
     ]
     with ThreadPoolExecutor(max_workers=2) as executor:
         futures = [executor.submit(process_pdf, pdf, out) for pdf, out in pdf_files]
