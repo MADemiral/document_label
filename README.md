@@ -87,7 +87,7 @@ Perfect choice! Here's how to write the license section in your `README.md` to r
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the **MIT License**.
 
