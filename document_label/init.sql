@@ -3,6 +3,7 @@
 -- ==============================
 CREATE TABLE documents (
     document_id SERIAL PRIMARY KEY,
+    title TEXT,
     content TEXT,
     uploaded_at TIMESTAMP DEFAULT NOW(),
     created_at TIMESTAMP DEFAULT NOW(),
@@ -31,5 +32,5 @@ CREATE TABLE document_labels (
 -- ==============================
 --  INDEXES FOR PERFORMANCE
 -- ==============================
-CREATE INDEX idx_documents_title ON documents(title);
+CREATE INDEX idx_documents_title ON documents(title);       
 CREATE INDEX idx_labels_name ON labels(label_name);

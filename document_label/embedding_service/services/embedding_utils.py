@@ -3,7 +3,7 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
-client = chromadb.HttpClient(host="localhost", port=8000)
+client = chromadb.HttpClient(host="chromadb", port=8000)
 collection = client.get_or_create_collection("documents")
 
 embedding_model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")

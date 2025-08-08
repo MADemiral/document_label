@@ -87,6 +87,8 @@ def process_and_save(image_path, output_txt):
 
 # Main
 if __name__ == "__main__":
-    process_and_save("doc/doc1.png", "out/doc1_output_stanza_EasyOCR.txt")
-    process_and_save("doc/doc2.png", "out/doc2_output_stanza_EasyOCR.txt")
-    process_and_save("doc/doc3.png", "out/doc3_output_stanza_EasyOCR.txt")
+
+    process_and_save("docs/doc1.png", "out/doc1_output_stanza_EasyOCR.txt")
+    process_and_save("docs/doc2.png", "out/doc2_output_stanza_EasyOCR.txt")
+    process_and_save("docs/doc3.png", "out/doc3_output_stanza_EasyOCR.txt")
+
