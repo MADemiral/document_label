@@ -83,4 +83,16 @@ CREATE TABLE documents (
 
 For questions, suggestions, or contributions, feel free to open an issue or submit a pull request.
 
+Perfect choice! Here's how to write the license section in your `README.md` to reflect the MIT License:
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+You are free to use, modify, and distribute this software in both private and commercial applications, provided that the original copyright and license notice are included.
+
+See the full license text in the [LICENSE](LICENSE) file.
+
 ---
