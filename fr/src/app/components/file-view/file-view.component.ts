@@ -1,9 +1,9 @@
 // file-view.component.ts - document görüntüleyici
 
-import { Component, Input, Output, EventEmitter, signal, inject, computed, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ApiService } from '../../service/api.service';
+//import { ApiService } from '../../service/api.service';
 
 // Backend model'e uygun document interface
 export interface DocumentViewData {
@@ -47,7 +47,7 @@ export class FileViewComponent implements OnInit {
   @Output() labelClick = new EventEmitter<string>();
 
   // Service injection
-  private apiService = inject(ApiService);
+//  private apiService = inject(ApiService);
 
   // Signals for UI state
   isLoading = signal(false);

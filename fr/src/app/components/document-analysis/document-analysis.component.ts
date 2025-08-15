@@ -115,10 +115,10 @@ export class DocumentAnalysisComponent implements OnInit {
         this.saveSuccess.set(`Döküman başarıyla kaydedildi! ID: ${response.document_id}`);
         
         // Update analysis result with saved data
-        const updatedResult: DocumentAnalysisResult = {
+       /* const updatedResult: DocumentAnalysisResult = {
           ...this.analysisResult,
           labels: response.labels
-        };
+        };*/
 
         // Emit save completed event
         this.saveCompleted.emit(response);
@@ -206,7 +206,7 @@ export class DocumentAnalysisComponent implements OnInit {
   /**
    * Track by function for performance
    */
-  trackByIndex(index: number, item: string): number {
+  trackByIndex(index: number, _item: string): number {
     return index;
   }
 

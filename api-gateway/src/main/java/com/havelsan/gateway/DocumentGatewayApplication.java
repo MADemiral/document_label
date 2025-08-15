@@ -21,7 +21,7 @@ public RouteLocator documentRouter(RouteLocatorBuilder builder) {
 	return builder.routes()
 		.route("analyze-document", r -> r
 			.path("/analyze-document")
-			.uri("http://127.0.0.1:8000")) 
+			.uri("http://127.0.0.1:800")) 
 
 		.route("search", r -> r
 			.path("/search")

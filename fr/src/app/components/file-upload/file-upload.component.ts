@@ -646,7 +646,7 @@ export class FileUploadComponent implements OnInit {
   /**
    * Track by function for ngFor
    */
-  trackByFileId(index: number, item: FileUploadData): string {
+  trackByFileId(_index: number, item: FileUploadData): string {
     return item.id;
   }
 }

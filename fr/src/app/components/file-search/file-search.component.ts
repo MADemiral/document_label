@@ -544,7 +544,7 @@ export class FileSearchComponent implements OnInit, OnDestroy {
   /**
    * Clear search results
    */
-  private clearSearchResults(): void {
+ /* private clearSearchResults(): void {
     this.totalResults.set(0);
     this.searchTime.set(0);
     
@@ -554,7 +554,7 @@ export class FileSearchComponent implements OnInit, OnDestroy {
       searchTime: 0,
       suggestions: []
     });
-  }
+  }*/
   
   // ==================== ADVANCED FILTERS ====================
   
@@ -942,10 +942,10 @@ export class FileSearchComponent implements OnInit, OnDestroy {
   /**
    * Show error message
    */
-  private showErrorMessage(message: string): void {
+  /*private showErrorMessage(message: string): void {
     console.error('Search Error:', message);
     this.saveErrorSignal.set(message);
-  }
+  }*/
   
   /**
    * Get search type display text
