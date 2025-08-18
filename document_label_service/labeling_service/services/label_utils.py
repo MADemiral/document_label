@@ -50,18 +50,21 @@ def chunk_text(text, max_len=3000):
 # --- Combined Labels + Keywords ---
 def extract_labels_and_keywords(content: str):
     label_prompt = (
-        "You're a professional Turkish tagging assistant. "
-        "Given the document below, extract 3–7 relevant topic tags. "
-        "Return only a JSON array of strings. Use concise Turkish tags, no extra text."
+        "Sen bir Türkçe belge sınıflandırma uzmanısın. "
+        "Aşağıdaki belgeyi inceleyerek 3 ila 7 arasında kısa, anlamlı ve konuya özgü etiket üret. "
+        "Etiketler yalnızca belge içeriğiyle ilgili olmalı; genel ifadelerden kaçın. "
+        "Yanıt olarak sadece geçerli bir JSON dizisi döndür:"
+        "Ek açıklama, metin veya biçimlendirme kullanma."
     )
 
     keyword_prompt = (
-        "You are a document analysis assistant. "
-        "Extract the most critical and repeated keywords from the document below. "
-        "Include full dates, full telephone numbers, full bank account numbers, and company names. "
-        "Return ONLY a valid JSON array of strings with no extra text or formatting."
+        "Sen bir belge analiz uzmanısın. "
+        "Aşağıdaki metni inceleyerek en kritik ve sık geçen anahtar kelimeleri çıkar. "
+        "Tarihleri (gün/ay/yıl), telefon numaralarını, banka hesap numaralarını ve şirket adlarını tam haliyle dahil et. "
+        "Yanıt olarak yalnızca geçerli bir JSON dizisi döndür: örnek ['ABC Holding', '01/03/2023', 'TR12 0001 1000 0000 0000 5000 01']. "
+        "Ek açıklama, metin veya biçimlendirme kullanma."
     )
-
+    
     # Labels
     raw_labels = call_groq([
         {"role": "system", "content": label_prompt},

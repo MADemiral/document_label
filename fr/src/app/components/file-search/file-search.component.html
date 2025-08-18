@@ -1,322 +1,363 @@
-<div class="file-search-container">
+<div class="retro-search-container">
   
-  <!-- Search Section - ADD THIS BACK -->
-  <div class="search-section">
-    <div class="search-bar-container">
-      <div class="search-input-wrapper">
-        <input
-          type="text"
-          class="search-input"
-          [placeholder]="placeholder"
-          [value]="searchQuery()"
-          (input)="onSearchInput($event)"
-          (focus)="onInputFocus()"
-          (blur)="onInputBlur()"
-          (keydown)="onSearchKeyDown($event)"
-        />
-        <button 
-          class="search-btn"
-          (click)="performManualSearch()"
-          [disabled]="isSearching()"
-          title="Ara">
-          <i class="fas fa-search" *ngIf="!isSearching()"></i>
-          <i class="fas fa-spinner fa-spin" *ngIf="isSearching()"></i>
-        </button>
-        <button 
-          class="clear-btn"
-          *ngIf="searchQuery()"
-          (click)="clearSearch()"
-          title="Temizle">
-          <i class="fas fa-times"></i>
-        </button>
+  <!-- Terminal Search Header -->
+  <div class="search-terminal-window">
+    <!-- Window Chrome -->
+    <div class="terminal-window-chrome">
+      <div class="window-controls">
+        <span class="control minimize">-</span>
+        <span class="control maximize">□</span>
+        <span class="control close">×</span>
+      </div>
+      <div class="window-title">
+        <span class="title-text">[DOCUMENT_SEARCH.EXE]</span>
+        <span class="status-led" [class.active]="isSearching()"></span>
+      </div>
+    </div>
+
+    <!-- Command Line Interface -->
+    <div class="terminal-cli">
+      <div class="cli-header">
+        <span class="system-prompt">SEARCH&gt;</span>
+        <span class="system-status">{{ isSearching() ? 'PROCESSING...' : 'READY' }}</span>
+        <span class="cursor-blink">█</span>
       </div>
 
-      <!-- Character Hint -->
-      <div class="character-hint" *ngIf="showCharacterHint()">
-        <i class="fas fa-info-circle"></i>
-        {{ getCharacterHintText() }}
-      </div>
-
-      <!-- Suggestions Dropdown -->
-      <div class="suggestions-dropdown" *ngIf="showSuggestions()">
-        <div class="suggestions-header">
-          <i class="fas fa-tags"></i>
-          <span>Etiket Önerileri</span>
-          <span class="suggestions-count">({{ suggestions().length }})</span>
+      <!-- Search Input Terminal -->
+      <div class="search-input-terminal">
+        <div class="input-line">
+          <span class="input-prompt">QUERY&gt;</span>
+          <input
+            type="text"
+            class="terminal-input"
+            [placeholder]="placeholder"
+            [value]="searchQuery()"
+            (input)="onSearchInput($event)"
+            (focus)="onInputFocus()"
+            (blur)="onInputBlur()"
+            (keydown)="onSearchKeyDown($event)"
+          />
+          <div class="input-actions">
+            <button 
+              class="terminal-btn search-btn"
+              (click)="performManualSearch()"
+              [disabled]="isSearching()">
+              <span *ngIf="!isSearching()">🔍</span>
+              <span *ngIf="isSearching()" class="spinning">⟳</span>
+            </button>
+            <button 
+              class="terminal-btn clear-btn"
+              *ngIf="searchQuery()"
+              (click)="clearSearch()">
+              <span>✗</span>
+            </button>
+          </div>
         </div>
-        <div class="suggestions-list">
-          <div 
-            class="suggestion-item"
-            *ngFor="let suggestion of suggestions(); let i = index"
-            [class.active]="i === activeSuggestionIndex()"
-            (click)="selectSuggestion(suggestion)"
-            (mouseenter)="activeSuggestionIndex.set(i)">
-            <div class="suggestion-content">
-              <i class="fas fa-tag"></i>
+
+        <!-- Character Hint Terminal -->
+        <div class="hint-terminal" *ngIf="showCharacterHint()">
+          <span class="hint-prompt">INFO&gt;</span>
+          <span class="hint-text">{{ getCharacterHintText() }}</span>
+          <span class="warning-icon">⚠</span>
+        </div>
+
+        <!-- Suggestions Terminal -->
+        <div class="suggestions-terminal" *ngIf="showSuggestions()">
+          <div class="suggestions-header">
+            ┌─── LABEL SUGGESTIONS ───┐
+            │ Found {{ suggestions().length }} matches │
+            └─────────────────────────┘
+          </div>
+          <div class="suggestions-list">
+            <div 
+              class="suggestion-item"
+              *ngFor="let suggestion of suggestions(); let i = index"
+              [class.active]="i === activeSuggestionIndex()"
+              (click)="selectSuggestion(suggestion)"
+              (mouseenter)="activeSuggestionIndex.set(i)">
+              <span class="suggestion-index">[{{i+1}}]</span>
+              <span class="suggestion-icon">🏷</span>
               <span class="suggestion-name" [innerHTML]="highlightMatch(suggestion.name, searchQuery())"></span>
-             
+              <span class="suggestion-arrow">→</span>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Search Type Selector -->
-    <div class="search-type-selector" *ngIf="enableAdvancedSearch">
-      <label for="search-type">Arama Tipi:</label>
-      <select 
-        id="search-type"
-        class="search-type-select"
-        [value]="searchType()"
-        (change)="onSearchTypeChange($event)">
-     
-        <option value="semantic">Anlamsal</option>
-        <option value="label">Etiket</option>
-      </select>
-    </div>
-
-    <!-- Advanced Filters Toggle -->
-    <button 
-      class="advanced-filters-toggle"
-      *ngIf="enableAdvancedSearch"
-      (click)="toggleAdvancedFilters()"
-      [class.active]="showAdvancedFilters()">
-      <i class="fas fa-filter"></i>
-      Gelişmiş Filtreler
-      <i class="fas fa-chevron-down" [class.rotated]="showAdvancedFilters()"></i>
-    </button>
-
-    <!-- Advanced Filters Panel -->
-    <div class="advanced-filters-panel" *ngIf="showAdvancedFilters()">
-      <div class="filters-grid">
-        <div class="filter-group">
-          <label for="file-type">Dosya Tipi:</label>
+      <!-- Control Panel Terminal -->
+      <div class="control-panel-terminal">
+        <!-- Search Type Selector -->
+        <div class="control-group" *ngIf="enableAdvancedSearch">
+          <span class="control-label">MODE:</span>
           <select 
-            id="file-type"
-            class="filter-select"
-            [value]="selectedFileType()"
-            (change)="onFileTypeChange($event)">
-            <option value="all">Tümü</option>
-            <option *ngFor="let type of fileTypes.slice(1)" [value]="type">
-              {{ type.toUpperCase() }}
-            </option>
+            class="terminal-select"
+            [value]="searchType()"
+            (change)="onSearchTypeChange($event)">
+            <option value="semantic">[SEMANTIC]</option>
+            <option value="label">[LABEL]</option>
           </select>
         </div>
 
-        <div class="filter-group">
-          <label for="category">Kategori:</label>
-          <select 
-            id="category"
-            class="filter-select"
-            [value]="selectedCategory()"
-            (change)="onCategoryChange($event)">
-            <option value="all">Tümü</option>
-            <option *ngFor="let category of categories().slice(1)" [value]="category">
-              {{ category }}
-            </option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label for="start-date">Başlangıç Tarihi:</label>
-          <input 
-            id="start-date"
-            type="date"
-            class="filter-input"
-            [value]="getStartDateValue()"
-            (change)="onStartDateChange($event)">
-        </div>
-
-        <div class="filter-group">
-          <label for="end-date">Bitiş Tarihi:</label>
-          <input 
-            id="end-date"
-            type="date"
-            class="filter-input"
-            [value]="getEndDateValue()"
-            (change)="onEndDateChange($event)">
+        <!-- Advanced Filters Toggle -->
+        <div class="control-group" *ngIf="enableAdvancedSearch">
+          <button 
+            class="terminal-toggle-btn"
+            (click)="toggleAdvancedFilters()"
+            [class.active]="showAdvancedFilters()">
+            <span class="btn-icon">{{ showAdvancedFilters() ? '▼' : '▶' }}</span>
+            <span class="btn-text">FILTERS</span>
+          </button>
         </div>
       </div>
 
-      <div class="filters-actions">
-        <button 
-          class="clear-filters-btn"
-          (click)="clearFilters()"
-          [disabled]="!hasActiveFilters()">
-          <i class="fas fa-eraser"></i>
-          Filtreleri Temizle
-        </button>
+      <!-- Advanced Filters Terminal -->
+      <div class="filters-terminal" *ngIf="showAdvancedFilters()">
+        <div class="filters-border">
+          ╔═════════════ ADVANCED FILTERS ══════════════╗
+          ║                                              ║
+          ╚══════════════════════════════════════════════╝
+        </div>
+        
+        <div class="filters-grid">
+          <div class="filter-terminal">
+            <span class="filter-label">TYPE:</span>
+            <select 
+              class="terminal-select filter-select"
+              [value]="selectedFileType()"
+              (change)="onFileTypeChange($event)">
+              <option value="all">[ALL]</option>
+              <option *ngFor="let type of fileTypes.slice(1)" [value]="type">
+                [{{ type.toUpperCase() }}]
+              </option>
+            </select>
+          </div>
+
+          <div class="filter-terminal">
+            <span class="filter-label">CATEGORY:</span>
+            <select 
+              class="terminal-select filter-select"
+              [value]="selectedCategory()"
+              (change)="onCategoryChange($event)">
+              <option value="all">[ALL]</option>
+              <option *ngFor="let category of categories().slice(1)" [value]="category">
+                [{{ category.toUpperCase() }}]
+              </option>
+            </select>
+          </div>
+
+          <div class="filter-terminal">
+            <span class="filter-label">FROM:</span>
+            <input 
+              type="date"
+              class="terminal-input filter-input"
+              [value]="getStartDateValue()"
+              (change)="onStartDateChange($event)">
+          </div>
+
+          <div class="filter-terminal">
+            <span class="filter-label">TO:</span>
+            <input 
+              type="date"
+              class="terminal-input filter-input"
+              [value]="getEndDateValue()"
+              (change)="onEndDateChange($event)">
+          </div>
+        </div>
+
+        <div class="filters-actions">
+          <button 
+            class="terminal-btn clear-filters-btn"
+            (click)="clearFilters()"
+            [disabled]="!hasActiveFilters()">
+            <span>🗑</span>
+            <span>CLEAR_FILTERS</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Search Results Header -->
-  <div class="results-header" *ngIf="totalResults() > 0">
-    <div class="results-info">
-      <h3>
-        <i class="fas fa-search"></i>
-        Arama Sonuçları
-      </h3>
-      <div class="results-stats">
-        <span class="result-count">
-          <strong>{{ totalResults() }}</strong> döküman bulundu
-        </span>
-        <span class="search-time" *ngIf="searchTime() > 0">
-          <i class="fas fa-clock"></i>
-          {{ searchTime() }}ms
-        </span>
-        <span class="search-type-info" *ngIf="searchQuery()">
-          <i class="fas fa-info-circle"></i>
-          {{ getSearchTypeText() }} arama
-        </span>
+  <!-- Results Terminal Header -->
+  <div class="results-terminal-header" *ngIf="totalResults() > 0">
+    <div class="results-display">
+      <div class="results-banner">
+        ╔═══════════════ SEARCH RESULTS ═══════════════╗
+        ║ {{ totalResults() }} DOCUMENTS FOUND          ║
+        ║ SEARCH TIME: {{ searchTime() }}ms             ║
+        ║ TYPE: {{ getSearchTypeText().toUpperCase() }}  ║
+        ╚═══════════════════════════════════════════════╝
       </div>
     </div>
 
-    <!-- View Controls -->
-    <div class="view-controls">
-      <!-- View Mode Buttons -->
-      <div class="view-mode-buttons">
-        <button 
-          class="view-mode-btn"
-          [class.active]="viewMode() === 'cards'"
-          (click)="setViewMode('cards')"
-          title="Kart görünümü">
-          <i class="fas fa-th-large"></i>
-        </button>
-        <button 
-          class="view-mode-btn"
-          [class.active]="viewMode() === 'grid'"
-          (click)="setViewMode('grid')"
-          title="Izgara görünümü">
-          <i class="fas fa-th"></i>
-        </button>
-        <button 
-          class="view-mode-btn"
-          [class.active]="viewMode() === 'list'"
-          (click)="setViewMode('list')"
-          title="Liste görünümü">
-          <i class="fas fa-list"></i>
-        </button>
+    <!-- View Controls Terminal -->
+    <div class="view-controls-terminal">
+      <!-- View Mode -->
+      <div class="control-group">
+        <span class="control-label">VIEW:</span>
+        <div class="mode-buttons">
+          <button 
+            class="mode-btn"
+            [class.active]="viewMode() === 'cards'"
+            (click)="setViewMode('cards')"
+            title="Cards View">
+            <span>⊞</span>
+          </button>
+          <button 
+            class="mode-btn"
+            [class.active]="viewMode() === 'grid'"
+            (click)="setViewMode('grid')"
+            title="Grid View">
+            <span>▦</span>
+          </button>
+          <button 
+            class="mode-btn"
+            [class.active]="viewMode() === 'list'"
+            (click)="setViewMode('list')"
+            title="List View">
+            <span>☰</span>
+          </button>
+        </div>
       </div>
 
       <!-- Sort Controls -->
-      <div class="sort-controls">
+      <div class="control-group">
+        <span class="control-label">SORT:</span>
         <select 
-          class="sort-select"
+          class="terminal-select sort-select"
           [value]="sortBy()"
           (change)="onSortByChange($event)">
-          <option value="relevance">Uygunluk</option>
-          <option value="date">Tarih</option>
-          <option value="name">İsim</option>
-          <option value="size">Boyut</option>
+          <option value="relevance">[RELEVANCE]</option>
+          <option value="date">[DATE]</option>
+          <option value="name">[NAME]</option>
+          <option value="size">[SIZE]</option>
         </select>
         
         <button 
-          class="sort-order-btn"
-          (click)="toggleSortOrder()"
-          [title]="sortOrder() === 'asc' ? 'Artan sıralama' : 'Azalan sıralama'">
-          <i [class]="getSortIcon()"></i>
+          class="terminal-btn sort-order-btn"
+          (click)="toggleSortOrder()">
+          <span>{{ sortOrder() === 'asc' ? '↑' : '↓' }}</span>
         </button>
       </div>
 
       <!-- Preview Toggle -->
-      <button 
-        class="preview-toggle-btn"
-        [class.active]="showPreview()"
-        (click)="togglePreview()"
-        title="Önizleme">
-        <i class="fas fa-eye"></i>
-      </button>
+      <div class="control-group">
+        <button 
+          class="terminal-toggle-btn preview-btn"
+          [class.active]="showPreview()"
+          (click)="togglePreview()">
+          <span>👁</span>
+          <span>PREVIEW</span>
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- Search Results Container -->
-  <div class="search-results-container" *ngIf="!isSearching() && totalResults() > 0">
+  <!-- Search Results Terminal -->
+  <div class="search-results-terminal" *ngIf="!isSearching() && totalResults() > 0">
     
-    <!-- Cards View -->
-    <div class="results-cards-view" *ngIf="viewMode() === 'cards'">
+    <!-- Cards View Terminal -->
+    <div class="results-cards-terminal" *ngIf="viewMode() === 'cards'">
       <div class="document-cards-grid">
         <div 
-          class="document-card"
+          class="document-card-terminal"
           *ngFor="let document of documents(); trackBy: trackByDocumentId"
-          [class.has-score]="document.score"
           (click)="openDocumentView(document)">
           
-          <!-- Card Content -->
-          <div class="card-header">
-            <div class="file-icon">
-              <i [class]="getDocumentIcon(document)"></i>
+          <!-- Card Header -->
+          <div class="card-terminal-header">
+            <div class="card-chrome">
+              <span class="card-controls">
+                <span class="card-btn minimize">-</span>
+                <span class="card-btn maximize">□</span>
+                <span class="card-btn close">×</span>
+              </span>
+              <span class="card-title">DOC_{{ document.document_id }}</span>
             </div>
-            <div class="document-info">
-              <h4 class="document-title" [title]="document.summary">
-                {{ document.title }}
-              </h4>
-              <div class="document-meta">
-                <span class="document-id">ID: {{ document.document_id }}</span>
-                <span class="content-stats">{{ getContentStats(document) }}</span>
+            
+            <div class="card-info-display">
+              <div class="info-line">
+                <span class="info-label">FILE:</span>
+                <span class="info-value">{{ document.title }}</span>
+              </div>
+              <div class="info-line" *ngIf="document.score">
+                <span class="info-label">SCORE:</span>
+                <span class="info-value score-display" [class]="getScoreClass(document.score)">
+                  {{ (document.score * 100).toFixed(0) }}%
+                </span>
+              </div>
+              <div class="info-line">
+                <span class="info-label">SIZE:</span>
+                <span class="info-value">{{ getContentStats(document) }}</span>
               </div>
             </div>
-            <div class="score-badge" *ngIf="document.score" [class]="getScoreClass(document.score)">
-              {{ (document.score * 100).toFixed(0) }}%
+          </div>
+
+          <!-- Preview Terminal -->
+          <div class="card-preview-terminal" *ngIf="showPreview()">
+            <div class="preview-border">
+              ┌─── DOCUMENT PREVIEW ───┐
+              │                        │
+              └────────────────────────┘
+            </div>
+            <div class="preview-content">
+              <div class="preview-text" *ngIf="document.summary">
+                {{ getTruncatedSummary(document) }}
+              </div>
+              <div class="preview-text alt" *ngIf="!document.summary && document.content">
+                {{ getTruncatedContent(document) }}
+              </div>
             </div>
           </div>
 
-          <!-- Preview Content -->
-          <div class="card-preview" *ngIf="showPreview()">
-            <div class="summary-preview" *ngIf="document.summary">
-              <p [innerHTML]="getTruncatedSummary(document)"></p>
+          <!-- Labels Terminal -->
+          <div class="card-labels-terminal" *ngIf="document.labels?.length > 0">
+            <div class="labels-header">
+              <span class="labels-prompt">TAGS&gt;</span>
+              <span class="labels-count">[{{ document.labels.length }}]</span>
             </div>
-            <div class="content-preview" *ngIf="!document.summary && document.content">
-              <p [innerHTML]="getTruncatedContent(document)"></p>
-            </div>
-          </div>
-
-          <!-- Labels -->
-          <div class="card-labels" *ngIf="document.labels?.length > 0">
-            <span 
-              class="label-tag"
-              *ngFor="let labelName of getVisibleLabels(document); let i = index"
-              [class.highlighted]="isLabelHighlighted(labelName)"
-              (click)="onLabelClick(labelName, $event)">
-              <i class="fas fa-tag"></i>
-              {{ labelName }}
-            </span>
-            <span class="more-labels" *ngIf="document.labels.length > 3">
-              +{{ document.labels.length - 3 }} daha
-            </span>
-          </div>
-
-          <!-- Card Footer -->
-          <div class="card-footer">
-            <div class="footer-info">
-              <span class="created-date" *ngIf="document.created_at">
-                <i class="fas fa-calendar"></i>
-                {{ formatDate(document.created_at) }}
+            <div class="labels-list">
+              <span 
+                class="label-chip-terminal"
+                *ngFor="let labelName of getVisibleLabels(document); let i = index"
+                [class.highlighted]="isLabelHighlighted(labelName)"
+                (click)="onLabelClick(labelName, $event)">
+                🏷{{ labelName }}
               </span>
-              <span class="search-type" *ngIf="document.search_type">
-                <i class="fas fa-search"></i>
-                {{ getSearchTypeText() }}
+              <span class="more-labels-chip" *ngIf="document.labels.length > 3">
+                +{{ document.labels.length - 3 }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Card Footer Terminal -->
+          <div class="card-footer-terminal">
+            <div class="footer-info">
+              <span class="footer-item" *ngIf="document.created_at">
+                📅 {{ formatDate(document.created_at) }}
+              </span>
+              <span class="footer-item" *ngIf="document.search_type">
+                🔍 {{ getSearchTypeText() }}
               </span>
             </div>
             
-            <div class="quick-actions">
+            <div class="footer-actions">
               <button 
-                class="quick-action-btn"
+                class="footer-btn"
                 (click)="openDocumentView(document); $event.stopPropagation()"
-                title="Görüntüle">
-                <i class="fas fa-eye"></i>
+                title="View">
+                👁
               </button>
               <button 
-                class="quick-action-btn"
+                class="footer-btn"
                 (click)="copyDocumentContent(document); $event.stopPropagation()"
-                title="Kopyala">
-                <i class="fas fa-copy"></i>
+                title="Copy">
+                📋
               </button>
               <button 
-                class="quick-action-btn"
+                class="footer-btn"
                 (click)="shareDocument(document); $event.stopPropagation()"
-                title="Paylaş">
-                <i class="fas fa-share-alt"></i>
+                title="Share">
+                📤
               </button>
             </div>
           </div>
@@ -324,72 +365,105 @@
       </div>
     </div>
 
-    <!-- List View -->
-    <div class="results-list-view" *ngIf="viewMode() === 'list'">
-      <div class="document-list">
+    <!-- List View Terminal -->
+    <div class="results-list-terminal" *ngIf="viewMode() === 'list'">
+      <div class="list-header-terminal">
+        ╔═══╤═══════════════════════════════════════╤═══════╤═══════╗
+        ║ # │ DOCUMENT                              │ SCORE │ ACTION║
+        ╠═══╪═══════════════════════════════════════╪═══════╪═══════╣
+      </div>
+      
+      <div class="document-list-terminal">
         <div 
-          class="document-list-item"
-          *ngFor="let document of documents(); trackBy: trackByDocumentId"
+          class="list-item-terminal"
+          *ngFor="let document of documents(); let i = index; trackBy: trackByDocumentId"
           (click)="openDocumentView(document)">
           
           <div class="list-item-content">
-            <div class="item-icon">
-              <i [class]="getDocumentIcon(document)"></i>
-            </div>
+            <span class="item-number">{{ (i + 1).toString().padStart(2, '0') }}</span>
+            <span class="item-separator">│</span>
             
             <div class="item-details">
-              <h4 class="item-title">{{ document.title }}</h4>
-              <p class="item-summary" *ngIf="document.summary" [innerHTML]="getTruncatedSummary(document)"></p>
-              <div class="item-meta">
-                <span>ID: {{ document.document_id }}</span>
-                <span>{{ getContentStats(document) }}</span>
-                <span *ngIf="document.created_at">{{ formatDate(document.created_at) }}</span>
+              <div class="item-title-line">
+                <span class="item-icon">{{ getDocumentTypeChar(document) }}</span>
+                <span class="item-title">{{ document.title }}</span>
+              </div>
+              <div class="item-summary-line" *ngIf="document.summary">
+                <span class="summary-text" [innerHTML]="getTruncatedSummary(document)"></span>
+              </div>
+              <div class="item-meta-line">
+                <span class="meta-item">ID:{{ document.document_id }}</span>
+                <span class="meta-separator">│</span>
+                <span class="meta-item">{{ getContentStats(document) }}</span>
+                <span class="meta-separator">│</span>
+                <span class="meta-item" *ngIf="document.created_at">{{ formatDate(document.created_at) }}</span>
               </div>
             </div>
             
-            <div class="item-labels" *ngIf="document.labels?.length > 0">
-              <span 
-                class="label-mini"
-                *ngFor="let label of getVisibleLabels(document)"
-                [class.highlighted]="isLabelHighlighted(label)">
-                {{ label }}
+            <span class="item-separator">│</span>
+            
+            <div class="item-score" *ngIf="document.score">
+              <span class="score-bar" [class]="getScoreClass(document.score)">
+                {{ (document.score * 100).toFixed(0) }}%
               </span>
             </div>
             
+            <span class="item-separator">│</span>
+            
             <div class="item-actions">
-              <div class="score-mini" *ngIf="document.score" [class]="getScoreClass(document.score)">
-                {{ (document.score * 100).toFixed(0) }}%
-              </div>
               <button 
-                class="list-action-btn"
+                class="action-btn"
                 (click)="openDocumentView(document); $event.stopPropagation()"
-                title="Aç">
-                <i class="fas fa-external-link-alt"></i>
+                title="Open">
+                ▶
               </button>
             </div>
           </div>
+          
+          <!-- Labels Line -->
+          <div class="item-labels-line" *ngIf="document.labels?.length > 0">
+            <span class="labels-prefix">    TAGS&gt;</span>
+            <span 
+              class="label-mini-terminal"
+              *ngFor="let label of getVisibleLabels(document)"
+              [class.highlighted]="isLabelHighlighted(label)">
+              [{{ label }}]
+            </span>
+          </div>
         </div>
+      </div>
+      
+      <div class="list-footer-terminal">
+        ╚═══════════════════════════════════════════════════════════╝
       </div>
     </div>
 
-    <!-- Grid View -->
-    <div class="results-grid-view" *ngIf="viewMode() === 'grid'">
-      <div class="document-grid">
+    <!-- Grid View Terminal -->
+    <div class="results-grid-terminal" *ngIf="viewMode() === 'grid'">
+      <div class="document-grid-terminal">
         <div 
-          class="document-grid-item"
+          class="grid-item-terminal"
           *ngFor="let document of documents(); trackBy: trackByDocumentId"
           (click)="openDocumentView(document)">
           
-          <div class="grid-item-icon">
-            <i [class]="getDocumentIcon(document)"></i>
+          <div class="grid-item-border">
+            ┌─────────────────┐
+            │                 │
+            └─────────────────┘
           </div>
           
-          <div class="grid-item-title">{{ document.title }}</div>
-          
-          <div class="grid-item-info">
-            <span>{{ getContentStats(document) }}</span>
-            <div class="score-mini" *ngIf="document.score" [class]="getScoreClass(document.score)">
-              {{ (document.score * 100).toFixed(0) }}%
+          <div class="grid-item-content">
+            <div class="grid-item-icon">
+              {{ getDocumentTypeChar(document) }}
+            </div>
+            
+            <div class="grid-item-title">{{ document.title }}</div>
+            
+            <div class="grid-item-info">
+              <span class="grid-stats">{{ getContentStats(document) }}</span>
+              <span class="grid-score" *ngIf="document.score" [class]="getScoreClass(document.score)">
+                {{ (document.score * 100).toFixed(0) }}%
+              </span>
             </div>
           </div>
         </div>
@@ -397,41 +471,65 @@
     </div>
   </div>
 
-  <!-- Loading State -->
-  <div class="loading-state" *ngIf="isSearching()">
-    <div class="loading-content">
-      <div class="spinner"></div>
-      <p>Dökümanlar aranıyor...</p>
+  <!-- Loading Terminal -->
+  <div class="loading-terminal" *ngIf="isSearching()">
+    <div class="loading-border">
+      ╔════════════════════════════════════╗
+      ║          SEARCHING...              ║
+      ║                                    ║
+      ║    ⠋ Processing documents...       ║
+      ║                                    ║
+      ╚════════════════════════════════════╝
+    </div>
+    <div class="loading-progress">
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+      <div class="loading-text">Please wait...</div>
     </div>
   </div>
 
-  <!-- Empty State -->
-  <div class="empty-state" *ngIf="!isSearching() && totalResults() === 0 && searchQuery()">
-    <div class="empty-content">
-      <i class="fas fa-search"></i>
-      <h3>Sonuç bulunamadı</h3>
-      <p>"{{ searchQuery() }}" için hiçbir döküman bulunamadı.</p>
-      <button class="clear-search-btn" (click)="clearSearch()">
-        <i class="fas fa-times"></i>
-        Aramayı temizle
+  <!-- Empty Terminal -->
+  <div class="empty-terminal" *ngIf="!isSearching() && totalResults() === 0 && searchQuery()">
+    <div class="empty-border">
+      ╔════════════════════════════════════╗
+      ║            NO RESULTS              ║
+      ║                                    ║
+      ║     🔍 No documents found          ║
+      ║                                    ║
+      ║     Query: "{{ searchQuery() }}"   ║
+      ║                                    ║
+      ╚════════════════════════════════════╝
+    </div>
+    <div class="empty-actions">
+      <button class="terminal-btn clear-search-btn" (click)="clearSearch()">
+        <span>✗</span>
+        <span>CLEAR_SEARCH</span>
       </button>
     </div>
   </div>
 
-  <!-- Success/Error Messages -->
-  <div class="message-container">
-    <div class="success-message" *ngIf="saveSuccess()">
-      {{ saveSuccess() }}
+  <!-- Status Messages Terminal -->
+  <div class="messages-terminal" *ngIf="saveSuccess() || saveError()">
+    <div class="message-success" *ngIf="saveSuccess()">
+      <span class="message-prompt">OK&gt;</span>
+      <span class="message-text">{{ saveSuccess() }}</span>
+      <span class="message-icon">✓</span>
     </div>
-    <div class="error-message" *ngIf="saveError()">
-      {{ saveError() }}
+    <div class="message-error" *ngIf="saveError()">
+      <span class="message-prompt">ERR&gt;</span>
+      <span class="message-text">{{ saveError() }}</span>
+      <span class="message-icon">✗</span>
     </div>
   </div>
+
+  <!-- Terminal Scan Lines Effect -->
+  <div class="terminal-scanlines"></div>
 </div>
 
-<!-- FILE VIEW MODAL -->
-<div class="file-view-overlay" *ngIf="showFileView()" (click)="closeFileView()">
-  <div class="file-view-modal" (click)="$event.stopPropagation()">
+<!-- FILE VIEW MODAL TERMINAL -->
+<div class="file-view-terminal-overlay" *ngIf="showFileView()" (click)="closeFileView()">
+  <div class="file-view-terminal-modal" (click)="$event.stopPropagation()">
     <app-file-view
       [document]="selectedDocument()!"
       [isModal]="isFileViewModal()"

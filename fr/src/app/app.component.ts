@@ -28,6 +28,8 @@ export class AppComponent {
   currentAnalysis = signal<DocumentAnalysisResult | null>(null);
   originalContent = signal<string>('');
   searchResults = signal<any[]>([]);
+  uploadedFile = signal<File | null>(null); // Current uploaded file
+
 
   // Computed properties
   isSearchMode = () => this.searchModeSignal();
@@ -46,26 +48,40 @@ export class AppComponent {
     } else {
       this.currentAnalysis.set(null);
       this.originalContent.set('');
+      this.uploadedFile.set(null); // Clear uploaded file
     }
   }
 
   // ==================== UPLOAD MODE HANDLERS ====================
 
   /**
+   * Handle file uploaded event from file-upload component
+   */
+  onFileUploaded(file: File): void {
+    console.log('📁 File uploaded in app:', file);
+    this.uploadedFile.set(file); // Store the uploaded file
+  }
+
+  /**
    * Handle analysis completion from file upload
    */
   onAnalysisCompleted(event: {result: DocumentAnalysisResult, content: string}): void {
-    console.log('Analysis completed:', event);
+    console.log('📊 Analysis completed:', event);
     this.currentAnalysis.set(event.result);
     this.originalContent.set(event.content);
+    
+    // File is already stored in uploadedFile signal from onFileUploaded
   }
 
   /**
    * Handle save completion
    */
   onSaveCompleted(response: ConfirmDocumentResponse): void {
-    console.log('Document saved successfully:', response);
+    console.log('💾 Document saved successfully:', response);
     this.showSuccessMessage(`Document saved successfully! ID: ${response.document_id}`);
+    
+    // Clear uploaded file after successful save
+    this.uploadedFile.set(null);
   }
 
   /**
@@ -74,13 +90,14 @@ export class AppComponent {
   onCloseAnalysis(): void {
     this.currentAnalysis.set(null);
     this.originalContent.set('');
+    this.uploadedFile.set(null); // Clear uploaded file
   }
 
   /**
    * Handle labels update
    */
   onLabelsUpdated(labels: string[]): void {
-    console.log('Labels updated:', labels);
+    console.log('🏷️ Labels updated:', labels);
     this.currentAnalysis.update(analysis => 
       analysis ? { ...analysis, labels } : null
     );
@@ -90,8 +107,9 @@ export class AppComponent {
    * Handle upload error
    */
   onUploadError(error: string): void {
-    console.error('Upload error:', error);
+    console.error('❌ Upload error:', error);
     this.showErrorMessage(`Dosya yükleme hatası: ${error}`);
+    this.uploadedFile.set(null); // Clear file on error
   }
 
   // ==================== SEARCH MODE HANDLERS ====================
@@ -100,7 +118,7 @@ export class AppComponent {
    * Handle search results from file-search component
    */
   onSearchResults(results: any): void {
-    console.log('Search results received:', results);
+    console.log('🔍 Search results received:', results);
     this.searchResults.set(results.files || []);
   }
 
@@ -108,16 +126,15 @@ export class AppComponent {
    * Handle search error
    */
   onSearchError(error: string): void {
-    console.error('Search error:', error);
+    console.error('🔍 Search error:', error);
     this.searchResults.set([]);
-    // Handle error (show notification, etc.)
   }
 
   /**
    * Handle search result selection
    */
   onSearchResultSelected(result: any): void {
-    console.log('Search result selected:', result);
+    console.log('📋 Search result selected:', result);
     
     // Convert search result to analysis format for viewing
     const analysisResult: DocumentAnalysisResult = {
@@ -134,9 +151,10 @@ export class AppComponent {
       }
     };
 
-    // Set as current analysis for viewing
+    // Set as current analysis for viewing (no file for search results)
     this.currentAnalysis.set(analysisResult);
     this.originalContent.set(result.content || '');
+    this.uploadedFile.set(null); // No file for search results
   }
 
   // ==================== UTILITY METHODS ====================
@@ -170,8 +188,8 @@ export class AppComponent {
    * Show success message
    */
   private showSuccessMessage(message: string): void {
+    console.log('✅ Success:', message);
     // TODO: Implement proper toast notification
-    console.log('Success:', message);
     alert(message);
   }
 
@@ -179,8 +197,8 @@ export class AppComponent {
    * Show error message
    */
   private showErrorMessage(message: string): void {
+    console.error('❌ Error:', message);
     // TODO: Implement proper toast notification
-    console.error('Error:', message);
     alert(message);
   }
 }

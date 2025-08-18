@@ -20,16 +20,24 @@ export interface ApiAnalysisResponse {
 
 
 
+
+// Response interfaces
+export interface AnalyzeDocumentResponse {
+  labels: string[];
+  summary: string;
+  filename?: string;
+  content_type?: string;
+}
+
+
 export interface ConfirmDocumentResponse {
   status: 'saved' | 'duplicate_skipped';
+  title?: string;
   document_id?: number;
   labels: string[];
   summary: string;
   message: string;
 }
-
-
-
 
 
 

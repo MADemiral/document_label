@@ -1,6 +1,4 @@
-# main.py - import'ları ekleyin
-
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
@@ -57,6 +55,7 @@ class ConfirmInput(BaseModel):
     summary: str
     labels: List[str]
     fileName: Optional[str] = None
+    # file field'ini kaldır - UploadFile ile ayrı alacağız
 
 class LabelSuggestionInput(BaseModel):
     query: str
@@ -204,51 +203,119 @@ def get_label_suggestions(data: LabelSuggestionInput):
 def health_check():
     return {"status": "healthy", "service": "document-label-service"}
 
+class ConfirmDocumentRequest(BaseModel):
+    title: str
+    content: str
+    summary: str
+    labels: List[str]
+    fileName: Optional[str] = None
+
 @app.post("/confirm-document")
-def confirm_document(data: ConfirmInput):
-    """Save confirmed document with labels"""
-    if not data.content or not data.labels:
-        raise HTTPException(status_code=400, detail="Content and labels are required")
-
+async def confirm_document(request: ConfirmDocumentRequest):
+    """Save confirmed document with labels - JSON version"""
     try:
-        # Check similarity before saving
-        if is_duplicate(data.content):
-            return {
-                "status": "duplicate_skipped",
-                "message": "A similar document already exists. Skipping save.",
-                "title": data.title,
-                "labels": data.labels,
-                "summary": data.summary
-            }
+        print(f"Received JSON data:")
+        print(f"  title: {request.title}")
+        print(f"  content length: {len(request.content) if request.content else 0}")
+        print(f"  summary length: {len(request.summary) if request.summary else 0}")
+        print(f"  labels: {request.labels}")
+        print(f"  fileName: {request.fileName}")
+        
+        if not request.content or not request.labels:
+            raise HTTPException(
+                status_code=400, 
+                detail="Content and at least one label are required"
+            )
 
+        # Clean labels
+        clean_labels = [label.strip() for label in request.labels if label.strip()]
+        
+        if not clean_labels:
+            raise HTTPException(
+                status_code=400, 
+                detail="At least one valid label is required"
+            )
+
+        # Check similarity before saving
+        try:
+            if is_duplicate(request.content):
+                return {
+                    "status": "duplicate_skipped",
+                    "message": "A similar document already exists. Skipping save.",
+                    "title": request.title,
+                    "labels": clean_labels,
+                    "summary": request.summary
+                }
+        except Exception as dup_error:
+            print(f"Duplicate check error (continuing): {dup_error}")
+        
         # Save document to PostgreSQL
-        document = create_document(title=data.title, content=data.content, summary=data.summary)
+        try:
+            document = create_document(
+                title=request.title, 
+                content=request.content, 
+                summary=request.summary, 
+                file=None  # JSON request'te file yok
+            )
+            print(f"Document created with ID: {document.document_id}")
+        except Exception as db_error:
+            print(f"Database error: {db_error}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to save document: {str(db_error)}"
+            )
 
         # Save labels and link to document
-        for label in data.labels:
-            add_label_to_document(document.document_id, label)
+        try:
+            for label in clean_labels:
+                add_label_to_document(document.document_id, label)
+            print(f"Added {len(clean_labels)} labels to document")
+        except Exception as label_error:
+            print(f"Label linking error: {label_error}")
 
-        # Save embedding with metadata to ChromaDB
-        save_document_embedding(
-            document_id=document.document_id,
-            title=data.title,
-            content=data.content,
-            summary=data.summary,
-            labels=data.labels
-        )
+        # Save embedding
+        try:
+            save_document_embedding(
+                document_id=document.document_id,
+                title=request.title,
+                content=request.content,
+                summary=request.summary,
+                labels=clean_labels
+            )
+            print("Document embedding saved")
+        except Exception as embed_error:
+            print(f"Embedding save error (continuing): {embed_error}")
 
         return {
             "status": "saved",
             "document_id": document.document_id,
-            "labels": data.labels,
-            "summary": data.summary,
-            "message": "Document saved successfully"
+            "labels": clean_labels,
+            "summary": request.summary,
+            "message": "Document saved successfully",
+            "filename": request.fileName
         }
         
+    except HTTPException:
+        raise
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Save error: {str(e)}")
+        print(f"Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail=f"Server error: {str(e)}")
+
+# Form version için ayrı endpoint (file upload için)
+@app.post("/confirm-document-with-file")
+async def confirm_document_with_file(
+    title: str = Form(...),
+    content: str = Form(...),
+    summary: str = Form(...),
+    labels: str = Form(...),
+    fileName: Optional[str] = Form(None),
+    file: Optional[UploadFile] = File(None)
+):
+    """Save confirmed document with file upload - Form version"""
+    # Mevcut Form kodu buraya
+    pass
 @app.post("/semantic-search")
 async def semantic_search(search_input: SearchInput):
     try:

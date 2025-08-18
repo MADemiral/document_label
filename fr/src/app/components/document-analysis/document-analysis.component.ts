@@ -1,10 +1,10 @@
 import { Component, Input, Output, EventEmitter, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ApiService, ConfirmDocumentResponse } from '../../service/api.service';
+import { ApiService, } from '../../service/api.service';
 
 import { ConfirmDocumentRequest } from '../../interfaces/document-analysis/document-analysis-request.interface';
-import { DocumentAnalysisResult } from '../../interfaces/document-analysis/document-analysis-response.interface';
+import { ConfirmDocumentResponse, DocumentAnalysisResult } from '../../interfaces/document-analysis/document-analysis-response.interface';
 
 @Component({
   selector: 'app-document-analysis',
@@ -16,6 +16,7 @@ import { DocumentAnalysisResult } from '../../interfaces/document-analysis/docum
 export class DocumentAnalysisComponent implements OnInit {
   @Input() analysisResult!: DocumentAnalysisResult;
   @Input() originalContent: string = ''; // Ana içerik için input ekleyelim
+  @Input() file: File | null = null; // File input ekleyelim
   @Output() labelsUpdated = new EventEmitter<string[]>();
   @Output() saveCompleted = new EventEmitter<ConfirmDocumentResponse>();
   @Output() closeAnalysis = new EventEmitter<void>();
@@ -92,7 +93,7 @@ export class DocumentAnalysisComponent implements OnInit {
 
     this.isSaving.set(true);
     this.clearMessages();
-
+    
     try {
       // Prepare API request
       const confirmRequest: ConfirmDocumentRequest = {
@@ -100,7 +101,8 @@ export class DocumentAnalysisComponent implements OnInit {
         content: this.originalContent,
         summary: this.analysisResult.summary,
         labels: this.editableLabels(),
-        fileName: this.analysisResult.fileName
+        fileName: this.analysisResult.fileName,
+        file: this.file ?? undefined
       };
 
       console.log('Sending confirm request:', confirmRequest);
@@ -156,6 +158,88 @@ export class DocumentAnalysisComponent implements OnInit {
   }
 
   /**
+   * Save document with file
+   */
+  async saveDocument(): Promise<void> {
+    if (!this.analysisResult || !this.originalContent) {
+      this.showErrorMessage('No document data to save');
+      return;
+    }
+
+    try {
+      this.isSaving.set(true);
+      
+      // Validate data before sending
+      const title = this.analysisResult.title.trim();
+      const content = this.originalContent.trim();
+      const summary = this.analysisResult.summary.trim();
+      const labels = this.editableLabels().filter(label => label.trim());
+      
+      if (!title) {
+        this.showErrorMessage('Title is required');
+        return;
+      }
+      
+      if (!content) {
+        this.showErrorMessage('Content is required');
+        return;
+      }
+      
+      if (!summary) {
+        this.showErrorMessage('Summary is required');
+        return;
+      }
+      
+      if (labels.length === 0) {
+        this.showErrorMessage('At least one label is required');
+        return;
+      }
+      
+      console.log('Saving document with data:', {
+        title,
+        contentLength: content.length,
+        summaryLength: summary.length,
+        labelsCount: labels.length,
+        labels,
+        fileName: this.analysisResult.fileName,
+        hasFile: !!this.file
+      });
+      
+      const request: ConfirmDocumentRequest = {
+        title,
+        content,
+        summary,
+        labels,
+        fileName: this.analysisResult.fileName
+      };
+
+      // Pass the file from input
+      const response = await this.apiService.saveDocumentToDatabase(request, this.file ?? undefined);
+      
+      console.log('✅ Document saved successfully:', response);
+      this.saveCompleted.emit(response);
+      
+      this.showSuccessMessage(`Document saved successfully! ID: ${response.document_id}`);
+      
+    } catch (error: any) {
+      console.error('❌ Save error:', error);
+      
+      let errorMessage = 'Save failed';
+      if (error.status === 422) {
+        errorMessage = `Validation error: ${error.error?.detail || 'Invalid data format'}`;
+      } else if (error.error?.detail) {
+        errorMessage = `Save failed: ${error.error.detail}`;
+      } else if (error.message) {
+        errorMessage = `Save failed: ${error.message}`;
+      }
+      
+      this.showErrorMessage(errorMessage);
+    } finally {
+      this.isSaving.set(false);
+    }
+  }
+
+  /**
    * Close analysis panel
    */
   handleCloseAnalysis(): void {
@@ -174,6 +258,20 @@ export class DocumentAnalysisComponent implements OnInit {
   private clearMessages(): void {
     this.saveError.set('');
     this.saveSuccess.set('');
+  }
+
+  /**
+   * Show error message
+   */
+  private showErrorMessage(message: string): void {
+    this.saveError.set(message);
+  }
+
+  /**
+   * Show success message
+   */
+  private showSuccessMessage(message: string): void {
+    this.saveSuccess.set(message);
   }
 
   /**
@@ -232,5 +330,19 @@ export class DocumentAnalysisComponent implements OnInit {
    */
   isSaveDisabled(): boolean {
     return this.isSaving() || !this.isEditing() || this.editableLabels().length === 0;
+  }
+
+  /**
+   * Get summary lines for display in terminal
+   */
+  getSummaryLines(): string[] {
+    if (!this.analysisResult?.summary) {
+      return ['No summary available'];
+    }
+    
+    return this.analysisResult.summary
+      .split('\n')
+      .filter(line => line.trim().length > 0)
+      .map(line => line.trim());
   }
 }

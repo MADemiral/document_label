@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, Text, TIMESTAMP, ForeignKey, String
+from sqlalchemy.dialects.postgresql import BYTEA
 from sqlalchemy.orm import relationship
 from .db import Base
 from datetime import datetime
@@ -11,7 +12,7 @@ class Document(Base):
     uploaded_at = Column(TIMESTAMP, default=datetime.utcnow)
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
     summary = Column(Text)
-
+    file = Column(BYTEA)
     labels = relationship("Label", secondary="document_labels", back_populates="documents")
 
 class Label(Base):

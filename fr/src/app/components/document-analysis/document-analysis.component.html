@@ -1,158 +1,218 @@
-<div class="analysis-container">
-  <!-- Analysis Header -->
-  <div class="analysis-header">
-    <div class="header-content">
-      <div class="title-section">
-        <div class="title-icon">
-          <i class="fas fa-file-alt"></i>
-        </div>
-        <div class="title-info">
-          <h3>Döküman Analiz Sonucu</h3>
-          <p class="file-name">{{ analysisResult.fileName }}</p>
-        </div>
+<div class="retro-analysis-container">
+  <!-- Terminal Analysis Header -->
+  <div class="analysis-terminal-header">
+    <div class="terminal-chrome">
+      <div class="window-controls">
+        <span class="control minimize">-</span>
+        <span class="control maximize">□</span>
+        <span class="control close" (click)="handleCloseAnalysis()">×</span>
       </div>
-      
-      <div class="header-actions">
-        <button 
-          (click)="toggleEditMode()"
-          [disabled]="isSaving()"
-          class="btn btn-secondary"
-          [class.active]="isEditing()">
-          <i class="fas" [class.fa-edit]="!isEditing()" [class.fa-times]="isEditing()"></i>
-          {{ isEditing() ? 'İptal' : 'Düzenle' }}
-        </button>
-        
-        <button 
-          (click)="saveAnalysis()"
-          [disabled]="isSaving() || !isEditing()"
-          class="btn btn-primary">
-          <i class="fas" [class.fa-save]="!isSaving()" [class.fa-spinner]="isSaving()" [class.fa-spin]="isSaving()"></i>
-          {{ isSaving() ? 'Kaydediliyor...' : 'Kaydet' }}
-        </button>
-        
-        <button 
-          (click)="handleCloseAnalysis()"
-          class="btn btn-close"
-          title="Analizi kapat">
-          <i class="fas fa-times"></i>
-        </button>
+      <div class="window-title">
+        <span class="title-text">[DOCUMENT_ANALYZER.EXE]</span>
+        <span class="status-indicator processing" *ngIf="isSaving()">⟳</span>
+        <span class="status-indicator ready" *ngIf="!isSaving()">●</span>
       </div>
     </div>
     
-    <!-- File Info Stats -->
-    <div class="file-stats">
-      <div class="stat-item">
-        <i class="fas fa-calendar"></i>
-        <span>{{ analysisResult.analysisDate | date:'dd/MM/yyyy HH:mm' }}</span>
+    <!-- File Info Display -->
+    <div class="file-info-display">
+      <div class="info-line">
+        <span class="prompt">FILE:</span>
+        <span class="value">{{ analysisResult.fileName }}</span>
       </div>
-      <div *ngIf="analysisResult.fileMetadata" class="stat-item">
-        <i class="fas fa-weight"></i>
-        <span>{{ (analysisResult.fileMetadata.size / 1024 / 1024).toFixed(2) }} MB</span>
+      <div class="info-line">
+        <span class="prompt">DATE:</span>
+        <span class="value">{{ analysisResult.analysisDate | date:'dd/MM/yyyy HH:mm' }}</span>
       </div>
-      <div class="stat-item">
-        <i class="fas fa-tags"></i>
-        <span>{{ editableLabels().length }} etiket</span>
+      <div class="info-line" *ngIf="analysisResult.fileMetadata">
+        <span class="prompt">SIZE:</span>
+        <span class="value">{{ (analysisResult.fileMetadata.size / 1024 / 1024).toFixed(2) }}MB</span>
       </div>
+      <div class="info-line">
+        <span class="prompt">TAGS:</span>
+        <span class="value">{{ editableLabels().length }}</span>
+      </div>
+    </div>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+      <button 
+        (click)="toggleEditMode()"
+        [disabled]="isSaving()"
+        class="retro-btn edit-btn"
+        [class.active]="isEditing()">
+        <span class="btn-icon">{{ isEditing() ? '✗' : '✎' }}</span>
+        <span class="btn-text">{{ isEditing() ? 'CANCEL' : 'EDIT' }}</span>
+      </button>
+      
+      <button 
+        (click)="saveAnalysis()"
+        [disabled]="isSaving() || !isEditing()"
+        class="retro-btn save-btn"
+        [class.processing]="isSaving()">
+        <span class="btn-icon">{{ isSaving() ? '⟳' : '💾' }}</span>
+        <span class="btn-text">{{ isSaving() ? 'SAVING' : 'SAVE' }}</span>
+      </button>
     </div>
   </div>
 
-  <!-- Analysis Content -->
-  <div class="analysis-content">
+  <!-- Analysis Content Terminal -->
+  <div class="analysis-terminal-content">
     
-    <!-- Labels Section -->
-    <div class="section labels-section">
-      <div class="section-header">
-        <h4>
-          <i class="fas fa-tags"></i>
-          Etiketler ve Anahtar Kelimeler
-        </h4>
-        <div *ngIf="isEditing()" class="edit-badge">
-          <i class="fas fa-edit"></i>
-          Düzenleme Modu
+    <!-- Command Line Header -->
+    <div class="command-header">
+      <span class="prompt">C:\ANALYSIS&gt;</span>
+      <span class="command">PROCESS_DOCUMENT.BAT</span>
+      <span class="cursor">█</span>
+    </div>
+
+    <!-- Labels Section Terminal -->
+    <div class="section-terminal labels-terminal">
+      <div class="terminal-section-header">
+        <div class="section-title">
+          <span class="icon">🏷</span>
+          <span class="text">[LABEL MANAGEMENT SYSTEM]</span>
+        </div>
+        <div *ngIf="isEditing()" class="edit-mode-indicator">
+          <span class="indicator">▶</span>
+          <span class="text">EDIT MODE ACTIVE</span>
+          <span class="blink">█</span>
         </div>
       </div>
 
-      <!-- Add New Label Form -->
-      <div *ngIf="isEditing()" class="add-label-section">
-        <div class="add-label-form">
-          <div class="input-wrapper">
+      <!-- Add New Label Terminal -->
+      <div *ngIf="isEditing()" class="add-label-terminal">
+        <div class="terminal-border">
+          ┌─── NEW LABEL INPUT ───┐
+          │                      │
+          └──────────────────────┘
+        </div>
+        <div class="input-section">
+          <div class="input-line">
+            <span class="input-prompt">ADD&gt;</span>
             <input
               type="text"
               [(ngModel)]="newLabelInput"
               (keypress)="onLabelInputKeyPress($event)"
-              placeholder="Yeni etiket ekle..."
-              class="label-input">
+              placeholder="enter new label..."
+              class="terminal-input">
             <button
               (click)="addLabel()"
               [disabled]="!newLabelInput().trim() || editableLabels().includes(newLabelInput().trim())"
-              class="add-btn">
-              <i class="fas fa-plus"></i>
+              class="terminal-add-btn">
+              <span>+</span>
             </button>
           </div>
           <div *ngIf="editableLabels().includes(newLabelInput().trim()) && newLabelInput().trim()" 
-               class="error-msg">
-            <i class="fas fa-exclamation-triangle"></i>
-            Bu etiket zaten mevcut
+               class="error-line">
+            <span class="error-prompt">ERR&gt;</span>
+            <span class="error-text">LABEL ALREADY EXISTS</span>
+            <span class="error-icon">⚠</span>
           </div>
         </div>
       </div>
 
-      <!-- Labels Display -->
-      <div class="labels-display">
-        <div *ngIf="editableLabels().length === 0" class="empty-labels">
-          <div class="empty-icon">
-            <i class="fas fa-tag"></i>
+      <!-- Labels Display Terminal -->
+      <div class="labels-terminal-display">
+        <div *ngIf="editableLabels().length === 0" class="empty-labels-terminal">
+          <div class="empty-ascii">
+    ╔════════════════╗
+    ║   NO LABELS    ║
+    ║     FOUND      ║
+    ║                ║
+    ║   🏷 [EMPTY]   ║
+    ╚════════════════╝
           </div>
-          <p>{{ isEditing() ? 'Etiket eklemek için yukarıdaki formu kullanın' : 'Henüz etiket bulunmuyor' }}</p>
+          <div class="empty-message">
+            <span class="prompt">STATUS&gt;</span>
+            <span class="message">{{ isEditing() ? 'USE INPUT ABOVE TO ADD LABELS' : 'NO LABELS AVAILABLE' }}</span>
+          </div>
         </div>
 
-        <div class="labels-grid">
+        <div class="labels-grid-terminal">
           <div 
             *ngFor="let label of editableLabels(); let i = index; trackBy: trackByIndex"
-            class="label-chip {{ getLabelColorClass(i) }}"
+            class="label-terminal-chip {{ getLabelColorClass(i) }}"
             [class.editable]="isEditing()">
             
-            <span class="label-text">{{ label }}</span>
+            <div class="chip-content">
+              <span class="chip-index">[{{i+1}}]</span>
+              <span class="chip-text">{{ label }}</span>
+              
+              <button
+                *ngIf="isEditing()"
+                (click)="removeLabel(i)"
+                class="chip-remove-btn"
+                title="Remove label">
+                <span>×</span>
+              </button>
+            </div>
             
-            <button
-              *ngIf="isEditing()"
-              (click)="removeLabel(i)"
-              class="remove-btn"
-              title="Kaldır">
-              <i class="fas fa-times"></i>
-            </button>
+            <div class="chip-border">
+              <span class="corner tl">┌</span>
+              <span class="corner tr">┐</span>
+              <span class="corner bl">└</span>
+              <span class="corner br">┘</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Summary Section -->
-    <div class="section summary-section">
-      <div class="section-header">
-        <h4>
-          <i class="fas fa-file-text"></i>
-          Döküman Özeti
-        </h4>
-        <div class="summary-length">
-          {{ analysisResult.summary.length }} karakter
+    <!-- Summary Section Terminal -->
+    <div class="section-terminal summary-terminal">
+      <div class="terminal-section-header">
+        <div class="section-title">
+          <span class="icon">📄</span>
+          <span class="text">[DOCUMENT SUMMARY PROCESSOR]</span>
+        </div>
+        <div class="summary-stats">
+          <span class="stat-label">LENGTH:</span>
+          <span class="stat-value">{{ analysisResult.summary.length }}</span>
+          <span class="stat-unit">CHARS</span>
         </div>
       </div>
       
-      <div class="summary-content">
-        <p class="summary-text">{{ analysisResult.summary }}</p>
+      <div class="summary-terminal-content">
+        <div class="terminal-text-border">
+          <div class="border-top">
+            ┌─────────────────────────────────────────────────────────────┐
+          </div>
+          <div class="content-area">
+            <div class="line-numbers">
+              <span *ngFor="let line of getSummaryLines(); let i = index" class="line-number">
+                {{(i + 1).toString().padStart(3, '0')}}│
+              </span>
+            </div>
+            <div class="summary-text">
+              <div *ngFor="let line of getSummaryLines(); let i = index" class="text-line">
+                {{ line }}
+              </div>
+            </div>
+          </div>
+          <div class="border-bottom">
+            └─────────────────────────────────────────────────────────────┘
+          </div>
+        </div>
       </div>
     </div>
 
   </div>
 
-  <!-- Edit Mode Footer -->
-  <div *ngIf="isEditing()" class="edit-footer">
-    <div class="edit-info">
-      <i class="fas fa-info-circle"></i>
-      Değişikliklerinizi kaydetmeyi unutmayın
+  <!-- Edit Mode Status Bar -->
+  <div *ngIf="isEditing()" class="edit-status-bar">
+    <div class="status-left">
+      <span class="status-prompt">EDIT&gt;</span>
+      <span class="status-text">CHANGES NOT SAVED</span>
+      <span class="warning-blink">⚠</span>
     </div>
-    <div class="edit-stats">
-      {{ editableLabels().length }} etiket • Son güncelleme: {{ analysisResult.analysisDate | date:'HH:mm' }}
+    <div class="status-right">
+      <span class="stats">{{ editableLabels().length }} LABELS</span>
+      <span class="separator">│</span>
+      <span class="time">{{ analysisResult.analysisDate | date:'HH:mm' }}</span>
     </div>
   </div>
+
+  <!-- Terminal Scan Lines Effect -->
+  <div class="scan-lines-overlay"></div>
 </div>

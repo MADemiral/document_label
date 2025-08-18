@@ -1,47 +1,94 @@
-<div class="file-upload-container">
-  <!-- Upload Area -->
-  <div 
-    class="upload-section"
-    [class.drag-over]="isDragOver()"
-    [class.uploading]="isUploading()">
-    
+<div class="retro-upload-container">
+  <!-- Terminal Upload Section -->
+  <div class="terminal-section">
+    <div class="section-header">
+      <span class="terminal-prompt">C:\UPLOAD&gt;</span>
+      <span class="command-text">FILE_UPLOAD.EXE</span>
+      <span class="cursor-blink">█</span>
+    </div>
+
+    <!-- Upload Zone -->
     <div 
-      class="upload-area"
+      class="upload-terminal"
+      [class.drag-over]="isDragOver()"
+      [class.uploading]="isUploading()"
       (click)="triggerFileInput()"
       (dragover)="onDragOver($event)"
       (dragleave)="onDragLeave($event)"
       (drop)="onDrop($event)">
       
-      <!-- Upload Icon -->
-      <div class="upload-icon">
-        <i class="fas fa-cloud-upload-alt" *ngIf="!isUploading()"></i>
-        <i class="fas fa-spinner fa-spin" *ngIf="isUploading()"></i>
+      <!-- Terminal Border -->
+      <div class="terminal-border">
+        <div class="border-corner tl">┌</div>
+        <div class="border-corner tr">┐</div>
+        <div class="border-corner bl">└</div>
+        <div class="border-corner br">┘</div>
       </div>
-      
-      <!-- Upload Text -->
-      <div class="upload-text">
-        <ng-container *ngIf="!isUploading()">
-          <strong>Dosyaları buraya sürükleyin</strong> veya <span class="click-text">tıklayın</span>
-        </ng-container>
-        <ng-container *ngIf="isUploading()">
-          Dosyalar yükleniyor...
-        </ng-container>
-      </div>
-      
-      <!-- Upload Hint -->
-      <div class="upload-hint" *ngIf="!isUploading()">
-        PDF, DOC, DOCX, TXT, XLS, XLSX, PPT, PPTX (Maksimum {{formatFileSize(maxFileSize)}})
-      </div>
-      
-      <!-- Progress Bar -->
-      <div class="progress-container" *ngIf="isUploading()">
-        <div class="progress-bar">
-          <div 
-            class="progress-fill" 
-            [style.width.%]="uploadProgress()">
+
+      <!-- Upload Content -->
+      <div class="upload-content">
+        <!-- ASCII Art Upload Icon -->
+        <div class="ascii-upload" *ngIf="!isUploading()">
+          <pre class="ascii-art">
+    ╔══════════════╗
+    ║   ▲▲▲▲▲▲▲    ║
+    ║   ████████    ║
+    ║     ████      ║
+    ║   ▼▼▼▼▼▼▼    ║
+    ╚══════════════╝
+          </pre>
+        </div>
+
+        <!-- Processing Animation -->
+        <div class="processing-ascii" *ngIf="isUploading()">
+          <pre class="ascii-spinner">
+    ╔══════════════╗
+    ║  ░░░░░░░░░░   ║
+    ║  ████████░░   ║
+    ║  ░░████░░░░   ║
+    ║  ░░░░░░░░░░   ║
+    ╚══════════════╝
+          </pre>
+        </div>
+        
+        <!-- Upload Messages -->
+        <div class="upload-messages">
+          <div class="message-line" *ngIf="!isUploading()">
+            <span class="prompt">$</span>
+            <span class="message">DRAG FILES HERE OR CLICK TO SELECT</span>
+          </div>
+          <div class="message-line" *ngIf="isUploading()">
+            <span class="prompt">></span>
+            <span class="message processing">UPLOADING FILES... PLEASE WAIT</span>
+            <span class="dots">...</span>
           </div>
         </div>
-        <div class="progress-text">{{Math.round(uploadProgress())}}%</div>
+
+        <!-- File Format Info -->
+        <div class="format-info" *ngIf="!isUploading()">
+          <div class="info-line">
+            <span class="label">SUPPORTED:</span>
+            <span class="formats">PDF | DOC | DOCX | TXT | XLS | XLSX | PPT | PPTX</span>
+          </div>
+          <div class="info-line">
+            <span class="label">MAX SIZE:</span>
+            <span class="size">{{formatFileSize(maxFileSize)}}</span>
+          </div>
+        </div>
+        
+        <!-- Progress Display -->
+        <div class="progress-display" *ngIf="isUploading()">
+          <div class="progress-line">
+            <span class="progress-label">PROGRESS:</span>
+            <div class="ascii-progress">
+              <span class="progress-bar">
+                <span class="filled" [style.width.%]="uploadProgress()">████████████████████</span>
+                <span class="empty">░░░░░░░░░░░░░░░░░░░░</span>
+              </span>
+              <span class="percentage">{{Math.round(uploadProgress())}}%</span>
+            </div>
+          </div>
+        </div>
       </div>
       
       <!-- Hidden File Input -->
@@ -55,92 +102,129 @@
     </div>
   </div>
 
-  <!-- Upload Status -->
-  <div class="upload-status" *ngIf="uploadedFiles().length > 0 || isUploading()">
-    <div class="status-header">
-      <div class="status-text">
-        <i class="fas fa-info-circle"></i>
-        {{getUploadStatusText()}}
-      </div>
+  <!-- Upload Status Terminal -->
+  <div class="status-terminal" *ngIf="uploadedFiles().length > 0 || isUploading()">
+    <div class="terminal-header">
+      <span class="window-title">[UPLOAD STATUS]</span>
       <button 
-        class="clear-all-btn"
+        class="terminal-close-btn"
         *ngIf="uploadedFiles().length > 0 && !isUploading() && processingFiles().size === 0"
         (click)="clearAllFiles()"
-        title="Tüm dosyaları temizle">
-        <i class="fas fa-trash"></i>
+        title="Clear all files">
+        <span>×</span>
       </button>
+    </div>
+    
+    <div class="status-content">
+      <div class="status-line">
+        <span class="prompt">STATUS:</span>
+        <span class="status-text" [class.active]="isUploading()">
+          {{getUploadStatusText()}}
+        </span>
+      </div>
     </div>
   </div>
 
-  <!-- Uploaded Files List -->
-  <div class="uploaded-files" *ngIf="uploadedFiles().length > 0">
-    <div class="files-header">
-      <h3>Yüklenen Dosyalar</h3>
-      <span class="files-count">{{uploadedFiles().length}} dosya</span>
+  <!-- File List Terminal -->
+  <div class="files-terminal" *ngIf="uploadedFiles().length > 0">
+    <div class="terminal-header">
+      <span class="window-title">[FILE REGISTRY - {{uploadedFiles().length}} ENTRIES]</span>
     </div>
     
-    <div class="files-list">
+    <div class="files-content">
+      <!-- Table Header -->
+      <div class="file-header">
+        <div class="col-icon">T</div>
+        <div class="col-name">FILENAME</div>
+        <div class="col-size">SIZE</div>
+        <div class="col-date">DATE</div>
+        <div class="col-status">STATUS</div>
+        <div class="col-action">DEL</div>
+      </div>
+      
+      <!-- File Entries -->
       <div 
-        class="uploaded-file" 
+        class="file-entry" 
         *ngFor="let fileData of uploadedFiles(); trackBy: trackByFileId"
         [class.processing]="fileData.isProcessing">
         
-        <!-- File Icon -->
-        <div class="file-icon-container">
-          <i [class]="getFileIcon(fileData.file.name)" *ngIf="!fileData.isProcessing"></i>
-          <i class="fas fa-spinner fa-spin text-blue-500" *ngIf="fileData.isProcessing"></i>
+        <!-- File Type -->
+        <div class="col-icon">
+          <span class="file-type-icon" *ngIf="!fileData.isProcessing">
+            {{getFileTypeChar(fileData.file.name)}}
+          </span>
+          <span class="processing-icon" *ngIf="fileData.isProcessing">
+            ⟳
+          </span>
         </div>
         
-        <!-- File Info -->
-        <div class="file-info">
-          <div class="file-name" [title]="fileData.file.name">
-            {{fileData.file.name}}
-          </div>
-          <div class="file-details">
-            <span class="file-size">{{formatFileSize(fileData.file.size)}}</span>
-            <span class="file-separator">•</span>
-            <span class="upload-date">{{fileData.uploadDate | date:'dd.MM.yyyy HH:mm'}}</span>
-            <span class="file-separator">•</span>
-            <span class="file-status" [class.processing]="fileData.isProcessing" [class.completed]="fileData.content">
-              {{getFileStatus(fileData)}}
-            </span>
-          </div>
+        <!-- Filename -->
+        <div class="col-name" [title]="fileData.file.name">
+          <span class="filename">{{truncateFilename(fileData.file.name, 25)}}</span>
         </div>
         
-        <!-- File Actions -->
-        <div class="file-actions">
+        <!-- File Size -->
+        <div class="col-size">
+          <span class="file-size">{{formatFileSize(fileData.file.size)}}</span>
+        </div>
+        
+        <!-- Upload Date -->
+        <div class="col-date">
+          <span class="upload-date">{{fileData.uploadDate | date:'dd/MM HH:mm'}}</span>
+        </div>
+        
+        <!-- Status -->
+        <div class="col-status">
+          <span class="status-indicator" 
+                [class.ready]="!!fileData.content && !fileData.isProcessing"
+                [class.processing]="fileData.isProcessing"
+                [class.error]="fileData.error">
+            {{getFileStatusChar(fileData)}}
+          </span>
+        </div>
+        
+        <!-- Delete Action -->
+        <div class="col-action">
           <button 
-            class="remove-btn"
+            class="delete-btn"
             *ngIf="!fileData.isProcessing"
             (click)="removeFile(fileData.id)"
-            title="Dosyayı kaldır">
-            <i class="fas fa-times"></i>
+            title="Delete file">
+            <span>×</span>
           </button>
-          <div class="processing-indicator" *ngIf="fileData.isProcessing">
-            <i class="fas fa-cog fa-spin"></i>
-          </div>
+          <span class="processing-indicator" *ngIf="fileData.isProcessing">⚡</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Upload Tips -->
-  <div class="upload-tips" *ngIf="uploadedFiles().length === 0 && !isUploading()">
-    <div class="tips-header">
-      <i class="fas fa-lightbulb"></i>
-      <span>İpuçları</span>
+  <!-- Help Terminal -->
+  <div class="help-terminal" *ngIf="uploadedFiles().length === 0 && !isUploading()">
+    <div class="terminal-header">
+      <span class="window-title">[SYSTEM HELP]</span>
     </div>
-    <ul class="tips-list">
-      <li>Birden fazla dosyayı aynı anda seçebilirsiniz</li>
-      <li>Dosyaları doğrudan sürükleyip bırakabilirsiniz</li>
-      <li>Desteklenen formatlar: PDF, Word, Excel, PowerPoint, Metin</li>
-      <li>Maksimum dosya boyutu: {{formatFileSize(maxFileSize)}}</li>
-      <li>Dosyalar otomatik olarak içerik analizi için işlenir</li>
-    </ul>
+    
+    <div class="help-content">
+      <div class="help-section">
+        <div class="help-title">COMMANDS:</div>
+        <div class="help-item">• DRAG & DROP FILES TO UPLOAD ZONE</div>
+        <div class="help-item">• CLICK UPLOAD ZONE TO BROWSE FILES</div>
+        <div class="help-item">• MULTIPLE FILES SUPPORTED</div>
+      </div>
+      
+      <div class="help-section">
+        <div class="help-title">FILE SPECS:</div>
+        <div class="help-item">• MAX SIZE: {{formatFileSize(maxFileSize)}}</div>
+        <div class="help-item">• FORMATS: PDF, DOC, DOCX, TXT, XLS, XLSX, PPT, PPTX</div>
+        <div class="help-item">• AUTO-ANALYSIS: ENABLED</div>
+      </div>
+      
+      <div class="help-section">
+        <div class="help-title">SYSTEM STATUS:</div>
+        <div class="help-item">• UPLOAD ENGINE: <span class="status-ok">READY</span></div>
+        <div class="help-item">• ANALYSIS MODULE: <span class="status-ok">ONLINE</span></div>
+        <div class="help-item">• STORAGE: <span class="status-ok">AVAILABLE</span></div>
+      </div>
+    </div>
   </div>
 </div>
-
-<!-- Track by function for performance -->
-<ng-container>
-  <!-- This is a template-only function for trackBy -->
-</ng-container>

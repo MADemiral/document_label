@@ -5,28 +5,8 @@ import { catchError, retry, timeout } from 'rxjs/operators';
 
 import { LabelSuggestionRequest, SearchDocumentRequest } from '../interfaces/file-search/file-search-request.interface';
 import { LabelSuggestionsResponse, SearchDocumentQuery, SearchDocumentResponse, SearchDocumentResponseByLabel } from '../interfaces/file-search/file-search-response.interface';
-import { AnalyzeDocumentRequest, ConfirmDocumentRequest } from '../interfaces/document-analysis/document-analysis-request.interface';
-
-
-
-
-
-// Response interfaces
-export interface AnalyzeDocumentResponse {
-  labels: string[];
-  summary: string;
-}
-
-export interface ConfirmDocumentResponse {
-  status: 'saved' | 'duplicate_skipped';
-  title?: string;
-  document_id?: number;
-  labels: string[];
-  summary: string;
-  message: string;
-}
-
-
+import { ConfirmDocumentRequest } from '../interfaces/document-analysis/document-analysis-request.interface';
+import { AnalyzeDocumentResponse, ConfirmDocumentResponse } from '../interfaces/document-analysis/document-analysis-response.interface';
 
 
 
@@ -59,24 +39,35 @@ export class ApiService {
   // ==================== DOCUMENT ANALYSIS ====================
 
   /**
-   * Analyze document content and get AI-generated labels and summary
+   * Analyze document file using multipart/form-data
    */
-  sendDocumentAnalyze(request: AnalyzeDocumentRequest): Promise<AnalyzeDocumentResponse> {
-    console.log('API: Sending document analyze request:', request);
+  sendDocumentAnalyze(file: File): Promise<AnalyzeDocumentResponse> {
+    console.log('API: Sending file for analysis:', file.name);
+    
+    const formData = new FormData();
+    formData.append('file', file);
+
+    // Don't set Content-Type header - let browser handle multipart/form-data
     return this.http.post<AnalyzeDocumentResponse>(
       `${this.baseUrl}/analyze-document`,
-      request,
-      this.httpOptions
+      formData // Send FormData instead of JSON
+    ).pipe(
+      retry(1),
+      timeout(60000), // 60 second timeout for file processing
+      catchError(error => {
+        console.error('API: Document analysis failed:', error);
+        throw error;
+      })
     ).toPromise() as Promise<AnalyzeDocumentResponse>;
   }
 
   /**
    * Analyze document content (wrapper method)
    */
-  async analyzeDocument(content: string): Promise<AnalyzeDocumentResponse> {
+  async analyzeDocument(file: File): Promise<AnalyzeDocumentResponse> {
     try {
-      console.log('API: Analyzing document content...');
-      const response = await this.sendDocumentAnalyze({ content });
+      console.log('API: Analyzing document file...');
+      const response = await this.sendDocumentAnalyze(file);
       console.log('API: Analysis response:', response);
       return response;
     } catch (error) {
@@ -100,16 +91,46 @@ export class ApiService {
   }
 
   /**
-   * Save document to database (wrapper method)
+   * Save confirmed document with file
    */
-  async saveDocumentToDatabase(request: ConfirmDocumentRequest): Promise<ConfirmDocumentResponse> {
+  async saveDocumentToDatabase(request: ConfirmDocumentRequest, file?: File): Promise<ConfirmDocumentResponse> {
     try {
       console.log('API: Saving document to database...');
-      const response = await this.confirmDocument(request);
-      console.log('API: Save response:', response);
+      
+      const formData = new FormData();
+      formData.append('title', request.title);
+      formData.append('content', request.content);
+      formData.append('summary', request.summary);
+      formData.append('labels', JSON.stringify(request.labels));
+      
+      if (request.fileName) {
+        formData.append('fileName', request.fileName);
+      }
+      
+      // Add file if provided
+      if (file) {
+        formData.append('file', file);
+      }
+
+      const response = await this.http.post<ConfirmDocumentResponse>(
+        `${this.baseUrl}/confirm-document`,
+        formData  // FormData with file
+      ).pipe(
+        timeout(60000), // 60 second timeout
+        catchError(error => {
+          console.error('API: Save document failed:', error);
+          throw error;
+        })
+      ).toPromise();
+
+      console.log('API: Document saved successfully:', response);
+      if (!response) {
+        throw new Error('API: Document save response is undefined');
+      }
       return response;
+      
     } catch (error) {
-      console.error('API: Document save failed:', error);
+      console.error('API: Save document failed:', error);
       throw error;
     }
   }

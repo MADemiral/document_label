@@ -1,114 +1,188 @@
-<div class="app-container">
-  <!-- Floating particles -->
-  <div class="floating-particles">
-    <div class="particle particle-1"></div>
-    <div class="particle particle-2"></div>
-    <div class="particle particle-3"></div>
-    <div class="particle particle-4"></div>
-    <div class="particle particle-5"></div>
-    <div class="particle particle-6"></div>
-  </div>
-
-  <!-- Gradient orbs -->
-  <div class="gradient-orbs">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-  </div>
-
-  <!-- Header with mode toggle -->
-  <header class="app-header">
+<div class="retro-app">
+  <!-- Retro CRT Header -->
+  <header class="crt-header">
+    <div class="scan-lines"></div>
     <div class="header-content">
-      <h1 class="app-title">
-        <i class="fas fa-file-alt"></i>
-        Document Label Service
-      </h1>
+      <div class="terminal-title">
+        <span class="cursor">█</span>
+        <span class="typing-text">{{ title }}</span>
+        <span class="blinking-cursor">_</span>
+      </div>
       
-      <!-- Mode Toggle Button -->
-      <div class="header-actions">
+      <div class="control-panel">
         <button 
-          class="mode-toggle-btn"
+          class="retro-button"
+          [class.active]="!isSearchMode()"
           (click)="toggleSearchMode()"
-          [class.search-active]="isSearchMode()">
-          <i class="fas" 
-             [class.fa-upload]="isSearchMode()" 
-             [class.fa-search]="!isSearchMode()"></i>
-          <span>{{ isSearchMode() ? 'Yükleme Modu' : 'Arama Modu' }}</span>
+          [attr.aria-label]="isSearchMode() ? 'Switch to upload mode' : 'Switch to search mode'">
+          <div class="button-face">
+            <i [class]="isSearchMode() ? 'fas fa-upload' : 'fas fa-search'"></i>
+            <span>{{ isSearchMode() ? 'UPLOAD.EXE' : 'SEARCH.EXE' }}</span>
+          </div>
+          <div class="button-shadow"></div>
         </button>
+        
+        <div class="status-lights">
+          <div class="led" [class.on]="!isSearchMode()"></div>
+          <div class="led" [class.on]="isSearchMode()"></div>
+        </div>
       </div>
     </div>
   </header>
 
-  <div class="app-content">
-    <!-- Main content area -->
-    <main class="main-content">
-      
-      <!-- Upload Mode -->
-      <div *ngIf="!isSearchMode()" class="upload-mode">
-        <!-- File Upload Section -->
-        <section class="content-section upload-section">
-          <div class="section-header">
-            <h2>
-              <i class="fas fa-cloud-upload-alt"></i>
-              Dosya Yükle ve Analiz Et
-            </h2>
-            <p>Dökümanınızı yükleyin ve otomatik etiketleme ile özetleme yapın</p>
+  <!-- Main Terminal Window -->
+  <main class="terminal-main">
+    <div class="terminal-window">
+      <div class="window-chrome">
+        <div class="title-bar">
+          <span class="window-title">
+            {{ isSearchMode() ? 'DOCUMENT_SEARCH.BAT' : 'FILE_UPLOAD.EXE' }}
+          </span>
+          <div class="window-controls">
+            <span class="minimize">-</span>
+            <span class="maximize">□</span>
+            <span class="close">×</span>
           </div>
-          
-          <app-file-upload 
-            (analysisCompleted)="onAnalysisCompleted($event)"
-            (uploadError)="onUploadError($event)">
-          </app-file-upload>
-        </section>
-
-        <!-- Document Analysis Section (Shown after upload) -->
-        <section *ngIf="currentAnalysis()" class="content-section analysis-section">
-          <div class="section-header">
-            <h2>
-              <i class="fas fa-chart-line"></i>
-              Analiz Sonuçları
-            </h2>
-            <p>Döküman analiz edildi, etiketleri düzenleyebilir ve kaydedebilirsiniz</p>
-          </div>
-          
-          <app-document-analysis
-            [analysisResult]="currentAnalysis()!"
-            [originalContent]="originalContent()"
-            (labelsUpdated)="onLabelsUpdated($event)"
-            (saveCompleted)="onSaveCompleted($event)"
-            (closeAnalysis)="onCloseAnalysis()">
-          </app-document-analysis>
-        </section>
+        </div>
       </div>
 
-      <!-- Search Mode -->
-      <div *ngIf="isSearchMode()" class="search-mode">
-        <!-- Search Section -->
-        <section class="content-section search-section">
-          <div class="section-header">
-            <h2>
-              <i class="fas fa-search"></i>
-              Döküman Ara
-            </h2>
-            <p>Mevcut dökümanlar arasında arama yapın (semantic ve etiket bazlı)</p>
+      <div class="terminal-content">
+        <!-- Upload Mode -->
+        <section class="mode-section upload-mode" *ngIf="!isSearchMode()">
+          <div class="console-header">
+            <div class="prompt-line">
+              <span class="prompt">C:\DOCS&gt;</span>
+              <span class="command">UPLOAD_ANALYZER.EXE</span>
+              <span class="blinking">█</span>
+            </div>
           </div>
           
-          <!-- File Search Component -->
-          <app-file-search 
-            [placeholder]="'Döküman ara... (en az 3 karakter)'"
-            [enableAdvancedSearch]="true"
-            (searchResults)="onSearchResults($event)"
-            (searchError)="onSearchError($event)">
-          </app-file-search>
+          <div class="retro-card upload-zone">
+            <div class="card-header">
+              <span class="card-title">[FILE UPLOAD SYSTEM v2.1]</span>
+            </div>
+            <div class="card-content">
+              <app-file-upload
+                (fileUploaded)="onFileUploaded($event)"
+                (analysisCompleted)="onAnalysisCompleted($event)"
+                (uploadError)="onUploadError($event)">
+              </app-file-upload>
+            </div>
+          </div>
+
+          <!-- Analysis Results -->
+          <div class="retro-card analysis-results" *ngIf="currentAnalysis()">
+            <div class="card-header">
+              <span class="card-title">[ANALYSIS COMPLETE]</span>
+              <span class="status-indicator success">●</span>
+            </div>
+            <div class="card-content">
+              <app-document-analysis
+                [analysisResult]="currentAnalysis()!"
+                [originalContent]="originalContent()"
+                [file]="uploadedFile()"
+                (labelsUpdated)="onLabelsUpdated($event)"
+                (saveCompleted)="onSaveCompleted($event)"
+                (closeAnalysis)="onCloseAnalysis()">
+              </app-document-analysis>
+            </div>
+          </div>
         </section>
 
-        
+        <!-- Search Mode -->
+        <section class="mode-section search-mode" *ngIf="isSearchMode()">
+          <div class="console-header">
+            <div class="prompt-line">
+              <span class="prompt">C:\SEARCH&gt;</span>
+              <span class="command">FIND_DOCUMENTS.EXE</span>
+              <span class="blinking">█</span>
+            </div>
+          </div>
+          
+          <div class="retro-card search-zone">
+            <div class="card-header">
+              <span class="card-title">[DOCUMENT SEARCH ENGINE v1.3]</span>
+            </div>
+            <div class="card-content">
+              <app-file-search
+                (searchResults)="onSearchResults($event)"
+                (searchError)="onSearchError($event)"
+                (resultSelected)="onSearchResultSelected($event)">
+              </app-file-search>
+            </div>
+          </div>
 
-        
+          <!-- Search Results Analysis -->
+          <div class="retro-card search-results" *ngIf="currentAnalysis()">
+            <div class="card-header">
+              <span class="card-title">[SEARCH RESULT VIEWER]</span>
+              <span class="status-indicator info">●</span>
+            </div>
+            <div class="card-content">
+              <app-document-analysis
+                [analysisResult]="currentAnalysis()!"
+                [originalContent]="originalContent()"
+                [file]="null"
+                (labelsUpdated)="onLabelsUpdated($event)"
+                (closeAnalysis)="onCloseAnalysis()">
+              </app-document-analysis>
+            </div>
+          </div>
+        </section>
+
+        <!-- Empty State -->
+        <div class="empty-terminal" *ngIf="!currentAnalysis() && searchResults().length === 0">
+          <div class="boot-sequence">
+            <div class="boot-line">DOCUMENT LABEL SYSTEM v3.14</div>
+            <div class="boot-line">Copyright (c) 2024 RetroSoft Inc.</div>
+            <div class="boot-line">Initializing...</div>
+            <div class="boot-line"></div>
+            <div class="boot-line">
+              {{ isSearchMode() 
+                 ? 'SEARCH ENGINE READY. ENTER QUERY TO BEGIN...'
+                 : 'FILE UPLOAD SYSTEM READY. DROP FILES TO ANALYZE...' }}
+            </div>
+            <div class="boot-line"></div>
+            <div class="prompt-ready">
+              <span class="prompt">READY&gt;</span>
+              <span class="blinking-cursor">█</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Messages -->
+        <div class="system-messages">
+          <div class="message-line success" *ngIf="false">
+            <span class="timestamp">[12:34:56]</span>
+            <span class="message-text">OPERATION COMPLETED SUCCESSFULLY</span>
+            <span class="status-code">[OK]</span>
+          </div>
+        </div>
       </div>
+    </div>
+  </main>
 
-      
+  <!-- Retro Footer Status Bar -->
+  <footer class="status-bar">
+    <div class="status-segment">
+      <span class="status-label">MODE:</span>
+      <span class="status-value">{{ isSearchMode() ? 'SEARCH' : 'UPLOAD' }}</span>
+    </div>
+    <div class="status-segment">
+      <span class="status-label">STATUS:</span>
+      <span class="status-value" [class.active]="currentAnalysis()">
+        {{ currentAnalysis() ? 'PROCESSING' : 'READY' }}
+      </span>
+    </div>
+    <div class="status-segment">
+      <span class="status-label">SYS:</span>
+      <span class="status-value">OK</span>
+    </div>
+  </footer>
 
-    </main>
+  <!-- Retro Effects -->
+  <div class="retro-effects">
+    <div class="crt-flicker"></div>
+    <div class="static-noise"></div>
   </div>
 </div>

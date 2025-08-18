@@ -1069,6 +1069,32 @@ export class FileSearchComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Get document type character for terminal display
+   */
+  getDocumentTypeChar(document: any): string {
+    const extension = document.name?.split('.').pop()?.toLowerCase();
+    const typeMap: { [key: string]: string } = {
+      'pdf': 'P',
+      'doc': 'W',
+      'docx': 'W', 
+      'txt': 'T',
+      'xls': 'X',
+      'xlsx': 'X',
+      'ppt': 'S',
+      'pptx': 'S',
+      'zip': 'Z',
+      'rar': 'R',
+      'jpg': 'I',
+      'jpeg': 'I',
+      'png': 'I',
+      'gif': 'I',
+      'mp4': 'V',
+      'mp3': 'A'
+    };
+    return typeMap[extension || ''] || 'F';
+  }
+
+  /**
    * Content statistics helper
    */
   getContentStats(document: any): string {

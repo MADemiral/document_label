@@ -3,17 +3,26 @@ from .db import SessionLocal
 from sqlalchemy import text
 from sqlalchemy.orm import joinedload
 import logging
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 
-def create_document(content, title=None, summary=None):
-    session = SessionLocal()
-    doc = Document(content=content, title=title, summary=summary)
-    session.add(doc)
-    session.commit()
-    session.refresh(doc)
-    session.close()
-    return doc
+def create_document(title: str, content: str, summary: str, file: Optional[bytes] = None):
+    """Create a new document with optional file bytes"""
+    db = get_db_session()
+    try:
+        document = Document(
+            title=title,
+            content=content,
+            summary=summary,
+            file=file  # BYTEA field'ına bytes atanacak
+        )
+        db.add(document)
+        db.commit()
+        db.refresh(document)
+        return document
+    finally:
+        db.close()
 
 def add_label_to_document(document_id, label_name):
     session = SessionLocal()
