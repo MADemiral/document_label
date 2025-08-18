@@ -65,6 +65,20 @@ services:
       - embedding_service
     networks:
       - docnet
+  
+  angular:
+    build:
+      context: ./angular
+    container_name: angular
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api_gateway
+      - postgres
+      - chromadb
+    networks:
+      - docnet
+
       
 networks:
   docnet:
