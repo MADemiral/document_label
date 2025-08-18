@@ -8,6 +8,7 @@ CREATE TABLE documents (
     uploaded_at TIMESTAMP DEFAULT NOW(),
     created_at TIMESTAMP DEFAULT NOW(),
     summary TEXT
+    byte BYTEA
 );
 
 -- ==============================
