@@ -11,9 +11,11 @@ class SearchInput(BaseModel):
 
 
 class ConfirmInput(BaseModel):
+    title: str
     content: str
     summary: str
     labels: list[str]
+    file_bytes: bytes
 
 @app.post("/search")
 def search(data: SearchInput):
@@ -38,24 +40,26 @@ def search(data: SearchInput):
 
 @app.post("/confirm-document")
 def confirm_document(data: ConfirmInput):
-    if not data.content or not data.labels:
-        raise HTTPException(status_code=400, detail="Content and labels are required")
+    if not data.content or not data.labels or not data.title or not data.file_bytes:
+        raise HTTPException(status_code=400, detail="Title, content, labels, and file bytes are required")
 
-    # Check similarity before saving
     if is_duplicate(data.content):
         return {
             "status": "duplicate_skipped",
             "message": "A similar document already exists. Skipping save."
         }
 
-    # Save document to PostgreSQL
-    document = create_document(content=data.content, summary=data.summary)
+    # Save document to DB
+    document = create_document(
+        title=data.title,
+        content=data.content,
+        summary=data.summary,
+        file_bytes=data.file_bytes  # store as binary/blob
+    )
 
-    # Save labels and link to document
     for label in data.labels:
         add_label_to_document(document.document_id, label)
 
-    # Save embedding with metadata to ChromaDB
     save_document_embedding(
         document_id=document.document_id,
         content=data.content,
@@ -66,6 +70,7 @@ def confirm_document(data: ConfirmInput):
     return {
         "status": "saved",
         "document_id": document.document_id,
+        "title": data.title,
         "labels": data.labels,
         "summary": data.summary
     }
