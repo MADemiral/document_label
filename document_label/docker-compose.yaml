@@ -59,7 +59,7 @@ services:
       context: ./gateway
     container_name: api_gateway
     ports:
-      - "1071:1071"
+      - "5000:5000"
     depends_on:
       - labeling_service
       - embedding_service
@@ -70,8 +70,6 @@ services:
     build:
       context: ./angular
     container_name: angular
-    ports:
-      - "8080:8080"
     depends_on:
       - api_gateway
       - postgres

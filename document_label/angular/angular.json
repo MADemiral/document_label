@@ -44,7 +44,7 @@
           "options": {
             "browserTarget": "doc-analyzer-web:build",
             "proxyConfig": "proxy.conf.json",
-            "port": 4200
+            "port": 5000
           },
           "configurations": {
             "production": {
