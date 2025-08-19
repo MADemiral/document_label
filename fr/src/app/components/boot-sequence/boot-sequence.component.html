@@ -1,0 +1,102 @@
+<div class="retro-boot-screen" *ngIf="isBooting()">
+
+  <!-- BIOS Header -->
+  <div class="bios-header">
+    <div class="bios-info">
+      <span class="bios-brand">PHOENIX - AWARDBIOS v6.00PG</span>
+      <span class="copyright">Copyright (C) 1984-2025, Document Label Systems Inc.</span>
+    </div>
+  </div>
+
+  <!-- Boot Messages Terminal -->
+  <div class="boot-terminal">
+    <!-- Power-on self test -->
+    <div class="terminal-line" *ngIf="currentStep() >= 0">
+      <span class="prompt">POST</span>
+      <span class="dots">...................................</span>
+      <span class="status ok">[ OK ]</span>
+    </div>
+
+    <!-- System info -->
+    <div class="system-block" *ngIf="currentStep() >= 0">
+      <div class="terminal-line">
+        <span>Main Processor   : Intel(R) Core(TM) i7-9999K CPU &#64; 4.20GHz</span>
+      </div>
+      <div class="terminal-line">
+        <span>Memory Test      : {{ systemStats.memoryUsage.toFixed(0) }}MB OK</span>
+      </div>
+      <div class="terminal-line">
+        <span>Floppy drives    : None</span>
+      </div>
+      <div class="terminal-line">
+        <span>Hard drives      : Primary master - ST2000DM001</span>
+      </div>
+    </div>
+
+    <!-- Boot steps as terminal output -->
+    <div class="boot-steps-terminal" *ngIf="currentStep() > 0">
+      <div class="terminal-separator">
+        <span>Loading Document Label Operating System...</span>
+      </div>
+      
+      <!-- Each step as terminal line -->
+      <div class="terminal-step" 
+           *ngFor="let step of bootSteps; let i = index"
+           [class.visible]="currentStep() > i"
+           [class.processing]="currentStep() === i + 1 && !step.completed"
+           [class.completed]="step.completed">
+        
+        <span class="step-name">{{ step.name.padEnd(12, '.') }}</span>
+        <span class="step-dots" *ngIf="!step.completed">{{ getLoadingDots() }}</span>
+        <span class="step-progress" *ngIf="currentStep() === i + 1 && !step.completed">
+          [{{ getProgressBar(step.progress) }}] {{ step.progress.toFixed(0) }}%
+        </span>
+        <span class="step-status" *ngIf="step.completed">
+          <span [class]="step.type === 'success' ? 'status ok' : 'status warn'">
+            [ {{ step.type === 'success' ? 'OK' : 'DONE' }} ]
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <!-- System resources monitor (retro style) -->
+    <div class="resource-monitor" *ngIf="currentStep() > 3">
+      <div class="terminal-separator">
+        <span>System Resources Status</span>
+      </div>
+      <div class="terminal-line">
+        <span>CPU Usage........: [{{ getProgressBar(systemStats.cpuUsage) }}] {{ systemStats.cpuUsage.toFixed(1) }}%</span>
+      </div>
+      <div class="terminal-line">
+        <span>Memory Usage.....: [{{ getProgressBar(systemStats.memoryUsage) }}] {{ systemStats.memoryUsage.toFixed(1) }}%</span>
+      </div>
+      <div class="terminal-line">
+        <span>Network..........: {{ systemStats.networkStatus === 'CONNECTED' ? '[ONLINE]' : '[OFFLINE]' }}</span>
+      </div>
+    </div>
+
+    <!-- Boot complete message -->
+    <div class="boot-complete-terminal" *ngIf="bootCompleted()">
+      <div class="terminal-separator success">
+        <span>*** BOOT SEQUENCE COMPLETED SUCCESSFULLY ***</span>
+      </div>
+      <div class="terminal-line">
+        <span>Starting DOCUMENT LABEL SYSTEM v3.14...</span>
+      </div>
+      <div class="terminal-line blinking">
+        <span>Press any key to continue{{ getBlinkingCursor() }}</span>
+      </div>
+    </div>
+
+    <!-- Blinking cursor at the end -->
+    <div class="terminal-cursor" *ngIf="isBooting() && !bootCompleted()">
+      <span class="cursor">█</span>
+    </div>
+  </div>
+
+  <!-- Skip instruction (very retro style) -->
+  <div class="skip-instruction" (dblclick)="skipBootSequence()">
+    <span>ESC - Skip Boot Sequence</span>
+  </div>
+
+</div>

@@ -1,0 +1,266 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --retro-bg: #000000;
+  --retro-text: #c0c0c0;
+  --retro-green: #00aa00;
+  --retro-yellow: #ffff00;
+  --retro-red: #ff5555;
+  --retro-blue: #5555ff;
+  --retro-cyan: #55ffff;
+  --retro-white: #ffffff;
+}
+
+.retro-boot-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--retro-bg);
+  color: var(--retro-text);
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  line-height: 1.2;
+  overflow: hidden;
+  z-index: 9999;
+  padding: 20px;
+
+  // CRT monitor effect
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(ellipse at center, transparent 0%, rgba(0,170,0,0.03) 70%, rgba(0,170,0,0.15) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  // Scanlines
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      to bottom,
+      transparent 50%,
+      rgba(0, 170, 0, 0.03) 50%
+    );
+    background-size: 100% 2px;
+    animation: scanlines 0.1s linear infinite;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  @keyframes scanlines {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 2px; }
+  }
+
+  > * {
+    position: relative;
+    z-index: 3;
+  }
+
+  // BIOS Header
+  .bios-header {
+    border-bottom: 1px solid var(--retro-text);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+
+    .bios-info {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      .bios-brand {
+        color: var(--retro-white);
+        font-weight: bold;
+      }
+
+      .copyright {
+        color: var(--retro-text);
+        font-size: 14px;
+      }
+    }
+  }
+
+  // Terminal Output
+  .boot-terminal {
+    .terminal-line {
+      margin: 3px 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+
+      .prompt {
+        color: var(--retro-yellow);
+        min-width: 60px;
+      }
+
+      .dots {
+        color: var(--retro-text);
+        flex: 1;
+      }
+
+      .status {
+        font-weight: bold;
+        min-width: 50px;
+        text-align: right;
+
+        &.ok {
+          color: var(--retro-green);
+        }
+
+        &.warn {
+          color: var(--retro-yellow);
+        }
+
+        &.error {
+          color: var(--retro-red);
+        }
+      }
+    }
+
+    .system-block {
+      margin: 20px 0;
+      padding: 10px 0;
+      border-top: 1px solid #333;
+      border-bottom: 1px solid #333;
+    }
+
+    .terminal-separator {
+      margin: 15px 0 10px 0;
+      padding: 5px 0;
+      color: var(--retro-cyan);
+      font-weight: bold;
+      border-top: 1px solid #333;
+      
+      &.success {
+        color: var(--retro-green);
+        animation: pulse 1s infinite;
+      }
+    }
+
+    .boot-steps-terminal {
+      .terminal-step {
+        display: flex;
+        align-items: center;
+        margin: 5px 0;
+        min-height: 20px;
+        opacity: 0;
+        transform: translateX(-10px);
+
+        &.visible {
+          opacity: 1;
+          transform: translateX(0);
+          transition: all 0.3s ease;
+        }
+
+        &.processing {
+          color: var(--retro-yellow);
+          
+          .step-name {
+            animation: blink 1s infinite;
+          }
+        }
+
+        &.completed {
+          color: var(--retro-text);
+        }
+
+        .step-name {
+          color: var(--retro-white);
+          min-width: 120px;
+          font-family: monospace;
+        }
+
+        .step-dots {
+          color: var(--retro-text);
+          min-width: 30px;
+        }
+
+        .step-progress {
+          color: var(--retro-cyan);
+          font-family: monospace;
+          margin-left: 10px;
+        }
+
+        .step-status {
+          margin-left: auto;
+          
+          .status {
+            padding: 0 5px;
+          }
+        }
+      }
+    }
+
+    .resource-monitor {
+      .terminal-line {
+        font-family: monospace;
+        color: var(--retro-text);
+      }
+    }
+
+    .boot-complete-terminal {
+      margin-top: 30px;
+      
+      .blinking {
+        animation: blink 1s infinite;
+        color: var(--retro-yellow);
+      }
+    }
+
+    .terminal-cursor {
+      .cursor {
+        color: var(--retro-green);
+        animation: blink 1s infinite;
+      }
+    }
+  }
+
+  // Skip instruction
+  .skip-instruction {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    color: #666;
+    font-size: 14px;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--retro-text);
+    }
+  }
+
+  // Animations
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .retro-boot-screen {
+    font-size: 14px;
+    padding: 10px;
+    
+    .boot-terminal .terminal-step .step-name {
+      min-width: 100px;
+    }
+  }
+}

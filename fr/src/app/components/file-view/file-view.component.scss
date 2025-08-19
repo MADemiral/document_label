@@ -1,10 +1,67 @@
-// file-view.component.scss - modern document viewer
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+
+// Retro File View Variables - Güncellenmiş renkler
+:root {
+  --file-bg: #0f1419;
+  --file-surface: #1a2332;
+  --file-border: #4a6fa5;
+  --file-primary: #00ff88;
+  --file-secondary: #55ccff;
+  --file-accent: #ff8855;
+  --file-warning: #ffcc44;
+  --file-error: #ff5577;
+  --file-success: #00ff88;
+  --file-text: #ffffff; // Pure white
+  --file-text-dim: #e6e6e6; // Daha açık
+  --file-text-muted: #cccccc; // Daha açık
+  
+  // Label renkleri
+  --label-color-1: #00ff88; // Green
+  --label-color-2: #55ccff; // Blue  
+  --label-color-3: #ff8855; // Orange
+  --label-color-4: #ffcc44; // Yellow
+  --label-color-5: #ff5577; // Pink
+  --label-color-6: #aa88ff; // Purple
+  --label-color-7: #88ffcc; // Cyan
+  --label-color-8: #ffaa88; // Coral
+  --label-color-9: #ccff55; // Lime
+  --label-color-10: #ff88aa; // Rose
+  
+  --terminal-font: 'VT323', 'Courier New', monospace;
+  --terminal-font-mono: 'Share Tech Mono', monospace;
+  --terminal-font-title: 'Orbitron', monospace;
+}
 
 .file-view-container {
-  background: white;
-  border-radius: 16px;
+  font-family: var(--terminal-font);
+  background: var(--file-bg);
+  color: var(--file-text);
+  border: 3px solid var(--file-border);
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 
+    0 0 40px rgba(0, 0, 0, 0.8),
+    0 0 80px rgba(0, 255, 136, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  
+  // Terminal scan lines - daha hafif
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 4px,
+      rgba(0, 255, 136, 0.008) 5px // Çok daha hafif
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
   
   &.modal-view {
     max-width: 90vw;
@@ -13,14 +70,31 @@
   }
 }
 
-// ==================== HEADER ====================
+// ==================== RETRO HEADER ====================
 .file-view-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 32px;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  border-bottom: 1px solid #e2e8f0;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #1a2332, #0f1419);
+  border-bottom: 2px solid var(--file-border);
+  position: relative;
+  z-index: 2;
+
+  // Terminal window chrome effect
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, 
+      var(--file-primary) 0%, 
+      var(--file-secondary) 50%, 
+      var(--file-primary) 100%);
+    animation: terminalScan 3s linear infinite;
+  }
 }
 
 .header-left {
@@ -31,8 +105,10 @@
 }
 
 .file-icon {
-  font-size: 32px;
-  color: #64748b;
+  font-size: 36px;
+  color: var(--file-primary);
+  text-shadow: 0 0 15px currentColor;
+  animation: iconGlow 2s infinite alternate;
 }
 
 .file-info {
@@ -40,26 +116,34 @@
 }
 
 .file-title {
-  font-size: 24px;
+  font-family: var(--terminal-font-title);
+  font-size: 24px; // Daha büyük
   font-weight: 700;
-  color: #1e293b;
+  color: #ffffff; // Pure white
   margin: 0 0 8px 0;
   line-height: 1.3;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); // Beyaz glow
+  letter-spacing: 1px;
 }
 
 .file-meta {
   display: flex;
   gap: 20px;
-  font-size: 14px;
-  color: #64748b;
+  font-size: 15px; // Daha büyük
+  color: #e6e6e6; // Çok daha açık
+  font-family: var(--terminal-font-mono);
+  font-weight: 500; // Kalın font
   
   span {
     display: flex;
     align-items: center;
     gap: 6px;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3); // Beyaz glow
     
     i {
-      font-size: 12px;
+      color: var(--file-secondary);
+      text-shadow: 0 0 8px currentColor;
+      font-size: 16px;
     }
   }
 }
@@ -70,172 +154,275 @@
   gap: 12px;
 }
 
+// Terminal Score Badge
 .score-badge {
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 16px; // Daha büyük
+  font-weight: bold;
   display: flex;
   align-items: center;
   gap: 6px;
+  font-family: var(--terminal-font-mono);
+  border: 2px solid;
   
   &.score-high {
-    background: #dcfce7;
-    color: #166534;
+    background: rgba(0, 255, 136, 0.15);
+    color: #ffffff; // Beyaz text
+    border-color: var(--file-success);
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+    text-shadow: 0 0 10px var(--file-success);
   }
   
   &.score-medium {
-    background: #fef3c7;
-    color: #92400e;
+    background: rgba(255, 204, 68, 0.15);
+    color: #ffffff; // Beyaz text
+    border-color: var(--file-warning);
+    box-shadow: 0 0 20px rgba(255, 204, 68, 0.4);
+    text-shadow: 0 0 10px var(--file-warning);
   }
   
   &.score-low {
-    background: #fee2e2;
-    color: #991b1b;
+    background: rgba(255, 85, 119, 0.15);
+    color: #ffffff; // Beyaz text
+    border-color: var(--file-error);
+    box-shadow: 0 0 20px rgba(255, 85, 119, 0.4);
+    text-shadow: 0 0 10px var(--file-error);
   }
 }
 
 .search-type-badge {
-  padding: 6px 12px;
-  background: #e0f2fe;
-  color: #0369a1;
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: 600;
+  padding: 8px 14px;
+  background: rgba(85, 204, 255, 0.15);
+  color: #ffffff; // Beyaz text
+  border: 2px solid var(--file-secondary);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
   display: flex;
   align-items: center;
   gap: 4px;
+  font-family: var(--terminal-font-mono);
+  text-shadow: 0 0 8px var(--file-secondary);
+  box-shadow: 0 0 15px rgba(85, 204, 255, 0.3);
 }
 
+// Terminal Action Buttons
 .action-buttons {
   display: flex;
   gap: 8px;
 }
 
 .action-btn {
-  width: 44px;
-  height: 44px;
-  border: none;
-  border-radius: 12px;
+  width: 46px;
+  height: 46px;
+  border: 2px solid;
+  border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  font-size: 16px;
+  transition: all 0.3s ease;
+  font-size: 18px;
+  background: linear-gradient(145deg, var(--file-surface), var(--file-border));
+  position: relative;
+  color: #ffffff; // Beyaz icon color
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 6px;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  &:hover::before {
+    opacity: 1;
+  }
   
   &.copy-btn {
-    background: #f0f9ff;
-    color: #0369a1;
+    border-color: var(--file-secondary);
     
     &:hover {
-      background: #0369a1;
-      color: white;
+      background: var(--file-secondary);
+      color: var(--file-bg);
+      box-shadow: 0 0 25px var(--file-secondary);
+      transform: translateY(-2px);
     }
   }
   
   &.share-btn {
-    background: #f0fdf4;
-    color: #059669;
+    border-color: var(--file-success);
     
     &:hover {
-      background: #059669;
-      color: white;
+      background: var(--file-success);
+      color: var(--file-bg);
+      box-shadow: 0 0 25px var(--file-success);
+      transform: translateY(-2px);
     }
   }
   
   &.download-btn {
-    background: #fef3c7;
-    color: #92400e;
+    border-color: var(--file-warning);
     
     &:hover {
-      background: #92400e;
-      color: white;
+      background: var(--file-warning);
+      color: var(--file-bg);
+      box-shadow: 0 0 25px var(--file-warning);
+      transform: translateY(-2px);
     }
   }
   
   &.edit-btn {
-    background: #f3e8ff;
-    color: #7c3aed;
+    border-color: var(--file-accent);
     
     &:hover {
-      background: #7c3aed;
-      color: white;
+      background: var(--file-accent);
+      color: var(--file-bg);
+      box-shadow: 0 0 25px var(--file-accent);
+      transform: translateY(-2px);
     }
   }
   
   &.delete-btn {
-    background: #fee2e2;
-    color: #dc2626;
+    border-color: var(--file-error);
     
     &:hover {
-      background: #dc2626;
-      color: white;
+      background: var(--file-error);
+      color: var(--file-bg);
+      box-shadow: 0 0 25px var(--file-error);
+      transform: translateY(-2px);
     }
   }
   
   &.close-btn {
-    background: #f1f5f9;
-    color: #64748b;
+    border-color: var(--file-text-muted);
     
     &:hover {
-      background: #64748b;
-      color: white;
+      background: var(--file-text-muted);
+      color: var(--file-bg);
+      box-shadow: 0 0 25px var(--file-text-muted);
+      transform: translateY(-2px);
     }
   }
 }
 
-// ==================== SAVE MESSAGE ====================
+// ==================== TERMINAL SAVE MESSAGE ====================
 .save-message {
-  padding: 16px 32px;
-  background: #dcfce7;
-  color: #166534;
+  padding: 18px 32px;
+  background: rgba(0, 255, 136, 0.15);
+  color: #ffffff; // Beyaz text
   text-align: center;
-  font-weight: 600;
-  border-bottom: 1px solid #bbf7d0;
+  font-weight: bold;
+  border-bottom: 2px solid var(--file-success);
+  font-family: var(--terminal-font-mono);
+  font-size: 16px;
+  text-shadow: 0 0 12px var(--file-success);
+  animation: messageGlow 1s infinite alternate;
 }
 
-// ==================== TAB NAVIGATION ====================
+// ==================== TERMINAL TAB NAVIGATION ====================
 .tab-navigation {
   display: flex;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 2px solid var(--file-border);
+  position: relative;
+  z-index: 2;
 }
 
 .tab-btn {
-  padding: 16px 24px;
+  padding: 18px 26px;
   border: none;
   background: transparent;
-  color: #64748b;
+  color: #e6e6e6; // Daha açık
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 16px; // Daha büyük
+  font-weight: bold;
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   border-bottom: 3px solid transparent;
+  font-family: var(--terminal-font);
+  position: relative;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
   
   &:hover {
-    background: #f1f5f9;
-    color: #334155;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff; // Pure white hover
+    transform: translateY(-1px);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    
+    &::before {
+      opacity: 1;
+    }
+    
+    i {
+      color: var(--file-primary);
+      text-shadow: 0 0 10px currentColor;
+    }
   }
   
   &.active {
-    background: white;
-    color: #3b82f6;
-    border-bottom-color: #3b82f6;
+    background: var(--file-surface);
+    color: #ffffff; // Pure white active
+    border-bottom-color: var(--file-primary);
+    text-shadow: 0 0 10px var(--file-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+    
+    i {
+      color: var(--file-primary);
+      text-shadow: 0 0 12px currentColor;
+    }
   }
 }
 
-// ==================== CONTENT AREA ====================
+// ==================== TERMINAL CONTENT AREA ====================
 .content-area {
   min-height: 400px;
   max-height: 600px;
   overflow-y: auto;
+  background: rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 2;
+
+  // Custom terminal scrollbar
+  &::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--file-primary);
+    border-radius: 6px;
+    box-shadow: 0 0 12px var(--file-primary);
+
+    &:hover {
+      background: var(--file-secondary);
+      box-shadow: 0 0 18px var(--file-secondary);
+    }
+  }
 }
 
-// Content Tab
+// ==================== CONTENT TAB TERMINAL - NET YAZILAR ====================
 .content-tab {
   padding: 32px;
 }
@@ -250,10 +437,18 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 20px;
-    font-weight: 600;
-    color: #1e293b;
+    font-size: 22px;
+    font-weight: bold;
+    color: #ffffff; // Pure white
     margin: 0;
+    font-family: var(--terminal-font-title);
+    text-shadow: 0 0 12px var(--file-primary);
+    
+    i {
+      color: var(--file-secondary);
+      text-shadow: 0 0 10px currentColor;
+      font-size: 20px;
+    }
   }
 }
 
@@ -264,56 +459,96 @@
 }
 
 .content-stats-detail {
-  font-size: 14px;
-  color: #64748b;
+  font-size: 15px;
+  color: #e6e6e6; // Daha açık
+  font-family: var(--terminal-font-mono);
+  font-weight: 500;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
 }
 
 .toggle-btn {
-  padding: 8px 16px;
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  padding: 10px 18px;
+  background: linear-gradient(145deg, var(--file-surface), var(--file-border));
+  border: 2px solid var(--file-border);
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 13px;
-  color: #475569;
+  font-size: 14px;
+  color: #ffffff; // Pure white
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  font-family: var(--terminal-font);
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
   
   &:hover {
-    background: #e2e8f0;
+    border-color: var(--file-primary);
+    box-shadow: 0 0 18px var(--file-primary);
+    transform: translateY(-2px);
+    color: #ffffff;
+    text-shadow: 0 0 8px var(--file-primary);
   }
 }
 
+// Terminal Content Body - NET YAZILAR
 .content-body {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 24px;
+  background: rgba(0, 0, 0, 0.7); // Daha koyu arka plan
+  border: 2px solid var(--file-border);
+  border-radius: 8px;
+  padding: 28px;
   max-height: 400px;
   overflow-y: auto;
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.6);
   
   &.full-height {
     max-height: 70vh;
   }
-}
 
-.content-text {
-  line-height: 1.7;
-  color: #374151;
-  font-size: 15px;
-  white-space: pre-wrap;
-  
-  :global(mark.search-highlight) {
-    background: #fef3c7;
-    padding: 2px 6px;
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.4);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--file-primary);
     border-radius: 4px;
-    font-weight: 600;
+
+    &:hover {
+      background: var(--file-secondary);
+    }
   }
 }
 
-// Summary Tab
+// NET CONTENT TEXT - Blur'u kaldırdık
+.content-text {
+  line-height: 1.8;
+  color: #ffffff; // Pure white - blur yok!
+  font-size: 16px; // Daha büyük
+  white-space: pre-wrap;
+  font-family: var(--terminal-font-mono);
+  font-weight: 500; // Kalın font
+  text-shadow: none; // Blur efektini kaldırdık!
+  -webkit-font-smoothing: antialiased; // Daha net rendering
+  -moz-osx-font-smoothing: grayscale; // Firefox için
+  letter-spacing: 0.3px; // Harfler arası boşluk
+  
+  :global(mark.search-highlight) {
+    background: rgba(255, 204, 68, 0.4);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    color: #ffffff; // Beyaz highlight text
+    text-shadow: 0 0 8px var(--file-warning);
+    border: 1px solid var(--file-warning);
+  }
+}
+
+// ==================== SUMMARY TAB TERMINAL - NET YAZILAR ====================
 .summary-tab {
   padding: 32px;
 }
@@ -325,34 +560,53 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 20px;
-    font-weight: 600;
-    color: #1e293b;
+    font-size: 22px;
+    font-weight: bold;
+    color: #ffffff; // Pure white
     margin: 0;
+    font-family: var(--terminal-font-title);
+    text-shadow: 0 0 12px var(--file-secondary);
+    
+    i {
+      color: var(--file-primary);
+      text-shadow: 0 0 10px currentColor;
+      font-size: 20px;
+    }
   }
 }
 
 .summary-body {
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-radius: 12px;
-  padding: 24px;
+  background: rgba(85, 204, 255, 0.15);
+  border: 2px solid var(--file-secondary);
+  border-radius: 8px;
+  padding: 28px;
+  box-shadow: 0 0 25px rgba(85, 204, 255, 0.2);
 }
 
+// NET SUMMARY TEXT
 .summary-text {
-  line-height: 1.7;
-  color: #0c4a6e;
-  font-size: 16px;
+  line-height: 1.8;
+  color: #ffffff; // Pure white - blur yok!
+  font-size: 17px;
+  font-family: var(--terminal-font-mono);
+  font-weight: 500;
+  text-shadow: none; // Blur efektini kaldırdık!
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.3px;
   
   :global(mark.search-highlight) {
-    background: #fef3c7;
-    padding: 2px 6px;
+    background: rgba(255, 204, 68, 0.4);
+    padding: 3px 8px;
     border-radius: 4px;
-    font-weight: 600;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 0 8px var(--file-warning);
+    border: 1px solid var(--file-warning);
   }
 }
 
-// ==================== METADATA TAB ====================
+// ==================== METADATA TAB TERMINAL ====================
 .metadata-tab {
   padding: 32px;
 }
@@ -375,34 +629,46 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 18px;
-    font-weight: 600;
-    color: #1e293b;
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffffff; // Pure white
     margin: 0;
+    font-family: var(--terminal-font-title);
+    text-shadow: 0 0 10px var(--file-primary);
+    
+    i {
+      color: var(--file-secondary);
+      text-shadow: 0 0 8px currentColor;
+      font-size: 18px;
+    }
   }
   
   .edit-btn {
-    padding: 8px 16px;
-    background: #f3e8ff;
-    border: 1px solid #c4b5fd;
-    border-radius: 8px;
-    color: #7c3aed;
+    padding: 10px 18px;
+    background: linear-gradient(145deg, var(--file-surface), var(--file-border));
+    border: 2px solid var(--file-accent);
+    border-radius: 6px;
+    color: #ffffff; // Beyaz text
     cursor: pointer;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: bold;
     display: flex;
     align-items: center;
     gap: 6px;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    font-family: var(--terminal-font);
+    text-shadow: 0 0 8px var(--file-accent);
     
     &:hover {
-      background: #7c3aed;
-      color: white;
+      background: var(--file-accent);
+      color: var(--file-bg);
+      box-shadow: 0 0 25px var(--file-accent);
+      transform: translateY(-2px);
     }
   }
 }
 
-// Labels
+// ==================== RENKLI TERMINAL LABELS ====================
 .labels-container {
   display: flex;
   flex-wrap: wrap;
@@ -413,254 +679,472 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px;
-  background: #f1f5f9;
-  color: #475569;
+  padding: 12px 18px;
   border-radius: 20px;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  font-family: var(--terminal-font);
+  color: #ffffff; // Pure white text
+  border: 2px solid;
+  text-shadow: none; // Net yazı için
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.3px;
   
-  &:hover {
-    background: #e2e8f0;
-    transform: translateY(-1px);
+  // Label color variations
+  &:nth-child(10n+1) {
+    background: rgba(0, 255, 136, 0.2);
+    border-color: var(--label-color-1);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+    
+    &:hover {
+      box-shadow: 0 0 25px rgba(0, 255, 136, 0.5);
+      transform: translateY(-3px);
+      text-shadow: 0 0 8px var(--label-color-1);
+    }
   }
   
+  &:nth-child(10n+2) {
+    background: rgba(85, 204, 255, 0.2);
+    border-color: var(--label-color-2);
+    box-shadow: 0 0 15px rgba(85, 204, 255, 0.3);
+    
+    &:hover {
+      box-shadow: 0 0 25px rgba(85, 204, 255, 0.5);
+      transform: translateY(-3px);
+      text-shadow: 0 0 8px var(--label-color-2);
+    }
+  }
+  
+  &:nth-child(10n+3) {
+    background: rgba(255, 136, 85, 0.2);
+    border-color: var(--label-color-3);
+    box-shadow: 0 0 15px rgba(255, 136, 85, 0.3);
+    
+    &:hover {
+      box-shadow: 0 0 25px rgba(255, 136, 85, 0.5);
+      transform: translateY(-3px);
+      text-shadow: 0 0 8px var(--label-color-3);
+    }
+  }
+  
+  &:nth-child(10n+4) {
+    background: rgba(255, 204, 68, 0.2);
+    border-color: var(--label-color-4);
+    box-shadow: 0 0 15px rgba(255, 204, 68, 0.3);
+    
+    &:hover {
+      box-shadow: 0 0 25px rgba(255, 204, 68, 0.5);
+      transform: translateY(-3px);
+      text-shadow: 0 0 8px var(--label-color-4);
+    }
+  }
+  
+  &:nth-child(10n+5) {
+    background: rgba(255, 85, 119, 0.2);
+    border-color: var(--label-color-5);
+    box-shadow: 0 0 15px rgba(255, 85, 119, 0.3);
+    
+    &:hover {
+      box-shadow: 0 0 25px rgba(255, 85, 119, 0.5);
+      transform: translateY(-3px);
+      text-shadow: 0 0 8px var(--label-color-5);
+    }
+  }
+  
+  &:nth-child(10n+6) {
+    background: rgba(170, 136, 255, 0.2);
+    border-color: var(--label-color-6);
+    box-shadow: 0 0 15px rgba(170, 136, 255, 0.3);
+    
+    &:hover {
+      box-shadow: 0 0 25px rgba(170, 136, 255, 0.5);
+      transform: translateY(-3px);
+      text-shadow: 0 0 8px var(--label-color-6);
+    }
+  }
+  
+  &:nth-child(10n+7) {
+    background: rgba(136, 255, 204, 0.2);
+    border-color: var(--label-color-7);
+    box-shadow: 0 0 15px rgba(136, 255, 204, 0.3);
+    
+    &:hover {
+      box-shadow: 0 0 25px rgba(136, 255, 204, 0.5);
+      transform: translateY(-3px);
+      text-shadow: 0 0 8px var(--label-color-7);
+    }
+  }
+  
+  &:nth-child(10n+8) {
+    background: rgba(255, 170, 136, 0.2);
+    border-color: var(--label-color-8);
+    box-shadow: 0 0 15px rgba(255, 170, 136, 0.3);
+    
+    &:hover {
+      box-shadow: 0 0 25px rgba(255, 170, 136, 0.5);
+      transform: translateY(-3px);
+      text-shadow: 0 0 8px var(--label-color-8);
+    }
+  }
+  
+  &:nth-child(10n+9) {
+    background: rgba(204, 255, 85, 0.2);
+    border-color: var(--label-color-9);
+    box-shadow: 0 0 15px rgba(204, 255, 85, 0.3);
+    
+    &:hover {
+      box-shadow: 0 0 25px rgba(204, 255, 85, 0.5);
+      transform: translateY(-3px);
+      text-shadow: 0 0 8px var(--label-color-9);
+    }
+  }
+  
+  &:nth-child(10n+10) {
+    background: rgba(255, 136, 170, 0.2);
+    border-color: var(--label-color-10);
+    box-shadow: 0 0 15px rgba(255, 136, 170, 0.3);
+    
+    &:hover {
+      box-shadow: 0 0 25px rgba(255, 136, 170, 0.5);
+      transform: translateY(-3px);
+      text-shadow: 0 0 8px var(--label-color-10);
+    }
+  }
+  
+  // Highlighted label - search match
   &.highlighted {
-    background: #fef3c7;
-    color: #92400e;
-    border: 1px solid #f59e0b;
+    background: rgba(255, 204, 68, 0.3) !important;
+    border-color: var(--file-warning) !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 12px var(--file-warning) !important;
+    box-shadow: 0 0 25px rgba(255, 204, 68, 0.5) !important;
+    animation: labelPulse 2s infinite;
   }
   
   i {
-    font-size: 12px;
+    font-size: 14px;
+    opacity: 0.8;
   }
 }
 
 .no-labels {
-  padding: 24px;
+  padding: 28px;
   text-align: center;
-  color: #64748b;
+  color: #e6e6e6;
   font-style: italic;
-  background: #f8fafc;
-  border: 2px dashed #cbd5e1;
-  border-radius: 12px;
+  font-size: 16px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px dashed var(--file-border);
+  border-radius: 8px;
+  font-family: var(--terminal-font);
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
   
   i {
     margin-right: 8px;
+    color: var(--file-primary);
+    font-size: 18px;
   }
 }
 
-// Label Editing
+// ==================== TERMINAL LABEL EDITING ====================
 .labels-editing {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid var(--file-border);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.4);
 }
 
 .editable-labels {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 10px;
+  margin-bottom: 18px;
 }
 
 .editable-label {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  background: white;
-  border: 1px solid #cbd5e1;
-  border-radius: 16px;
-  font-size: 14px;
+  padding: 10px 14px;
+  background: var(--file-surface);
+  border: 2px solid var(--file-border);
+  border-radius: 18px;
+  font-size: 15px;
+  font-family: var(--terminal-font);
   
   .label-text {
-    color: #374151;
+    color: #ffffff; // Pure white
+    font-weight: bold;
+    text-shadow: none; // Net yazı
   }
   
   .remove-label {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     border: none;
-    background: #fee2e2;
-    color: #dc2626;
+    background: var(--file-error);
+    color: var(--file-bg);
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
-    transition: all 0.2s ease;
+    font-size: 12px;
+    transition: all 0.3s ease;
+    font-weight: bold;
     
     &:hover {
-      background: #dc2626;
-      color: white;
+      box-shadow: 0 0 12px var(--file-error);
+      transform: scale(1.15);
     }
   }
 }
 
 .add-label-section {
   display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 10px;
+  margin-bottom: 18px;
 }
 
 .label-input {
   flex: 1;
-  padding: 10px 16px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 12px 18px;
+  border: 2px solid var(--file-border);
+  border-radius: 6px;
+  font-size: 15px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff; // Pure white
+  font-family: var(--terminal-font);
+  font-weight: 500;
+  text-shadow: none; // Net yazı
+  -webkit-font-smoothing: antialiased;
   
   &:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: var(--file-primary);
+    box-shadow: 0 0 18px var(--file-primary);
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  &::placeholder {
+    color: #cccccc;
+    font-weight: normal;
   }
 }
 
 .add-label-btn {
-  padding: 10px 16px;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 8px;
+  padding: 12px 18px;
+  background: var(--file-primary);
+  color: var(--file-bg);
+  border: 2px solid var(--file-primary);
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: bold;
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  font-family: var(--terminal-font);
   
   &:hover:not(:disabled) {
-    background: #2563eb;
+    box-shadow: 0 0 25px var(--file-primary);
+    transform: translateY(-2px);
   }
   
   &:disabled {
-    background: #cbd5e1;
+    background: var(--file-text-muted);
+    border-color: var(--file-text-muted);
     cursor: not-allowed;
+    opacity: 0.5;
   }
 }
 
 .label-actions {
   display: flex;
-  gap: 12px;
+  gap: 14px;
 }
 
 .save-labels-btn {
-  padding: 10px 20px;
-  background: #059669;
-  color: white;
-  border: none;
-  border-radius: 8px;
+  padding: 12px 22px;
+  background: var(--file-success);
+  color: var(--file-bg);
+  border: 2px solid var(--file-success);
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: bold;
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  font-family: var(--terminal-font);
   
   &:hover:not(:disabled) {
-    background: #047857;
+    box-shadow: 0 0 30px var(--file-success);
+    transform: translateY(-2px);
   }
   
   &:disabled {
-    background: #cbd5e1;
+    background: var(--file-text-muted);
+    border-color: var(--file-text-muted);
     cursor: not-allowed;
+    opacity: 0.5;
   }
 }
 
 .cancel-labels-btn {
-  padding: 10px 20px;
-  background: #f1f5f9;
-  color: #64748b;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  padding: 12px 22px;
+  background: linear-gradient(145deg, var(--file-surface), var(--file-border));
+  color: #ffffff; // Pure white
+  border: 2px solid var(--file-border);
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: bold;
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  font-family: var(--terminal-font);
+  text-shadow: none; // Net yazı
   
   &:hover {
-    background: #e2e8f0;
+    border-color: var(--file-error);
+    color: #ffffff;
+    box-shadow: 0 0 18px var(--file-error);
+    transform: translateY(-2px);
+    text-shadow: 0 0 8px var(--file-error);
   }
 }
 
-// Date Information
+// ==================== TERMINAL DATE INFO ====================
 .date-info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 16px;
+  gap: 18px;
 }
 
 .date-item {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  gap: 18px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid var(--file-border);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: var(--file-secondary);
+    box-shadow: 0 0 20px rgba(85, 204, 255, 0.3);
+  }
   
   i {
-    font-size: 20px;
-    color: #3b82f6;
+    font-size: 24px;
+    color: var(--file-secondary);
+    text-shadow: 0 0 10px currentColor;
   }
 }
 
 .date-details {
   .date-label {
     display: block;
-    font-size: 12px;
-    color: #64748b;
-    font-weight: 600;
+    font-size: 13px;
+    color: #e6e6e6; // Daha açık
+    font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    font-family: var(--terminal-font-mono);
+    text-shadow: none; // Net yazı
   }
   
   .date-value {
     display: block;
-    font-size: 14px;
-    color: #1e293b;
-    font-weight: 500;
-    margin-top: 4px;
+    font-size: 16px;
+    color: #ffffff; // Pure white
+    font-weight: bold;
+    margin-top: 6px;
+    font-family: var(--terminal-font);
+    text-shadow: none; // Net yazı
   }
 }
 
-// Technical Information
+// ==================== TERMINAL TECH INFO ====================
 .tech-info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 16px;
+  gap: 18px;
 }
 
 .tech-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid var(--file-border);
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: var(--file-primary);
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+  }
   
   .tech-label {
-    font-size: 14px;
-    color: #64748b;
-    font-weight: 500;
+    font-size: 15px;
+    color: #e6e6e6; // Daha açık
+    font-weight: bold;
+    font-family: var(--terminal-font-mono);
+    text-shadow: none; // Net yazı
   }
   
   .tech-value {
-    font-size: 14px;
-    color: #1e293b;
-    font-weight: 600;
+    font-size: 16px;
+    color: #ffffff; // Pure white
+    font-weight: bold;
+    font-family: var(--terminal-font);
+    text-shadow: 0 0 8px var(--file-primary);
+  }
+}
+
+// ==================== ANIMATIONS ====================
+@keyframes terminalScan {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes iconGlow {
+  from { 
+    text-shadow: 0 0 15px var(--file-primary);
+  }
+  to { 
+    text-shadow: 0 0 25px var(--file-primary), 0 0 35px var(--file-primary);
+  }
+}
+
+@keyframes messageGlow {
+  from { 
+    text-shadow: 0 0 8px var(--file-success);
+  }
+  to { 
+    text-shadow: 0 0 15px var(--file-success), 0 0 25px var(--file-success);
+  }
+}
+
+// Label pulse animation for highlighted labels
+@keyframes labelPulse {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: scale(1.02);
   }
 }
 
@@ -695,5 +1179,14 @@
   .date-info-grid,
   .tech-info-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+// ==================== ACCESSIBILITY ====================
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

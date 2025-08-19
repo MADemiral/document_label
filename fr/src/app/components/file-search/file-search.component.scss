@@ -17,10 +17,10 @@ $radius-sm: 0.375rem;
 $radius-md: 0.5rem;
 $radius-lg: 0.75rem;
 
-// Retro Search Variables
+// Retro Search Variables - Daha net yazılar için
 :root {
-  --search-bg: #1e2a3a;
-  --search-surface: #2a3f5f;
+  --search-bg: #0f1419;
+  --search-surface: #1a2332;
   --search-border: #4a6fa5;
   --search-primary: #00ff88;
   --search-secondary: #55ccff;
@@ -28,9 +28,9 @@ $radius-lg: 0.75rem;
   --search-warning: #ffcc44;
   --search-error: #ff5577;
   --search-success: #00ff88;
-  --search-text: #ffffff;
-  --search-text-dim: #cccccc;
-  --search-text-muted: #888888;
+  --search-text: #ffffff; // Pure white
+  --search-text-dim: #e6e6e6; // Daha açık
+  --search-text-muted: #cccccc; // Daha açık
   
   --terminal-font: 'VT323', 'Courier New', monospace;
   --terminal-font-mono: 'Share Tech Mono', monospace;
@@ -45,7 +45,7 @@ $radius-lg: 0.75rem;
   position: relative;
   overflow-x: hidden;
 
-  // Terminal Scan Lines Effect
+  // Terminal Scan Lines Effect - Daha hafif
   .terminal-scanlines {
     position: fixed;
     top: 0;
@@ -55,8 +55,8 @@ $radius-lg: 0.75rem;
     background: repeating-linear-gradient(
       0deg,
       transparent,
-      transparent 2px,
-      rgba(0, 255, 136, 0.02) 3px
+      transparent 4px,
+      rgba(0, 255, 136, 0.008) 5px // Çok daha hafif
     );
     pointer-events: none;
     z-index: 1;
@@ -99,12 +99,13 @@ $radius-lg: 0.75rem;
           font-size: 14px;
           transition: all 0.3s ease;
           background: var(--search-surface);
-          color: var(--search-text);
+          color: #ffffff; // Pure white controls
+          font-weight: bold;
 
           &:hover {
             border-color: var(--search-primary);
             color: var(--search-primary);
-            box-shadow: 0 0 10px var(--search-primary);
+            box-shadow: 0 0 12px var(--search-primary);
           }
 
           &.close {
@@ -126,16 +127,16 @@ $radius-lg: 0.75rem;
 
         .title-text {
           font-family: var(--terminal-font-title);
-          font-size: 18px;
-          color: var(--search-text);
-          text-shadow: 0 0 10px var(--search-primary);
+          font-size: 20px; // Biraz daha büyük
+          color: #ffffff; // Pure white title
+          text-shadow: 0 0 12px var(--search-primary);
           letter-spacing: 1px;
           font-weight: bold;
         }
 
         .status-led {
-          width: 12px;
-          height: 12px;
+          width: 14px; // Biraz daha büyük
+          height: 14px;
           border-radius: 50%;
           background: var(--search-text-muted);
           border: 1px solid var(--search-border);
@@ -143,7 +144,7 @@ $radius-lg: 0.75rem;
 
           &.active {
             background: var(--search-primary);
-            box-shadow: 0 0 15px var(--search-primary);
+            box-shadow: 0 0 18px var(--search-primary);
             animation: ledPulse 2s infinite;
           }
         }
@@ -159,100 +160,104 @@ $radius-lg: 0.75rem;
         gap: 15px;
         margin-bottom: 20px;
         font-family: var(--terminal-font-mono);
-        font-size: 16px;
+        font-size: 18px; // Daha büyük
 
         .system-prompt {
           color: var(--search-secondary);
-          text-shadow: 0 0 8px currentColor;
+          text-shadow: 0 0 10px currentColor; // Güçlü glow
           font-weight: bold;
         }
 
         .system-status {
-          color: var(--search-primary);
-          text-shadow: 0 0 8px currentColor;
+          color: #ffffff; // Pure white status
+          text-shadow: 0 0 10px var(--search-primary);
           font-weight: bold;
         }
 
         .cursor-blink {
-          color: var(--search-text);
+          color: #ffffff; // Pure white cursor
           animation: blink 1s infinite;
+          font-size: 20px; // Daha büyük cursor
         }
       }
 
-      // Search Input Terminal - Daha okunabilir
+      // Search Input Terminal - NET YAZILAR
       .search-input-terminal {
         margin-bottom: 25px;
 
         .input-line {
           display: flex;
           align-items: center;
-          gap: 10px;
-          margin-bottom: 10px;
+          gap: 12px; // Daha fazla gap
+          margin-bottom: 12px;
 
           .input-prompt {
-            color: var(--search-primary); // Daha parlak yeşil
-            text-shadow: 0 0 10px currentColor; // Daha güçlü glow
+            color: var(--search-primary);
+            text-shadow: 0 0 12px currentColor;
             font-family: var(--terminal-font-mono);
-            font-size: 16px;
+            font-size: 18px; // Daha büyük
             font-weight: bold;
-            min-width: 60px;
+            min-width: 70px;
           }
 
           .terminal-input {
             flex: 1;
-            background: rgba(0, 0, 0, 0.6); // Daha koyu arka plan
+            background: rgba(0, 0, 0, 0.8); // Daha koyu arka plan
             border: 2px solid var(--search-border);
             color: #ffffff; // Pure white text
             font-family: var(--terminal-font-mono);
-            font-size: 16px;
-            padding: 12px 15px;
+            font-size: 17px; // Daha büyük font
+            padding: 14px 18px; // Daha fazla padding
             border-radius: 8px;
             outline: none;
-            text-shadow: 0 0 8px var(--search-primary); // Güçlü text glow
+            text-shadow: none; // Blur'u kaldırdık!
             transition: all 0.3s ease;
-            font-weight: 500; // Biraz daha kalın
+            font-weight: 600; // Daha kalın font
+            -webkit-font-smoothing: antialiased; // Net rendering
+            -moz-osx-font-smoothing: grayscale;
+            letter-spacing: 0.3px; // Letter spacing
 
             &:focus {
               border-color: var(--search-primary);
               box-shadow: 
-                0 0 20px var(--search-primary),
-                inset 0 0 20px rgba(0, 255, 136, 0.2);
-              background: rgba(0, 0, 0, 0.8); // Focus'ta daha koyu
+                0 0 25px var(--search-primary),
+                inset 0 0 25px rgba(0, 255, 136, 0.2);
+              background: rgba(0, 0, 0, 0.9);
               color: #ffffff; // Focus'ta da beyaz
             }
 
             &::placeholder {
               color: #cccccc; // Daha açık placeholder
               font-style: italic;
-              opacity: 0.8; // Daha opak
+              opacity: 0.9;
+              font-weight: normal;
             }
           }
 
-          // Input actions butonları daha görünür
           .input-actions {
             display: flex;
-            gap: 8px;
+            gap: 10px;
 
             .terminal-btn {
               background: linear-gradient(145deg, var(--search-surface), var(--search-border));
               border: 2px solid var(--search-border);
               color: #ffffff; // Pure white text
               font-family: var(--terminal-font);
-              font-size: 16px;
-              padding: 10px 12px;
+              font-size: 17px; // Daha büyük
+              padding: 12px 15px; // Daha fazla padding
               border-radius: 8px;
               cursor: pointer;
               transition: all 0.3s ease;
               position: relative;
-              text-shadow: 0 0 8px currentColor; // Text glow
-              font-weight: bold; // Bold text
+              text-shadow: none; // Net text
+              font-weight: bold;
               
               &:hover:not(:disabled) {
                 border-color: var(--search-primary);
-                box-shadow: 0 0 20px var(--search-primary);
+                box-shadow: 0 0 25px var(--search-primary);
                 transform: translateY(-2px);
                 background: linear-gradient(145deg, var(--search-border), var(--search-surface));
-                color: #ffffff; // Hover'da da beyaz
+                color: #ffffff;
               }
 
               &:active {
@@ -268,13 +273,13 @@ $radius-lg: 0.75rem;
               &.search-btn {
                 background: linear-gradient(145deg, #2a5f3a, #1a4f2a);
                 border-color: var(--search-success);
-                color: var(--search-success);
-                text-shadow: 0 0 10px currentColor;
+                color: #ffffff; // Beyaz text
+                text-shadow: 0 0 10px var(--search-success);
 
                 &:hover:not(:disabled) {
                   border-color: var(--search-success);
-                  box-shadow: 0 0 25px var(--search-success);
-                  color: #ffffff; // Hover'da beyaz
+                  box-shadow: 0 0 30px var(--search-success);
+                  color: #ffffff;
                   background: linear-gradient(145deg, #3a6f4a, #2a5f3a);
                 }
 
@@ -286,13 +291,13 @@ $radius-lg: 0.75rem;
               &.clear-btn {
                 background: linear-gradient(145deg, #5f2a2a, #4f1a1a);
                 border-color: var(--search-error);
-                color: var(--search-error);
-                text-shadow: 0 0 10px currentColor;
+                color: #ffffff; // Beyaz text
+                text-shadow: 0 0 10px var(--search-error);
 
                 &:hover {
                   border-color: var(--search-error);
-                  box-shadow: 0 0 25px var(--search-error);
-                  color: #ffffff; // Hover'da beyaz
+                  box-shadow: 0 0 30px var(--search-error);
+                  color: #ffffff;
                   background: linear-gradient(145deg, #6f3a3a, #5f2a2a);
                 }
               }
@@ -300,97 +305,102 @@ $radius-lg: 0.75rem;
           }
         }
 
-        // Hint Terminal - Daha okunabilir
+        // Hint Terminal - NET YAZILAR
         .hint-terminal {
           display: flex;
           align-items: center;
-          gap: 8px;
-          padding: 12px 15px; // Daha fazla padding
-          background: rgba(255, 204, 68, 0.2); // Daha opak arka plan
-          border: 2px solid var(--search-warning); // Daha kalın border
+          gap: 10px;
+          padding: 15px 20px; // Daha fazla padding
+          background: rgba(255, 204, 68, 0.2);
+          border: 2px solid var(--search-warning);
           border-radius: 6px;
-          font-size: 14px;
-          margin-bottom: 10px;
+          font-size: 16px; // Daha büyük
+          margin-bottom: 12px;
 
           .hint-prompt {
             color: var(--search-warning);
-            text-shadow: 0 0 8px currentColor; // Güçlü glow
+            text-shadow: 0 0 10px currentColor;
             font-weight: bold;
+            font-size: 17px;
           }
 
           .hint-text {
             color: #ffffff; // Pure white text
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); // Beyaz glow
-            font-weight: 500;
+            text-shadow: none; // Net yazı
+            font-weight: 600;
+            -webkit-font-smoothing: antialiased;
+            letter-spacing: 0.2px;
           }
 
           .warning-icon {
             color: var(--search-warning);
-            text-shadow: 0 0 10px currentColor;
+            text-shadow: 0 0 12px currentColor;
             animation: warningBlink 2s infinite;
-            font-size: 16px;
+            font-size: 18px;
           }
         }
 
-        // Suggestions Terminal - Çok daha okunabilir
+        // Suggestions Terminal - ÇOK NET YAZILAR
         .suggestions-terminal {
-          background: rgba(0, 0, 0, 0.8); // Çok daha koyu arka plan
-          border: 2px solid var(--search-primary); // Yeşil border
+          background: rgba(0, 0, 0, 0.9); // Çok daha koyu
+          border: 2px solid var(--search-primary);
           border-radius: 8px;
-          margin-top: 10px;
-          max-height: 300px; // Daha yüksek
+          margin-top: 12px;
+          max-height: 350px;
           overflow-y: auto;
-          box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); // Yeşil glow
+          box-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
 
           .suggestions-header {
             font-family: 'Courier New', monospace;
-            font-size: 14px; // Biraz daha büyük
-            color: var(--search-primary);
-            text-shadow: 0 0 8px currentColor;
-            padding: 10px 15px; // Daha fazla padding
+            font-size: 15px; // Daha büyük
+            color: #ffffff; // Pure white header
+            text-shadow: 0 0 10px var(--search-primary);
+            padding: 12px 18px;
             text-align: center;
             white-space: pre;
             border-bottom: 2px solid var(--search-primary);
-            background: rgba(0, 255, 136, 0.1);
+            background: rgba(0, 255, 136, 0.15);
             font-weight: bold;
           }
 
           .suggestions-list {
-            padding: 8px;
+            padding: 10px;
 
             .suggestion-item {
               display: flex;
               align-items: center;
-              gap: 10px; // Daha fazla gap
-              padding: 12px 15px; // Daha fazla padding
+              gap: 12px;
+              padding: 15px 20px; // Daha fazla padding
               cursor: pointer;
               border-radius: 6px;
               transition: all 0.3s ease;
-              font-size: 15px; // Biraz daha büyük font
-              margin-bottom: 2px; // Item'lar arası boşluk
+              font-size: 16px; // Daha büyük font
+              margin-bottom: 3px;
 
               .suggestion-index {
-                color: var(--search-secondary);
-                text-shadow: 0 0 5px currentColor;
+                color: #ffffff; // Pure white index
+                text-shadow: 0 0 8px var(--search-secondary);
                 font-weight: bold;
-                min-width: 30px;
-                background: rgba(85, 204, 255, 0.2);
-                padding: 2px 6px;
+                min-width: 35px;
+                background: rgba(85, 204, 255, 0.25);
+                padding: 4px 8px;
                 border-radius: 4px;
-                font-size: 12px;
+                font-size: 14px;
               }
 
               .suggestion-icon {
-                font-size: 14px;
+                font-size: 16px;
                 color: var(--search-primary);
-                text-shadow: 0 0 5px currentColor;
+                text-shadow: 0 0 8px currentColor;
               }
 
               .suggestion-name {
                 flex: 1;
                 color: #ffffff; // Pure white
-                text-shadow: 0 0 5px rgba(255, 255, 255, 0.3); // Beyaz glow
-                font-weight: 500;
+                text-shadow: none; // Net yazı
+                font-weight: 600;
+                -webkit-font-smoothing: antialiased;
+                letter-spacing: 0.3px;
               }
 
               .suggestion-arrow {
@@ -398,16 +408,16 @@ $radius-lg: 0.75rem;
                 font-weight: bold;
                 opacity: 0;
                 transition: opacity 0.3s ease;
-                text-shadow: 0 0 8px currentColor;
-                font-size: 16px;
+                text-shadow: 0 0 10px currentColor;
+                font-size: 18px;
               }
 
               &:hover,
               &.active {
-                background: rgba(0, 255, 136, 0.2); // Daha opak hover
+                background: rgba(0, 255, 136, 0.25);
                 border: 2px solid var(--search-primary);
-                transform: translateX(8px);
-                box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+                transform: translateX(10px);
+                box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
 
                 .suggestion-name {
                   color: #ffffff;
@@ -424,11 +434,11 @@ $radius-lg: 0.75rem;
 
           // Custom scrollbar
           &::-webkit-scrollbar {
-            width: 8px;
+            width: 10px;
           }
 
           &::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
           }
 
           &::-webkit-scrollbar-thumb {
@@ -442,55 +452,56 @@ $radius-lg: 0.75rem;
         }
       }
 
-      // Control Panel Terminal - Daha okunabilir
+      // Control Panel Terminal - NET YAZILAR
       .control-panel-terminal {
         display: flex;
         align-items: center;
         gap: 20px;
         margin-bottom: 20px;
-        padding: 18px; // Daha fazla padding
-        background: rgba(0, 0, 0, 0.5); // Daha koyu arka plan
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.6);
         border: 2px solid var(--search-border);
         border-radius: 8px;
-        box-shadow: inset 0 0 20px rgba(0, 255, 136, 0.1);
+        box-shadow: inset 0 0 25px rgba(0, 255, 136, 0.1);
 
         .control-group {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 12px;
 
           .control-label {
-            color: var(--search-primary); // Yeşil label
-            text-shadow: 0 0 8px currentColor;
+            color: var(--search-primary);
+            text-shadow: 0 0 10px currentColor;
             font-family: var(--terminal-font-mono);
-            font-size: 15px; // Biraz daha büyük
+            font-size: 16px; // Daha büyük
             font-weight: bold;
-            min-width: 60px;
+            min-width: 70px;
           }
 
           .terminal-select {
-            background: rgba(0, 0, 0, 0.7); // Daha koyu arka plan
+            background: rgba(0, 0, 0, 0.8);
             border: 2px solid var(--search-border);
             color: #ffffff; // Pure white text
             font-family: var(--terminal-font);
-            font-size: 14px;
-            padding: 10px 15px; // Daha fazla padding
+            font-size: 15px; // Daha büyük
+            padding: 12px 18px;
             border-radius: 6px;
             outline: none;
             cursor: pointer;
-            text-shadow: 0 0 5px var(--search-primary);
-            font-weight: 500;
+            text-shadow: none;
+            font-weight: 600;
+            -webkit-font-smoothing: antialiased;
 
             &:focus {
               border-color: var(--search-primary);
-              box-shadow: 0 0 15px var(--search-primary);
+              box-shadow: 0 0 18px var(--search-primary);
             }
 
             option {
               background: var(--search-bg);
-              color: #ffffff; // Beyaz option text
-              padding: 8px;
-              font-weight: 500;
+              color: #ffffff;
+              padding: 10px;
+              font-weight: 600;
             }
           }
 
@@ -499,21 +510,22 @@ $radius-lg: 0.75rem;
             border: 2px solid var(--search-border);
             color: #ffffff; // Pure white text
             font-family: var(--terminal-font);
-            font-size: 14px;
-            padding: 10px 15px;
+            font-size: 15px;
+            padding: 12px 18px;
             border-radius: 6px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             transition: all 0.3s ease;
-            text-shadow: 0 0 5px currentColor;
+            text-shadow: none;
             font-weight: bold;
 
             .btn-icon {
               font-weight: bold;
               color: var(--search-primary);
-              text-shadow: 0 0 8px currentColor;
+              text-shadow: 0 0 10px currentColor;
+              font-size: 16px;
             }
 
             .btn-text {
@@ -523,7 +535,7 @@ $radius-lg: 0.75rem;
 
             &:hover {
               border-color: var(--search-primary);
-              box-shadow: 0 0 15px var(--search-primary);
+              box-shadow: 0 0 18px var(--search-primary);
               transform: translateY(-1px);
               color: #ffffff;
             }
@@ -531,8 +543,8 @@ $radius-lg: 0.75rem;
             &.active {
               background: linear-gradient(145deg, #2a5f3a, #1a4f2a);
               border-color: var(--search-success);
-              color: #ffffff; // Aktif durumda da beyaz
-              box-shadow: 0 0 20px var(--search-success);
+              color: #ffffff;
+              box-shadow: 0 0 25px var(--search-success);
 
               .btn-icon {
                 color: var(--search-success);
@@ -543,22 +555,22 @@ $radius-lg: 0.75rem;
         }
       }
 
-      // Advanced Filters Terminal - Daha okunabilir
+      // Advanced Filters Terminal - NET YAZILAR
       .filters-terminal {
-        background: rgba(0, 0, 0, 0.6); // Daha koyu arka plan
+        background: rgba(0, 0, 0, 0.7);
         border: 2px solid var(--search-border);
         border-radius: 10px;
-        padding: 25px; // Daha fazla padding
+        padding: 28px;
         margin-bottom: 20px;
         box-shadow: inset 0 0 30px rgba(0, 255, 136, 0.1);
 
         .filters-border {
           font-family: 'Courier New', monospace;
-          font-size: 14px; // Biraz daha büyük
-          color: var(--search-primary); // Yeşil border text
-          text-shadow: 0 0 8px currentColor;
+          font-size: 15px; // Daha büyük
+          color: #ffffff; // Pure white border text
+          text-shadow: 0 0 10px var(--search-primary);
           text-align: center;
-          margin-bottom: 20px;
+          margin-bottom: 25px;
           white-space: pre;
           font-weight: bold;
         }
@@ -566,46 +578,47 @@ $radius-lg: 0.75rem;
         .filters-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-          gap: 20px; // Daha fazla gap
-          margin-bottom: 25px;
+          gap: 25px;
+          margin-bottom: 30px;
 
           .filter-terminal {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
 
             .filter-label {
               color: var(--search-secondary);
-              text-shadow: 0 0 8px currentColor;
+              text-shadow: 0 0 10px currentColor;
               font-family: var(--terminal-font-mono);
-              font-size: 15px; // Biraz daha büyük
+              font-size: 16px; // Daha büyük
               font-weight: bold;
-              min-width: 70px;
+              min-width: 80px;
             }
 
             .filter-select,
             .filter-input {
               flex: 1;
-              background: rgba(0, 0, 0, 0.7); // Daha koyu arka plan
+              background: rgba(0, 0, 0, 0.8);
               border: 2px solid var(--search-border);
               color: #ffffff; // Pure white text
               font-family: var(--terminal-font);
-              font-size: 14px;
-              padding: 10px 12px; // Daha fazla padding
+              font-size: 15px;
+              padding: 12px 15px;
               border-radius: 6px;
               outline: none;
-              text-shadow: 0 0 5px var(--search-primary);
-              font-weight: 500;
+              text-shadow: none;
+              font-weight: 600;
+              -webkit-font-smoothing: antialiased;
 
               &:focus {
                 border-color: var(--search-primary);
-                box-shadow: 0 0 15px var(--search-primary);
-                background: rgba(0, 0, 0, 0.8);
+                box-shadow: 0 0 20px var(--search-primary);
+                background: rgba(0, 0, 0, 0.9);
               }
 
               &::placeholder {
                 color: #cccccc;
-                opacity: 0.8;
+                opacity: 0.9;
               }
             }
           }
@@ -620,20 +633,20 @@ $radius-lg: 0.75rem;
             border: 2px solid var(--search-error);
             color: #ffffff; // Pure white text
             font-family: var(--terminal-font);
-            font-size: 15px; // Biraz daha büyük
-            padding: 12px 25px; // Daha fazla padding
+            font-size: 16px;
+            padding: 15px 30px;
             border-radius: 8px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             transition: all 0.3s ease;
             font-weight: bold;
-            text-shadow: 0 0 8px var(--search-error);
+            text-shadow: 0 0 10px var(--search-error);
 
             &:hover:not(:disabled) {
               border-color: var(--search-error);
-              box-shadow: 0 0 25px var(--search-error);
+              box-shadow: 0 0 30px var(--search-error);
               color: #ffffff;
               background: linear-gradient(145deg, #6f3a3a, #5f2a2a);
               transform: translateY(-2px);
@@ -650,7 +663,7 @@ $radius-lg: 0.75rem;
     }
   }
 
-  // Results Terminal Header
+  // Results Terminal Header - NET YAZILAR
   .results-terminal-header {
     margin: 20px;
     background: var(--search-surface);
@@ -662,55 +675,56 @@ $radius-lg: 0.75rem;
     overflow: hidden;
 
     .results-display {
-      padding: 20px;
+      padding: 25px;
       text-align: center;
 
       .results-banner {
         font-family: 'Courier New', monospace;
-        font-size: 14px;
-        color: var(--search-primary);
+        font-size: 15px; // Daha büyük
+        color: #ffffff; // Pure white banner
         white-space: pre;
-        text-shadow: 0 0 8px currentColor;
+        text-shadow: 0 0 12px var(--search-primary);
         animation: textGlow 3s infinite alternate;
+        font-weight: bold;
       }
     }
 
-    // View Controls Terminal
+    // View Controls Terminal - NET YAZILAR
     .view-controls-terminal {
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.4);
       border-top: 2px solid var(--search-border);
-      padding: 15px 20px;
+      padding: 18px 25px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 15px;
+      gap: 18px;
 
       .control-group {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
 
         .control-label {
           color: var(--search-secondary);
-          text-shadow: 0 0 5px currentColor;
+          text-shadow: 0 0 8px currentColor;
           font-family: var(--terminal-font-mono);
-          font-size: 14px;
+          font-size: 15px; // Daha büyük
           font-weight: bold;
         }
 
         .mode-buttons {
           display: flex;
-          gap: 5px;
+          gap: 6px;
 
           .mode-btn {
             background: linear-gradient(145deg, var(--search-surface), var(--search-border));
             border: 2px solid var(--search-border);
-            color: var(--search-text);
+            color: #ffffff; // Pure white
             font-family: var(--terminal-font);
-            font-size: 16px;
-            width: 36px;
-            height: 36px;
+            font-size: 18px;
+            width: 40px; // Biraz daha büyük
+            height: 40px;
             border-radius: 6px;
             cursor: pointer;
             display: flex;
@@ -720,45 +734,52 @@ $radius-lg: 0.75rem;
 
             &:hover {
               border-color: var(--search-primary);
-              box-shadow: 0 0 10px var(--search-primary);
+              box-shadow: 0 0 15px var(--search-primary);
               transform: translateY(-2px);
+              color: #ffffff;
             }
 
             &.active {
               background: linear-gradient(145deg, #2a5f3a, #1a4f2a);
               border-color: var(--search-success);
-              color: var(--search-success);
-              box-shadow: 0 0 15px var(--search-success);
+              color: #ffffff; // Aktif durumda da beyaz
+              box-shadow: 0 0 20px var(--search-success);
               transform: translateY(-2px);
             }
           }
         }
 
         .sort-select {
-          background: rgba(0, 0, 0, 0.5);
+          background: rgba(0, 0, 0, 0.6);
           border: 2px solid var(--search-border);
-          color: var(--search-text);
+          color: #ffffff; // Pure white text
           font-family: var(--terminal-font);
-          font-size: 14px;
-          padding: 8px 12px;
+          font-size: 15px;
+          padding: 10px 15px;
           border-radius: 6px;
           outline: none;
           cursor: pointer;
+          font-weight: 600;
 
           &:focus {
             border-color: var(--search-primary);
-            box-shadow: 0 0 8px var(--search-primary);
+            box-shadow: 0 0 12px var(--search-primary);
+          }
+
+          option {
+            background: var(--search-bg);
+            color: #ffffff;
           }
         }
 
         .sort-order-btn {
           background: linear-gradient(145deg, var(--search-surface), var(--search-border));
           border: 2px solid var(--search-border);
-          color: var(--search-text);
+          color: #ffffff; // Pure white
           font-family: var(--terminal-font);
-          font-size: 18px;
-          width: 36px;
-          height: 36px;
+          font-size: 20px;
+          width: 40px;
+          height: 40px;
           border-radius: 6px;
           cursor: pointer;
           display: flex;
@@ -768,7 +789,7 @@ $radius-lg: 0.75rem;
 
           &:hover {
             border-color: var(--search-primary);
-            box-shadow: 0 0 10px var(--search-primary);
+            box-shadow: 0 0 15px var(--search-primary);
             transform: translateY(-2px);
           }
         }
@@ -776,29 +797,29 @@ $radius-lg: 0.75rem;
         .preview-btn {
           background: linear-gradient(145deg, var(--search-surface), var(--search-border));
           border: 2px solid var(--search-border);
-          color: var(--search-text);
+          color: #ffffff; // Pure white text
           font-family: var(--terminal-font);
-          font-size: 14px;
-          padding: 8px 15px;
+          font-size: 15px;
+          padding: 10px 18px;
           border-radius: 6px;
           cursor: pointer;
           display: flex;
           align-items: center;
-          gap: 6px;
+          gap: 8px;
           transition: all 0.3s ease;
           font-weight: bold;
 
           &:hover {
             border-color: var(--search-primary);
-            box-shadow: 0 0 10px var(--search-primary);
+            box-shadow: 0 0 15px var(--search-primary);
             transform: translateY(-2px);
           }
 
           &.active {
             background: linear-gradient(145deg, #3a4f6a, #2a3f5a);
             border-color: var(--search-secondary);
-            color: var(--search-secondary);
-            box-shadow: 0 0 15px var(--search-secondary);
+            color: #ffffff; // Aktif durumda da beyaz
+            box-shadow: 0 0 20px var(--search-secondary);
             transform: translateY(-2px);
           }
         }
@@ -806,11 +827,11 @@ $radius-lg: 0.75rem;
     }
   }
 
-  // Search Results Terminal
+  // Search Results Terminal - NET YAZILAR
   .search-results-terminal {
     margin: 20px;
 
-    // Cards View Terminal
+    // Cards View Terminal - NET YAZILAR
     .results-cards-terminal {
       .document-cards-grid {
         display: grid;
@@ -838,37 +859,38 @@ $radius-lg: 0.75rem;
           .card-terminal-header {
             background: linear-gradient(135deg, #364c70, #2a3f5f);
             border-bottom: 1px solid var(--search-border);
-            padding: 15px;
+            padding: 18px;
 
             .card-chrome {
               display: flex;
               justify-content: space-between;
               align-items: center;
-              margin-bottom: 10px;
+              margin-bottom: 12px;
 
               .card-controls {
                 display: flex;
-                gap: 5px;
+                gap: 6px;
 
                 .card-btn {
-                  width: 16px;
-                  height: 16px;
+                  width: 18px;
+                  height: 18px;
                   border: 1px solid var(--search-border);
                   display: flex;
                   align-items: center;
                   justify-content: center;
-                  font-size: 10px;
+                  font-size: 11px;
                   background: var(--search-surface);
-                  color: var(--search-text-muted);
+                  color: #ffffff; // Pure white controls
                   border-radius: 2px;
+                  font-weight: bold;
                 }
               }
 
               .card-title {
                 font-family: var(--terminal-font-mono);
-                font-size: 14px;
-                color: var(--search-primary);
-                text-shadow: 0 0 5px currentColor;
+                font-size: 15px; // Daha büyük
+                color: #ffffff; // Pure white title
+                text-shadow: 0 0 8px var(--search-primary);
                 font-weight: bold;
               }
             }
@@ -876,26 +898,38 @@ $radius-lg: 0.75rem;
             .card-info-display {
               .info-line {
                 display: flex;
-                gap: 8px;
-                margin-bottom: 4px;
-                font-size: 13px;
+                gap: 10px;
+                margin-bottom: 6px;
+                font-size: 14px; // Daha büyük
 
                 .info-label {
                   color: var(--search-secondary);
                   font-weight: bold;
-                  min-width: 40px;
+                  min-width: 50px;
+                  text-shadow: 0 0 5px currentColor;
                 }
 
                 .info-value {
-                  color: var(--search-text);
-                  text-shadow: 0 0 3px var(--search-primary);
+                  color: #ffffff; // Pure white value
+                  text-shadow: none;
+                  font-weight: 600;
+                  -webkit-font-smoothing: antialiased;
 
                   &.score-display {
                     font-weight: bold;
                     
-                    &.high-score { color: var(--search-success); }
-                    &.medium-score { color: var(--search-warning); }
-                    &.low-score { color: var(--search-error); }
+                    &.high-score { 
+                      color: #ffffff;
+                      text-shadow: 0 0 8px var(--search-success);
+                    }
+                    &.medium-score { 
+                      color: #ffffff;
+                      text-shadow: 0 0 8px var(--search-warning);
+                    }
+                    &.low-score { 
+                      color: #ffffff;
+                      text-shadow: 0 0 8px var(--search-error);
+                    }
                   }
                 }
               }
@@ -903,130 +937,145 @@ $radius-lg: 0.75rem;
           }
 
           .card-preview-terminal {
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
+            padding: 18px;
+            background: rgba(0, 0, 0, 0.3);
 
             .preview-border {
               font-family: 'Courier New', monospace;
-              font-size: 11px;
-              color: var(--search-border);
+              font-size: 12px; // Biraz daha büyük
+              color: #ffffff; // Pure white border
+              text-shadow: 0 0 5px var(--search-border);
               text-align: center;
-              margin-bottom: 10px;
+              margin-bottom: 12px;
               white-space: pre;
+              font-weight: bold;
             }
 
             .preview-content {
               .preview-text {
-                color: var(--search-text-dim);
-                font-size: 14px;
-                line-height: 1.4;
-                max-height: 80px;
+                color: #ffffff; // Pure white preview
+                font-size: 15px; // Daha büyük
+                line-height: 1.5;
+                max-height: 90px;
                 overflow: hidden;
+                text-shadow: none;
+                font-weight: 500;
+                -webkit-font-smoothing: antialiased;
 
                 &.alt {
                   font-style: italic;
-                  opacity: 0.8;
+                  opacity: 0.9;
                 }
               }
             }
           }
 
           .card-labels-terminal {
-            padding: 10px 15px;
-            background: rgba(0, 0, 0, 0.1);
+            padding: 12px 18px;
+            background: rgba(0, 0, 0, 0.2);
 
             .labels-header {
               display: flex;
               align-items: center;
-              gap: 8px;
-              margin-bottom: 8px;
-              font-size: 12px;
+              gap: 10px;
+              margin-bottom: 10px;
+              font-size: 13px; // Daha büyük
 
               .labels-prompt {
                 color: var(--search-secondary);
                 font-weight: bold;
+                text-shadow: 0 0 5px currentColor;
               }
 
               .labels-count {
-                color: var(--search-primary);
+                color: #ffffff; // Pure white count
                 font-weight: bold;
+                text-shadow: 0 0 5px var(--search-primary);
               }
             }
 
             .labels-list {
               display: flex;
               flex-wrap: wrap;
-              gap: 6px;
+              gap: 8px;
 
               .label-chip-terminal {
                 background: linear-gradient(145deg, var(--search-border), var(--search-surface));
                 border: 1px solid var(--search-border);
-                color: var(--search-text);
-                font-size: 11px;
-                padding: 4px 8px;
+                color: #ffffff; // Pure white label text
+                font-size: 12px;
+                padding: 6px 10px;
                 border-radius: 4px;
                 cursor: pointer;
                 transition: all 0.3s ease;
+                font-weight: 600;
+                text-shadow: none;
 
                 &:hover,
                 &.highlighted {
                   border-color: var(--search-primary);
-                  box-shadow: 0 0 8px var(--search-primary);
-                  color: var(--search-primary);
+                  box-shadow: 0 0 12px var(--search-primary);
+                  color: #ffffff;
+                  text-shadow: 0 0 8px var(--search-primary);
                 }
               }
 
               .more-labels-chip {
                 background: rgba(255, 255, 255, 0.1);
-                color: var(--search-text-muted);
-                font-size: 11px;
-                padding: 4px 8px;
+                color: #ffffff; // Pure white
+                font-size: 12px;
+                padding: 6px 10px;
                 border-radius: 4px;
                 border: 1px dashed var(--search-border);
+                font-weight: 600;
               }
             }
           }
 
           .card-footer-terminal {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             border-top: 1px solid var(--search-border);
-            padding: 10px 15px;
+            padding: 12px 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
 
             .footer-info {
               display: flex;
-              gap: 15px;
-              font-size: 12px;
+              gap: 18px;
+              font-size: 13px; // Daha büyük
 
               .footer-item {
-                color: var(--search-text-muted);
+                color: #ffffff; // Pure white footer text
+                font-weight: 500;
+                text-shadow: none;
               }
             }
 
             .footer-actions {
               display: flex;
-              gap: 8px;
+              gap: 10px;
 
               .footer-btn {
                 background: none;
                 border: 1px solid var(--search-border);
-                color: var(--search-text);
-                font-size: 14px;
-                width: 28px;
-                height: 28px;
+                color: #ffffff; // Pure white icons
+                font-size: 16px; // Daha büyük
+                width: 32px; // Daha büyük
+                height: 32px;
                 border-radius: 4px;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 transition: all 0.3s ease;
+                font-weight: bold;
 
                 &:hover {
                   border-color: var(--search-primary);
-                  color: var(--search-primary);
-                  box-shadow: 0 0 8px var(--search-primary);
+                  color: #ffffff;
+                  box-shadow: 0 0 12px var(--search-primary);
+                  text-shadow: 0 0 8px var(--search-primary);
                 }
               }
             }
@@ -1035,7 +1084,7 @@ $radius-lg: 0.75rem;
       }
     }
 
-    // List View Terminal
+    // List View Terminal - NET YAZILAR
     .results-list-terminal {
       background: var(--search-surface);
       border: 2px solid var(--search-border);
@@ -1045,11 +1094,13 @@ $radius-lg: 0.75rem;
       .list-header-terminal,
       .list-footer-terminal {
         font-family: 'Courier New', monospace;
-        font-size: 12px;
-        color: var(--search-border);
-        padding: 8px 15px;
-        background: rgba(0, 0, 0, 0.3);
+        font-size: 13px; // Daha büyük
+        color: #ffffff; // Pure white border text
+        text-shadow: 0 0 5px var(--search-border);
+        padding: 10px 18px;
+        background: rgba(0, 0, 0, 0.4);
         white-space: pre;
+        font-weight: bold;
       }
 
       .document-list-terminal {
@@ -1057,28 +1108,30 @@ $radius-lg: 0.75rem;
           border-bottom: 1px solid var(--search-border);
           cursor: pointer;
           transition: all 0.3s ease;
-          padding: 15px;
+          padding: 18px;
 
           &:hover {
-            background: rgba(0, 255, 136, 0.1);
+            background: rgba(0, 255, 136, 0.15);
             border-color: var(--search-primary);
           }
 
           .list-item-content {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 18px;
             font-family: var(--terminal-font-mono);
-            font-size: 14px;
+            font-size: 15px; // Daha büyük
 
             .item-number {
               color: var(--search-secondary);
               font-weight: bold;
-              min-width: 30px;
+              min-width: 35px;
+              text-shadow: 0 0 5px currentColor;
             }
 
             .item-separator {
               color: var(--search-border);
+              font-size: 16px;
             }
 
             .item-details {
@@ -1087,32 +1140,38 @@ $radius-lg: 0.75rem;
               .item-title-line {
                 display: flex;
                 align-items: center;
-                gap: 8px;
-                margin-bottom: 4px;
+                gap: 10px;
+                margin-bottom: 6px;
 
                 .item-icon {
                   color: var(--search-primary);
                   font-weight: bold;
+                  font-size: 16px;
+                  text-shadow: 0 0 5px currentColor;
                 }
 
                 .item-title {
-                  color: var(--search-text);
+                  color: #ffffff; // Pure white title
                   font-weight: bold;
+                  text-shadow: none;
+                  font-size: 16px;
                 }
               }
 
               .item-summary-line {
-                color: var(--search-text-dim);
-                font-size: 12px;
-                margin-bottom: 4px;
-                opacity: 0.8;
+                color: #ffffff; // Pure white summary
+                font-size: 14px; // Daha büyük
+                margin-bottom: 6px;
+                opacity: 0.9;
+                font-weight: 500;
+                text-shadow: none;
               }
 
               .item-meta-line {
                 display: flex;
-                gap: 8px;
-                font-size: 11px;
-                color: var(--search-text-muted);
+                gap: 10px;
+                font-size: 13px; // Daha büyük
+                color: #ffffff; // Pure white meta
 
                 .meta-separator {
                   color: var(--search-border);
@@ -1121,28 +1180,32 @@ $radius-lg: 0.75rem;
             }
 
             .item-score {
-              min-width: 60px;
+              min-width: 70px;
 
               .score-bar {
                 font-weight: bold;
-                padding: 2px 8px;
+                padding: 4px 10px;
                 border-radius: 4px;
                 border: 1px solid;
+                font-size: 13px;
 
                 &.high-score { 
-                  color: var(--search-success); 
+                  color: #ffffff;
                   border-color: var(--search-success);
-                  background: rgba(0, 255, 136, 0.1);
+                  background: rgba(0, 255, 136, 0.2);
+                  text-shadow: 0 0 5px var(--search-success);
                 }
                 &.medium-score { 
-                  color: var(--search-warning); 
+                  color: #ffffff;
                   border-color: var(--search-warning);
-                  background: rgba(255, 204, 68, 0.1);
+                  background: rgba(255, 204, 68, 0.2);
+                  text-shadow: 0 0 5px var(--search-warning);
                 }
                 &.low-score { 
-                  color: var(--search-error); 
+                  color: #ffffff;
                   border-color: var(--search-error);
-                  background: rgba(255, 85, 119, 0.1);
+                  background: rgba(255, 85, 119, 0.2);
+                  text-shadow: 0 0 5px var(--search-error);
                 }
               }
             }
@@ -1151,48 +1214,54 @@ $radius-lg: 0.75rem;
               .action-btn {
                 background: none;
                 border: 1px solid var(--search-border);
-                color: var(--search-text);
-                font-size: 12px;
-                width: 28px;
-                height: 28px;
+                color: #ffffff; // Pure white
+                font-size: 14px;
+                width: 32px;
+                height: 32px;
                 border-radius: 4px;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 transition: all 0.3s ease;
+                font-weight: bold;
 
                 &:hover {
                   border-color: var(--search-primary);
-                  color: var(--search-primary);
-                  box-shadow: 0 0 8px var(--search-primary);
+                  color: #ffffff;
+                  box-shadow: 0 0 12px var(--search-primary);
+                  text-shadow: 0 0 8px var(--search-primary);
                 }
               }
             }
           }
 
           .item-labels-line {
-            margin-top: 8px;
-            font-size: 12px;
+            margin-top: 10px;
+            font-size: 13px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
 
             .labels-prefix {
               color: var(--search-secondary);
               font-weight: bold;
+              text-shadow: 0 0 5px currentColor;
             }
 
             .label-mini-terminal {
-              background: rgba(255, 255, 255, 0.1);
-              color: var(--search-text-dim);
-              padding: 2px 6px;
+              background: rgba(255, 255, 255, 0.15);
+              color: #ffffff; // Pure white labels
+              padding: 3px 8px;
               border-radius: 3px;
-              font-size: 11px;
+              font-size: 12px;
+              font-weight: 600;
+              text-shadow: none;
 
               &.highlighted {
-                background: rgba(0, 255, 136, 0.2);
-                color: var(--search-primary);
+                background: rgba(0, 255, 136, 0.25);
+                color: #ffffff;
+                text-shadow: 0 0 5px var(--search-primary);
               }
             }
           }
@@ -1200,18 +1269,18 @@ $radius-lg: 0.75rem;
       }
     }
 
-    // Grid View Terminal
+    // Grid View Terminal - NET YAZILAR
     .results-grid-terminal {
       .document-grid-terminal {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 15px;
+        gap: 18px;
 
         .grid-item-terminal {
           background: var(--search-surface);
           border: 2px solid var(--search-border);
           border-radius: 8px;
-          padding: 20px;
+          padding: 25px;
           text-align: center;
           cursor: pointer;
           transition: all 0.3s ease;
@@ -1219,50 +1288,63 @@ $radius-lg: 0.75rem;
 
           .grid-item-border {
             font-family: 'Courier New', monospace;
-            font-size: 10px;
-            color: var(--search-border);
-            margin-bottom: 10px;
+            font-size: 11px;
+            color: #ffffff; // Pure white border
+            margin-bottom: 12px;
             white-space: pre;
+            text-shadow: 0 0 3px var(--search-border);
+            font-weight: bold;
           }
 
           .grid-item-content {
             .grid-item-icon {
-              font-size: 32px;
+              font-size: 36px; // Daha büyük icon
               color: var(--search-primary);
-              margin-bottom: 10px;
-              text-shadow: 0 0 10px currentColor;
+              margin-bottom: 12px;
+              text-shadow: 0 0 12px currentColor;
             }
 
             .grid-item-title {
-              color: var(--search-text);
-              font-size: 14px;
-              margin-bottom: 8px;
+              color: #ffffff; // Pure white title
+              font-size: 15px; // Daha büyük
+              margin-bottom: 10px;
               font-weight: bold;
+              text-shadow: none;
             }
 
             .grid-item-info {
               display: flex;
               justify-content: space-between;
               align-items: center;
-              font-size: 12px;
+              font-size: 13px; // Daha büyük
 
               .grid-stats {
-                color: var(--search-text-muted);
+                color: #ffffff; // Pure white stats
+                font-weight: 500;
               }
 
               .grid-score {
                 font-weight: bold;
                 
-                &.high-score { color: var(--search-success); }
-                &.medium-score { color: var(--search-warning); }
-                &.low-score { color: var(--search-error); }
+                &.high-score { 
+                  color: #ffffff;
+                  text-shadow: 0 0 5px var(--search-success);
+                }
+                &.medium-score { 
+                  color: #ffffff;
+                  text-shadow: 0 0 5px var(--search-warning);
+                }
+                &.low-score { 
+                  color: #ffffff;
+                  text-shadow: 0 0 5px var(--search-error);
+                }
               }
             }
           }
 
           &:hover {
             border-color: var(--search-primary);
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
             transform: translateY(-3px);
           }
         }
@@ -1270,29 +1352,30 @@ $radius-lg: 0.75rem;
     }
   }
 
-  // Loading Terminal
+  // Loading Terminal - NET YAZILAR
   .loading-terminal {
     margin: 20px;
     text-align: center;
 
     .loading-border {
       font-family: 'Courier New', monospace;
-      font-size: 14px;
-      color: var(--search-primary);
-      margin-bottom: 20px;
+      font-size: 16px; // Daha büyük
+      color: #ffffff; // Pure white loading text
+      text-shadow: 0 0 10px var(--search-primary);
+      margin-bottom: 25px;
       white-space: pre;
-      text-shadow: 0 0 8px currentColor;
+      font-weight: bold;
       animation: textGlow 2s infinite alternate;
     }
 
     .loading-progress {
       .progress-bar {
-        width: 300px;
-        height: 8px;
-        background: rgba(0, 0, 0, 0.5);
+        width: 350px; // Daha geniş
+        height: 10px; // Daha kalın
+        background: rgba(0, 0, 0, 0.6);
         border: 1px solid var(--search-border);
         border-radius: 4px;
-        margin: 0 auto 10px;
+        margin: 0 auto 15px;
         overflow: hidden;
 
         .progress-fill {
@@ -1307,46 +1390,51 @@ $radius-lg: 0.75rem;
       }
 
       .loading-text {
-        color: var(--search-text-dim);
-        font-size: 14px;
+        color: #ffffff; // Pure white loading text
+        font-size: 16px; // Daha büyük
+        font-weight: 600;
+        text-shadow: none;
       }
     }
   }
 
-  // Empty Terminal
+  // Empty Terminal - NET YAZILAR
   .empty-terminal {
     margin: 20px;
     text-align: center;
-    padding: 40px;
+    padding: 50px;
 
     .empty-border {
       font-family: 'Courier New', monospace;
-      font-size: 14px;
-      color: var(--search-text-muted);
-      margin-bottom: 20px;
+      font-size: 16px; // Daha büyük
+      color: #ffffff; // Pure white empty text
+      text-shadow: 0 0 5px var(--search-text-muted);
+      margin-bottom: 25px;
       white-space: pre;
+      font-weight: bold;
     }
 
     .empty-actions {
       .clear-search-btn {
         background: linear-gradient(145deg, #5f2a2a, #4f1a1a);
         border: 2px solid var(--search-error);
-        color: var(--search-error);
+        color: #ffffff; // Pure white text
         font-family: var(--terminal-font);
-        font-size: 14px;
-        padding: 10px 20px;
+        font-size: 16px;
+        padding: 15px 25px;
         border-radius: 8px;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         transition: all 0.3s ease;
         font-weight: bold;
+        text-shadow: 0 0 8px var(--search-error);
 
         &:hover {
           border-color: var(--search-error);
-          box-shadow: 0 0 20px var(--search-error);
-          color: var(--search-text);
+          box-shadow: 0 0 25px var(--search-error);
+          color: #ffffff;
           background: linear-gradient(145deg, #6f3a3a, #5f2a2a);
           transform: translateY(-2px);
         }
@@ -1354,56 +1442,58 @@ $radius-lg: 0.75rem;
     }
   }
 
-  // Messages Terminal
+  // Messages Terminal - NET YAZILAR
   .messages-terminal {
     position: fixed;
     top: 20px;
     right: 20px;
     z-index: 1000;
-    max-width: 400px;
+    max-width: 450px; // Daha geniş
 
     .message-success,
     .message-error {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 12px 15px;
+      gap: 12px;
+      padding: 15px 20px; // Daha fazla padding
       border-radius: 6px;
-      margin-bottom: 10px;
-      font-size: 14px;
+      margin-bottom: 12px;
+      font-size: 15px; // Daha büyük
       animation: slideIn 0.3s ease-out;
 
       .message-prompt {
         font-weight: bold;
-        min-width: 40px;
+        min-width: 45px;
+        font-size: 16px;
       }
 
       .message-text {
         flex: 1;
+        font-weight: 600;
+        color: #ffffff; // Pure white message text
+        text-shadow: none;
       }
     }
 
     .message-success {
-      background: rgba(0, 255, 136, 0.1);
+      background: rgba(0, 255, 136, 0.15);
       border: 1px solid var(--search-success);
-      color: var(--search-success);
 
       .message-prompt,
       .message-icon {
         color: var(--search-success);
-        text-shadow: 0 0 5px currentColor;
+        text-shadow: 0 0 8px currentColor;
       }
     }
 
     .message-error {
-      background: rgba(255, 85, 119, 0.1);
+      background: rgba(255, 85, 119, 0.15);
       border: 1px solid var(--search-error);
-      color: var(--search-error);
 
       .message-prompt,
       .message-icon {
         color: var(--search-error);
-        text-shadow: 0 0 5px currentColor;
+        text-shadow: 0 0 8px currentColor;
       }
     }
   }
@@ -1415,12 +1505,12 @@ $radius-lg: 0.75rem;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.85); // Daha koyu overlay
     z-index: 2000;
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(8px);
 
     .file-view-terminal-modal {
       width: 90%;
@@ -1471,10 +1561,10 @@ $radius-lg: 0.75rem;
 
 @keyframes textGlow {
   from { 
-    text-shadow: 0 0 8px var(--search-primary);
+    text-shadow: 0 0 10px var(--search-primary);
   }
   to { 
-    text-shadow: 0 0 15px var(--search-primary), 0 0 25px var(--search-primary);
+    text-shadow: 0 0 20px var(--search-primary), 0 0 30px var(--search-primary);
   }
 }
 
@@ -1516,7 +1606,7 @@ $radius-lg: 0.75rem;
 
         .control-panel-terminal {
           flex-direction: column;
-          gap: 10px;
+          gap: 15px;
         }
 
         .filters-terminal {
@@ -1532,7 +1622,7 @@ $radius-lg: 0.75rem;
 
       .view-controls-terminal {
         flex-direction: column;
-        gap: 10px;
+        gap: 15px;
       }
     }
 
@@ -1574,7 +1664,7 @@ $radius-lg: 0.75rem;
         .search-input-terminal {
           .input-line {
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
 
             .input-actions {
               width: 100%;
@@ -1592,7 +1682,7 @@ $radius-lg: 0.75rem;
             .list-item-content {
               flex-direction: column;
               align-items: flex-start;
-              gap: 8px;
+              gap: 10px;
             }
           }
         }
