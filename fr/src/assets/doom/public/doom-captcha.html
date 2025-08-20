@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>DOOM CAPTCHA — Game Only</title>
+  <style>
+    html,body{height:100%;margin:0;background:#000;overflow:hidden}
+    .wrap{display:flex;align-items:center;justify-content:center;height:100%}
+    .game{position:relative}
+    /* status DOM'da kalsın ama görünmesin (script kırılmasın) */
+    .visually-hidden{
+      position:absolute !important; width:1px; height:1px; padding:0; margin:-1px;
+      overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+    }
+    canvas{display:block;image-rendering:pixelated;outline:none;border:0}
+    /* İstersen sabit boyut ver: */
+    #canvas{width:600px;height:350px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="game">
+      <div id="status" class="visually-hidden" aria-hidden="true">Loading…</div>
+      <canvas id="canvas" width="600" height="350" tabindex="0" autofocus></canvas>
+    </div>
+  </div>
+
+  <script>
+    // --- ORİJİNAL KODUN SENİNLE GELEN KISMI (küçültülmüş) ---
+    let enemiesKilled = 0;
+
+    function sendToAngular(type, data = {}) {
+      const message = { type, origin:'doom-iframe', timestamp: Date.now(), ...data };
+      if (window.parent && window.parent !== window) window.parent.postMessage(message, '*');
+    }
+
+    function testKillEnemy(){ enemiesKilled++; updateKillCounter(); sendToAngular('doom-enemy-killed',{kills:enemiesKilled}); if(enemiesKilled>=3) testComplete(); }
+    function testComplete(){ enemiesKilled=Math.max(3,enemiesKilled); updateKillCounter(); setStatusText('🎉 CAPTCHA SOLVED!'); sendToAngular('doom-captcha-complete',{stats:{completed:true,kills:enemiesKilled,deaths:0,score:enemiesKilled*100}}); }
+    function testReset(){ enemiesKilled=0; updateKillCounter(); setStatusText('Game reset - try again'); sendToAngular('doom-player-death'); }
+    function updateKillCounter(){ /* yalnız sayaç UI yok; sadece mesaj işlevsel */ }
+    function setStatusText(t){ var el=document.getElementById('status'); if(el) el.textContent=t; }
+    function focusCanvas(){ const c=document.getElementById('canvas'); if(c){ c.focus(); sendToAngular('doom-canvas-focused'); } }
+    function updateKeyTest(){ /* gizli; no-op */ }
+
+    function checkGameState(){
+      const canvas=document.getElementById('canvas'); const status=document.getElementById('status');
+      setTimeout(()=>{
+        const ctx=canvas.getContext('2d'); if(!ctx) return;
+        const img=ctx.getImageData(0,0,canvas.width,canvas.height); const p=img.data;
+        let black=0; for(let i=0;i<p.length;i+=4){ if(p[i]<50&&p[i+1]<50&&p[i+2]<50) black++; }
+        const pct=(black/(p.length/4))*100;
+        if(pct>90){
+          setStatusText('Trying to skip intro…');
+          setTimeout(()=>{
+            const e=new KeyboardEvent('keydown',{key:'Enter',code:'Enter',keyCode:13,which:13,bubbles:true});
+            canvas.dispatchEvent(e);
+            setTimeout(()=>{
+              const esc=new KeyboardEvent('keydown',{key:'Escape',code:'Escape',keyCode:27,which:27,bubbles:true});
+              canvas.dispatchEvent(esc);
+            },500);
+          },1000);
+        } else {
+          setStatusText('Game loaded');
+        }
+      },3000);
+    }
+
+    var Module = {
+      canvas: document.getElementById('canvas'),
+      noAudio: false,
+      arguments: ["-autoreborn","-nomenu","-fast","-skill","6","-warp","e1m1"],
+      print: function(t){ console.log('[DOOM]',t); },
+      printErr: function(text){
+        const ignore=['CopyOnLock','Audio callback had starved','TOTAL_MEMORY','INITIAL_MEMORY','IMPORTED_MEMORY','wasmMemory','Assertion failed','Use -sIMPORTED_MEMORY','Demo is from a different game version','SDL_LockSurface','SDL_HWPALETTE','index is out of range','ccall','EXPORTED_RUNTIME_METHODS'];
+        if(ignore.some(e=>text.includes(e))) return;
+        console.error('[DOOM ERROR]',text);
+      },
+      setStatus: function(text){ if(text.includes('Demo')) return; setStatusText(text); },
+      onRuntimeInitialized: function(){
+        setStatusText('DOOM initializing...');
+        sendToAngular('doom-engine-loaded');
+        checkGameState();
+        setTimeout(focusCanvas, 500);
+        if (typeof SDL!=='undefined'){ SDL.defaults.copyOnLock=false; SDL.defaults.discardOnLock=true; SDL.defaults.opaqueFrontBuffer=true; }
+      },
+      onAbort: function(){ setStatusText('DOOM loaded - click canvas to play'); },
+      preRun: [function(){
+        const canvas=document.getElementById('canvas');
+        if(canvas){
+          canvas.setAttribute('tabindex','0'); canvas.style.outline='none';
+          canvas.addEventListener('mousedown', e=>{ canvas.focus(); if(e.button===0) setStatusText('Firing…'); });
+          canvas.addEventListener('contextmenu', e=>{ e.preventDefault(); return false; });
+          canvas.addEventListener('keydown', e=>{ /* debug no-op */ });
+        }
+      }],
+      postRun: [function(){
+        setTimeout(()=>{
+          checkGameState();
+          const canvas=document.getElementById('canvas');
+          if(canvas){
+            ['Enter','Escape','Space'].forEach((key,i)=>{
+              setTimeout(()=>{
+                const ev=new KeyboardEvent('keydown',{key,code:key===' ' ? 'Space' : key,keyCode:key==='Enter'?13:key==='Escape'?27:32,bubbles:true});
+                canvas.dispatchEvent(ev);
+              }, i*500);
+            });
+          }
+        },2000);
+        sendToAngular('doom-engine-loaded');
+      }],
+      onPlayerBorn: function(){ setStatusText('Player ready'); sendToAngular('doom-player-born'); },
+      onEnemyKilled: function(){ testKillEnemy(); },
+      onPlayerDeath: function(){ testReset(); }
+    };
+
+    window.onerror = function(msg){ if((msg||'').includes('ccall')||(msg||'').includes('EXPORTED_RUNTIME_METHODS')) return true; };
+    window.addEventListener('unhandledrejection', e=>{ const r=e.reason?.toString?.()||''; if(r.includes('ccall')||r.includes('Aborted')) e.preventDefault(); });
+    window.addEventListener('load', ()=>{ setTimeout(focusCanvas,100); sendToAngular('doom-game-started'); });
+
+    function skipIntro(){
+      const canvas=document.getElementById('canvas'); if(!canvas) return;
+      canvas.focus();
+      [{key:'Escape',code:'Escape',keyCode:27},{key:'Enter',code:'Enter',keyCode:13},{key:' ',code:'Space',keyCode:32},{key:'y',code:'KeyY',keyCode:89},{key:'n',code:'KeyN',keyCode:78}]
+      .forEach((k,i)=>setTimeout(()=>canvas.dispatchEvent(new KeyboardEvent('keydown',k)), i*300));
+    }
+  </script>
+
+  <!-- DOOM engine -->
+  <script async type="text/javascript" src="index.js"
+    onerror="console.log('DOOM JS failed - test mode only')"></script>
+</body>
+</html>

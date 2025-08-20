@@ -543,3 +543,21 @@
     </app-file-view>
   </div>
 </div>
+
+<!-- CONFIRMATION DIALOG -->
+<app-confirmation-dialog
+  [isVisible]="showDeleteDialog()"
+  [config]="dialogConfig()"
+  (confirmed)="onDeleteConfirmed()"
+  (cancelled)="onDeleteCancelled()"
+  (closed)="onDeleteDialogClosed()">
+</app-confirmation-dialog>
+
+<!-- REAL DOOM CAPTCHA DIALOG -->
+<app-doom-ready
+  [isVisible]="showDoomCaptcha()"
+  [config]="doomConfig()"
+  (confirmed)="onDoomConfirmed()"
+  (cancelled)="onDoomCancelled()"
+  (closed)="onDoomClosed()">
+</app-doom-ready>

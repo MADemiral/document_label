@@ -1,0 +1,62 @@
+<div 
+  class="doom-overlay"
+  *ngIf="isVisible"
+  tabindex="-1"
+  (click)="onBackdropClick($event)">
+  <div class="doom-modal crt-frame">
+    <!-- CRT Header -->
+    <div class="crt-header">
+      <span class="crt-led crt-led-green"></span>
+      <span class="crt-title">[ DOOM SECURITY TERMINAL ]</span>
+      <button class="crt-close" (click)="onCancel()" title="Close">✖</button>
+    </div>
+    <!-- CRT Body -->
+    <div class="crt-body">
+      <pre class="crt-ascii">
+┌─────────────────────────────────────────────┐
+│  FILE: <span class="crt-file">{{ config.documentTitle }}</span>
+│  ID:   <span class="crt-file-id">{{ config.documentId }}</span>
+└─────────────────────────────────────────────┘
+      </pre>
+      <div class="crt-status">
+        <span>Status: <span class="crt-status-text">{{ statusMessage }}</span></span>
+        <span>Monsters killed: <span class="crt-kill">{{ enemiesKilled }}/3</span></span>
+      </div>
+      <div class="crt-game">
+        <iframe
+          src="assets/doom/public/doom-captcha.html"
+          class="doom-iframe"
+          frameborder="0"
+          allowfullscreen>
+        </iframe>
+      </div>
+      <div class="crt-warning">
+        <span class="crt-blink">█</span> <span>Kill 3 monsters to authorize deletion!</span>
+      </div>
+      <div class="crt-actions">
+        <button 
+          class="crt-btn crt-btn-confirm"
+          [disabled]="!gameCompleted || config.isProcessing"
+          (click)="onConfirm()">
+          {{ config.isProcessing ? 'DELETING...' : 'CONFIRM DELETE' }}
+        </button>
+        <button 
+          class="crt-btn crt-btn-cancel"
+          (click)="onCancel()"
+          [disabled]="config.isProcessing">
+          CANCEL
+        </button>
+      </div>
+      <div *ngIf="gameCompleted" class="crt-success">
+        <pre>
+ACCESS GRANTED
+File deletion AUTHORIZED
+        </pre>
+      </div>
+    </div>
+    <div class="crt-footer">
+      <span class="crt-led crt-led-red"></span>
+      <span class="crt-footer-text">C:\DOOM>_</span>
+    </div>
+  </div>
+</div>

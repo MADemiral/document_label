@@ -1,0 +1,122 @@
+<!-- CONFIRMATION DIALOG OVERLAY -->
+<div 
+  class="confirmation-overlay"
+  [class.visible]="isVisible"
+  [ngClass]="getTypeClass()"
+  (click)="onBackdropClick($event)"
+  tabindex="-1"
+  *ngIf="isVisible">
+  
+  <div class="confirmation-terminal">
+    <!-- Terminal Header -->
+    <div class="terminal-header">
+      <div class="terminal-title-bar">
+        <span class="terminal-title">
+          <i [class]="getTypeIcon()" class="type-icon"></i>
+          {{ config.title }}
+        </span>
+        <div class="terminal-controls">
+          <span 
+            class="control-btn close" 
+            (click)="onCancel()"
+            [class.disabled]="config.isProcessing"
+            title="Close [ESC]">×</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Terminal Content -->
+    <div class="terminal-content">
+      <!-- Animated Border -->
+      <div class="warning-border">
+        <div class="border-line top"></div>
+        <div class="border-line right"></div>
+        <div class="border-line bottom"></div>
+        <div class="border-line left"></div>
+      </div>
+      
+      <!-- Main Icon -->
+      <div class="main-icon">
+        <div class="icon-glow">
+          <i [class]="getTypeIcon()" class="main-type-icon"></i>
+        </div>
+      </div>
+      
+      <!-- Main Message -->
+      <div class="main-message">
+        <p class="message-text" [innerHTML]="config.message"></p>
+      </div>
+      
+      <!-- Details Section -->
+      <div class="details-section" *ngIf="config.showDetails && config.details">
+        <div class="details-header">
+          <i class="fas fa-list-ul"></i>
+          <span>DETAILS</span>
+        </div>
+        
+        <div class="details-grid">
+          <div 
+            class="detail-row" 
+            *ngFor="let detail of getDetailEntries()">
+            <span class="detail-label">{{ detail.key }}:</span>
+            <span class="detail-value" [title]="detail.value">{{ detail.value }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Warning Messages -->
+      <div class="warning-messages" *ngIf="config.type === 'danger'">
+        <div class="warning-line">⚠️ This operation is IRREVERSIBLE!</div>
+        <div class="warning-line">⚠️ Data will be PERMANENTLY DELETED!</div>
+        <div class="warning-line danger-text">⚠️ NO RECOVERY POSSIBLE after confirmation!</div>
+      </div>
+      
+      <!-- Confirmation Prompt -->
+      <div class="confirmation-prompt">
+        <div class="prompt-text">
+          <span class="cursor-blink">█</span> 
+          Are you sure you want to proceed?
+          <span class="key-hints">[Y/N]</span>
+        </div>
+      </div>
+      
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button 
+          class="retro-btn confirm-btn"
+          [class.processing]="config.isProcessing"
+          [disabled]="config.isProcessing"
+          (click)="onConfirm()">
+          <i class="fas fa-check" *ngIf="!config.isProcessing"></i>
+          <i class="fas fa-spinner fa-spin" *ngIf="config.isProcessing"></i>
+          <span>{{ config.isProcessing ? 'PROCESSING...' : (config.confirmText || 'CONFIRM') }}</span>
+        </button>
+        
+        <button 
+          class="retro-btn cancel-btn"
+          [disabled]="config.isProcessing"
+          (click)="onCancel()">
+          <i class="fas fa-times"></i>
+          <span>{{ config.cancelText || 'CANCEL' }}</span>
+        </button>
+      </div>
+      
+      <!-- Processing Animation -->
+      <div class="processing-animation" *ngIf="config.isProcessing">
+        <div class="progress-line">
+          <span class="progress-text">OPERATION IN PROGRESS</span>
+          <span class="dots">
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+          </span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p>confirmation-dialog works!</p>

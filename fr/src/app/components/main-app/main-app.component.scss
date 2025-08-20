@@ -14,7 +14,7 @@
   // Daha parlak Terminal Colors
   --terminal-bg: #3a3a4e;
   --terminal-border: #5555aa;
-  --terminal-text: #00ff88;
+  --terminal-text: #ffffff;        // ✨ PARLAK BEYAZ
   --terminal-prompt: #ffcc44;
   --terminal-command: #55ccff;
   
@@ -23,6 +23,7 @@
   --neon-blue: #44ddff;
   --neon-yellow: #ffff44;
   --neon-orange: #ff9944;
+  --neon-white: #ffffff;           // ✨ PURE WHITE
     
   // Spacing
   --retro-unit: 8px;
@@ -37,9 +38,11 @@
     linear-gradient(135deg, #2a2a3e 0%, #3a3a4e 100%);
   position: relative;
   font-family: 'VT323', monospace;
-  font-size: 16px;
+  font-size: 18px;                 // ✨ Daha büyük font
   line-height: 1.2;
-  color: var(--retro-primary);
+  color: #ffffff;                  // ✨ DEFAULT PARLAK BEYAZ
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 
   // CRT Screen effect
   &::before {
@@ -94,16 +97,18 @@
 
       .terminal-title {
         font-family: 'Orbitron', monospace;
-        font-size: 2rem;
+        font-size: 2.2rem;            // ✨ Daha büyük başlık
         font-weight: 900;
-        color: #ffffff;
+        color: #ffffff;               // ✨ PARLAK BEYAZ BAŞLIK
         text-shadow: 
-          0 0 15px var(--retro-primary),
+          0 0 20px #ffffff,           // ✨ Beyaz glow
           0 0 30px var(--retro-primary),
           0 0 60px var(--retro-primary);
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        letter-spacing: 1px;          // ✨ Letter spacing
+        filter: brightness(1.2);     // ✨ Extra brightness
         
         .typing-text {
           animation: textGlow 2s ease-in-out infinite alternate;
@@ -132,20 +137,28 @@
             border: 2px solid var(--terminal-border);
             border-radius: 8px;
             padding: calc(var(--retro-unit) * 2) calc(var(--retro-unit) * 3);
-            color: #ffffff;
+            color: #ffffff;           // ✨ PARLAK BEYAZ BUTON TEXT
             display: flex;
             align-items: center;
             gap: calc(var(--retro-unit) * 2);
-            font-size: 1.2rem;
+            font-size: 1.3rem;        // ✨ Daha büyük font
             font-weight: bold;
             transition: all 0.2s ease;
             position: relative;
             z-index: 2;
-            text-shadow: 0 0 10px var(--retro-primary);
+            text-shadow: 
+              0 0 15px #ffffff,       // ✨ Beyaz glow
+              0 0 25px var(--retro-primary);
+            -webkit-font-smoothing: antialiased;
+            letter-spacing: 0.5px;
             
             i {
-              font-size: 1.1rem;
+              font-size: 1.2rem;      // ✨ Daha büyük icon
               color: var(--retro-accent);
+            }
+
+            span {
+              filter: brightness(1.3); // ✨ Extra brightness
             }
           }
           
@@ -168,6 +181,13 @@
                 inset 0 0 25px rgba(0, 255, 136, 0.2);
               border-color: var(--retro-primary);
               background: linear-gradient(145deg, #6a6a8e, #5a5a7e);
+              
+              span {
+                color: #ffffff;       // ✨ Hover'da da beyaz
+                text-shadow: 
+                  0 0 20px #ffffff,
+                  0 0 35px var(--retro-primary);
+              }
             }
           }
           
@@ -178,6 +198,13 @@
               box-shadow: 
                 0 0 30px var(--retro-primary),
                 inset 0 0 30px rgba(0, 255, 136, 0.3);
+              
+              span {
+                color: #ffffff;       // ✨ Active'de de beyaz
+                text-shadow: 
+                  0 0 25px #ffffff,
+                  0 0 40px var(--retro-primary);
+              }
               
               i {
                 color: var(--retro-primary);
@@ -244,10 +271,14 @@
           font-family: 'VT323', monospace;
           
           .window-title {
-            color: #ffffff;
-            font-size: 1.2rem;
+            color: #ffffff;           // ✨ PARLAK BEYAZ BAŞLIK
+            font-size: 1.4rem;       // ✨ Daha büyük font
             font-weight: bold;
-            text-shadow: 0 0 10px var(--retro-primary);
+            text-shadow: 
+              0 0 15px #ffffff,       // ✨ Beyaz glow
+              0 0 25px var(--retro-primary);
+            -webkit-font-smoothing: antialiased;
+            letter-spacing: 0.5px;
           }
           
           .window-controls {
@@ -298,27 +329,35 @@
     
     .prompt-line {
       font-family: 'Share Tech Mono', monospace;
-      font-size: 1.1rem;
+      font-size: 1.2rem;             // ✨ Daha büyük font
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      -webkit-font-smoothing: antialiased;
       
       .prompt {
         color: var(--terminal-prompt);
-        text-shadow: 0 0 10px currentColor;
+        text-shadow: 
+          0 0 12px currentColor,
+          0 0 25px currentColor;
         font-weight: bold;
       }
       
       .command {
         color: var(--terminal-command);
-        text-shadow: 0 0 10px currentColor;
+        text-shadow: 
+          0 0 12px currentColor,
+          0 0 25px currentColor;
         font-weight: bold;
       }
       
       .blinking {
-        color: #ffffff;
-        text-shadow: 0 0 15px var(--retro-primary);
+        color: #ffffff;               // ✨ PARLAK BEYAZ
+        text-shadow: 
+          0 0 20px #ffffff,           // ✨ Beyaz glow
+          0 0 30px var(--retro-primary);
         animation: blink 1s infinite;
+        filter: brightness(1.3);     // ✨ Extra brightness
       }
     }
   }
@@ -361,10 +400,15 @@
       
       .card-title {
         font-family: 'VT323', monospace;
-        font-size: 1.3rem;
-        color: #ffffff;
-        text-shadow: 0 0 15px var(--retro-primary);
+        font-size: 1.5rem;           // ✨ Daha büyük font
+        color: #ffffff;              // ✨ PARLAK BEYAZ BAŞLIK
+        text-shadow: 
+          0 0 18px #ffffff,          // ✨ Beyaz glow
+          0 0 30px var(--retro-primary);
         letter-spacing: 1px;
+        font-weight: bold;
+        -webkit-font-smoothing: antialiased;
+        filter: brightness(1.2);    // ✨ Extra brightness
       }
       
       .status-indicator {
@@ -393,6 +437,13 @@
     .card-content {
       padding: calc(var(--retro-unit) * 3);
       position: relative;
+      
+      // ✨ Card content içindeki tüm yazılar parlak beyaz
+      * {
+        color: #ffffff !important;
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.8) !important;
+        -webkit-font-smoothing: antialiased;
+      }
     }
   }
 
@@ -407,9 +458,9 @@
       border: 2px solid var(--terminal-border);
       border-radius: 8px;
       padding: calc(var(--retro-unit) * 3) calc(var(--retro-unit) * 4);
-      color: #ffffff;
+      color: #ffffff;                // ✨ PARLAK BEYAZ BUTON TEXT
       font-family: 'VT323', monospace;
-      font-size: 1.2rem;
+      font-size: 1.3rem;             // ✨ Daha büyük font
       font-weight: bold;
       cursor: pointer;
       display: flex;
@@ -420,15 +471,23 @@
       text-align: center;
       transition: all 0.3s ease;
       position: relative;
-      text-shadow: 0 0 10px var(--retro-primary);
+      text-shadow: 
+        0 0 15px #ffffff,            // ✨ Beyaz glow
+        0 0 25px var(--retro-primary);
       box-shadow: 
         0 4px 15px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      -webkit-font-smoothing: antialiased;
+      letter-spacing: 0.5px;
       
       i {
-        font-size: 1.5rem;
+        font-size: 1.6rem;           // ✨ Daha büyük icon
         color: var(--retro-accent);
         animation: iconPulse 2s infinite;
+      }
+      
+      span {
+        filter: brightness(1.2);    // ✨ Extra brightness
       }
       
       &:hover {
@@ -439,6 +498,11 @@
           0 0 25px var(--retro-primary),
           0 6px 20px rgba(0, 0, 0, 0.4),
           inset 0 0 25px rgba(0, 255, 136, 0.2);
+        
+        color: #ffffff;              // ✨ Hover'da da beyaz
+        text-shadow: 
+          0 0 20px #ffffff,
+          0 0 35px var(--retro-primary);
         
         i {
           color: var(--retro-primary);
@@ -467,18 +531,22 @@
       
       p {
         margin: 0;
-        color: var(--terminal-text);
+        color: #ffffff !important;   // ✨ PARLAK BEYAZ
         font-weight: bold;
-        text-shadow: 0 0 5px var(--retro-primary);
+        text-shadow: 
+          0 0 12px #ffffff,          // ✨ Beyaz glow
+          0 0 20px var(--retro-primary) !important;
         font-family: 'VT323', monospace;
-        font-size: 1.1rem;
+        font-size: 1.2rem;          // ✨ Daha büyük font
         display: flex;
         align-items: center;
         gap: calc(var(--retro-unit) * 1);
+        -webkit-font-smoothing: antialiased;
+        letter-spacing: 0.3px;
         
         &::before {
           content: '📄';
-          font-size: 1.2rem;
+          font-size: 1.3rem;         // ✨ Daha büyük emoji
           animation: statusPulse 2s infinite;
         }
       }
@@ -542,10 +610,15 @@
       
       .drop-message {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 1.2rem;
-        color: var(--terminal-text);
-        text-shadow: 0 0 10px var(--retro-primary);
+        font-size: 1.3rem;          // ✨ Daha büyük font
+        color: #ffffff;             // ✨ PARLAK BEYAZ
+        text-shadow: 
+          0 0 15px #ffffff,         // ✨ Beyaz glow
+          0 0 25px var(--retro-primary);
         margin-bottom: calc(var(--retro-unit) * 2);
+        font-weight: bold;
+        -webkit-font-smoothing: antialiased;
+        letter-spacing: 0.5px;
         
         .highlight {
           color: var(--neon-yellow);
@@ -565,7 +638,7 @@
     justify-content: space-between;
     align-items: center;
     font-family: 'VT323', monospace;
-    font-size: 1.1rem;
+    font-size: 1.2rem;              // ✨ Daha büyük font
     box-shadow: 0 0 25px rgba(0, 255, 136, 0.5);
 
     .status-segment {
@@ -575,20 +648,179 @@
       
       .status-label {
         color: var(--terminal-prompt);
-        text-shadow: 0 0 8px currentColor;
+        text-shadow: 
+          0 0 10px currentColor,
+          0 0 20px currentColor;
         font-weight: bold;
       }
       
       .status-value {
-        color: #ffffff;
+        color: #ffffff;              // ✨ PARLAK BEYAZ
         font-weight: bold;
-        text-shadow: 0 0 10px var(--retro-primary);
+        text-shadow: 
+          0 0 15px #ffffff,          // ✨ Beyaz glow
+          0 0 25px var(--retro-primary);
+        -webkit-font-smoothing: antialiased;
+        letter-spacing: 0.3px;
+        filter: brightness(1.2);    // ✨ Extra brightness
         
         &.active {
           color: var(--retro-accent);
-          text-shadow: 0 0 15px var(--retro-accent);
+          text-shadow: 
+            0 0 18px var(--retro-accent),
+            0 0 35px var(--retro-accent);
           animation: statusBlink 1s infinite;
         }
+      }
+    }
+  }
+
+  // ✨ EMPTY TERMINAL - PARLAK BEYAZ YAZILAR
+  .empty-terminal {
+    padding: calc(var(--retro-unit) * 6);
+    text-align: left;
+    
+    .boot-sequence {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.3rem;            // ✨ Daha büyük font
+      line-height: 1.6;
+      
+      .boot-line {
+        color: #ffffff !important;   // ✨ PURE WHITE TEXT
+        text-shadow: 
+          0 0 15px #ffffff,          // ✨ Beyaz glow
+          0 0 25px var(--retro-primary);
+        margin-bottom: calc(var(--retro-unit) * 1);
+        -webkit-font-smoothing: antialiased;
+        font-weight: 600;           // ✨ Daha bold
+        letter-spacing: 0.5px;
+        filter: brightness(1.2);   // ✨ Extra brightness
+        
+        &:first-child {
+          color: #ffffff !important; // ✨ İlk satır da beyaz
+          font-size: 1.5rem;        // ✨ Daha büyük başlık
+          font-weight: bold;
+          text-shadow: 
+            0 0 20px #ffffff,
+            0 0 35px var(--neon-yellow);
+        }
+        
+        &:nth-child(2) {
+          color: #ffffff !important; // ✨ İkinci satır da beyaz
+          text-shadow: 
+            0 0 15px #ffffff,
+            0 0 25px var(--retro-info);
+        }
+        
+        &:nth-child(5) {
+          color: #ffffff !important; // ✨ Beşinci satır da beyaz
+          font-weight: bold;
+          text-shadow: 
+            0 0 18px #ffffff,
+            0 0 30px var(--retro-accent);
+        }
+      }
+      
+      .prompt-ready {
+        margin-top: calc(var(--retro-unit) * 3);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        
+        .prompt {
+          color: var(--terminal-prompt);
+          text-shadow: 
+            0 0 15px currentColor,
+            0 0 30px currentColor;
+          font-weight: bold;
+          font-size: 1.4rem;         // ✨ Daha büyük prompt
+        }
+        
+        .blinking-cursor {
+          color: #ffffff;            // ✨ PARLAK BEYAZ CURSOR
+          text-shadow: 
+            0 0 25px #ffffff,        // ✨ Güçlü beyaz glow
+            0 0 40px var(--retro-primary);
+          animation: blink 1s infinite;
+          font-size: 1.5rem;        // ✨ Daha büyük cursor
+          filter: brightness(1.4);  // ✨ Extra brightness
+        }
+      }
+    }
+  }
+
+  // ✨ ANALYSIS CONTENT - PARLAK BEYAZ
+  .analysis-content {
+    color: #ffffff !important;      // ✨ PARLAK BEYAZ
+    font-size: 1.2rem;             // ✨ Daha büyük font
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    
+    p {
+      color: #ffffff !important;    // ✨ PARLAK BEYAZ
+      text-shadow: 
+        0 0 10px #ffffff,           // ✨ Beyaz glow
+        0 0 15px var(--retro-primary);
+      margin-bottom: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      filter: brightness(1.1);     // ✨ Extra brightness
+      
+      strong {
+        color: #ffffff !important;  // ✨ Strong da beyaz
+        text-shadow: 
+          0 0 15px #ffffff,
+          0 0 25px var(--neon-yellow);
+        font-weight: bold;
+        filter: brightness(1.3);
+      }
+    }
+    
+    pre {
+      background: rgba(0, 0, 0, 0.3);
+      border: 2px solid var(--terminal-border);
+      border-radius: 8px;
+      padding: 1rem;
+      color: #ffffff !important;    // ✨ PARLAK BEYAZ
+      font-size: 1rem;             // ✨ Daha büyük font
+      text-shadow: 
+        0 0 8px #ffffff,            // ✨ Beyaz glow
+        0 0 12px var(--retro-primary);
+      overflow-x: auto;
+      -webkit-font-smoothing: antialiased;
+      font-weight: 500;
+    }
+    
+    .retro-btn {
+      background: linear-gradient(145deg, #5a5a7e, #4a4a6e);
+      border: 2px solid var(--terminal-border);
+      color: #ffffff !important;    // ✨ PARLAK BEYAZ BUTON
+      padding: 0.75rem 1.5rem;
+      font-family: 'VT323', monospace;
+      font-size: 1.2rem;           // ✨ Daha büyük font
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 6px;
+      text-shadow: 
+        0 0 15px #ffffff,           // ✨ Beyaz glow
+        0 0 20px var(--retro-primary);
+      transition: all 0.3s ease;
+      -webkit-font-smoothing: antialiased;
+      letter-spacing: 0.5px;
+      
+      &:hover {
+        border-color: var(--retro-primary);
+        box-shadow: 0 0 20px var(--retro-primary);
+        color: #ffffff !important;  // ✨ Hover'da da beyaz
+        text-shadow: 
+          0 0 20px #ffffff,
+          0 0 35px var(--retro-primary);
+        filter: brightness(1.2);
+      }
+      
+      i {
+        margin-right: 0.5rem;
+        text-shadow: 0 0 8px currentColor;
       }
     }
   }
@@ -638,48 +870,88 @@
 
 @keyframes textGlow {
   from { 
-    text-shadow: 0 0 15px var(--retro-primary), 0 0 30px var(--retro-primary), 0 0 60px var(--retro-primary); 
+    text-shadow: 
+      0 0 20px #ffffff,             // ✨ Beyaz glow ekledik
+      0 0 30px var(--retro-primary), 
+      0 0 60px var(--retro-primary); 
+    filter: brightness(1.2);
   }
   to { 
-    text-shadow: 0 0 20px var(--retro-primary), 0 0 40px var(--retro-primary), 0 0 80px var(--retro-primary); 
+    text-shadow: 
+      0 0 25px #ffffff,             // ✨ Beyaz glow ekledik
+      0 0 40px var(--retro-primary), 
+      0 0 80px var(--retro-primary); 
+    filter: brightness(1.4);
   }
 }
 
 @keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0.3; }
+  0%, 50% { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+  51%, 100% { 
+    opacity: 0.3; 
+    transform: scale(0.98);
+  }
 }
 
 @keyframes iconPulse {
-  0%, 100% { transform: scale(1); filter: brightness(1.2); }
-  50% { transform: scale(1.1); filter: brightness(1.5); }
+  0%, 100% { 
+    transform: scale(1); 
+    filter: brightness(1.2); 
+  }
+  50% { 
+    transform: scale(1.1); 
+    filter: brightness(1.5); 
+  }
 }
 
 @keyframes ledPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.7; 
+    transform: scale(0.95);
+  }
 }
 
 @keyframes scanLine {
-  0% { transform: translateX(-100%); opacity: 0.8; }
-  50% { opacity: 1; }
-  100% { transform: translateX(100vw); opacity: 0.8; }
-}
-
-@keyframes bootUp {
-  from { 
-    opacity: 0; 
-    transform: translateX(-10px); 
+  0% { 
+    transform: translateX(-100%); 
+    opacity: 0.8; 
   }
-  to { 
+  50% { 
     opacity: 1; 
-    transform: translateX(0); 
+  }
+  100% { 
+    transform: translateX(100vw); 
+    opacity: 0.8; 
   }
 }
 
 @keyframes statusPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.7; 
+    transform: scale(1.1);
+  }
+}
+
+@keyframes statusBlink {
+  0%, 50% { 
+    opacity: 1; 
+    filter: brightness(1);
+  }
+  51%, 100% { 
+    opacity: 0.7; 
+    filter: brightness(1.3);
+  }
 }
 
 @keyframes crtFlicker {
@@ -702,5 +974,28 @@
   50% { 
     border-color: var(--retro-primary);
     box-shadow: 0 0 60px rgba(0, 255, 136, 0.7);
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .retro-app {
+    font-size: 16px;
+    
+    .crt-header {
+      .header-content {
+        .terminal-title {
+          font-size: 1.8rem;
+        }
+      }
+    }
+    
+    .console-header .prompt-line {
+      font-size: 1rem;
+    }
+    
+    .retro-card .card-header .card-title {
+      font-size: 1.3rem;
+    }
   }
 }

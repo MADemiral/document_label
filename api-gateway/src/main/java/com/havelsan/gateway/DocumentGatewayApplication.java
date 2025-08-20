@@ -33,11 +33,11 @@ public RouteLocator documentRouter(RouteLocatorBuilder builder) {
 			 
 		.route("get-labels", r -> r
 			.path("/get-labels")
-			.uri("http://localhost:8001"))
+			.uri("http://localhost:8003"))
 
 				.route("label-suggestions", r -> r
 			.path("/label-suggestions")
-			.uri("http://localhost:8001"))
+			.uri("http://localhost:8003"))
 
 		 .route("semantic-search", r -> r
 			.path("/semantic-search")
@@ -45,11 +45,14 @@ public RouteLocator documentRouter(RouteLocatorBuilder builder) {
 
 			.route("search-documents-by-label", r -> r
 			.path("/search-documents-by-label")
-			.uri("http://localhost:8001"))
+			.uri("http://localhost:8003"))
 
 			.route("get-all-documents", r -> r
 			.path("/get-all-documents")
-			.uri("http://localhost:8001"))
+			.uri("http://localhost:8003"))
+		.route("delete-document", r -> r
+			.path("/delete-document/{document_id}")
+			.uri("http://localhost:8003"))
 		.build();
 
 	

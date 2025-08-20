@@ -17,6 +17,10 @@ Start-Process "python" -ArgumentList "-m", "uvicorn", "main:app", "--reload", "-
 Write-Host "Starting labeling service on port 8002..." -ForegroundColor Yellow
 Start-Process "python" -ArgumentList "-m", "uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8002" -WorkingDirectory "d:\staj\document_label\document_label_service\labeling_service" -WindowStyle Normal
 
+Write-Host "Starting labeling service on port 8003..." -ForegroundColor Yellow
+Start-Process "python" -ArgumentList "-m", "uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8003" -WorkingDirectory "d:\staj\document_label\document_label_service\database" -WindowStyle Normal
+
 Write-Host "Services are starting..." -ForegroundColor Green
 Write-Host "Embedding Service: http://localhost:8001" -ForegroundColor Cyan
 Write-Host "Labeling Service: http://localhost:8002" -ForegroundColor Cyan
+Write-Host "Labeling Service: http://localhost:8003" -ForegroundColor Cyan

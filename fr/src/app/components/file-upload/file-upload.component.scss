@@ -411,20 +411,25 @@ $shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
   }
 }
 
-// Retro Terminal Variables
+// Retro Terminal Variables - FILE-SEARCH GİBİ PARLAK!
 :root {
-  --terminal-bg: #0a0a0a;
-  --terminal-surface: #1a1a1a;
-  --terminal-border: #333333;
-  --terminal-text: #00ff41;
-  --terminal-prompt: #ffaa00;
-  --terminal-command: #33ccff;
-  --terminal-error: #ff3366;
-  --terminal-warning: #ffaa00;
-  --terminal-success: #00ff41;
-  --terminal-dim: #666666;
+  --terminal-bg: #0f1419;           // Daha koyu arka plan
+  --terminal-surface: #1a2332;      // Daha koyu surface
+  --terminal-border: #4a6fa5;       // Daha parlak border
+  --terminal-text: #ffffff;         // PURE WHITE - En parlak!
+  --terminal-prompt: #ffdd00;       // Çok parlak sarı
+  --terminal-command: #55ddff;      // Parlak mavi
+  --terminal-error: #ff5577;        // Parlak kırmızı
+  --terminal-warning: #ffcc44;      // Parlak turuncu
+  --terminal-success: #00ff88;      // Parlak yeşil
+  --terminal-dim: #e6e6e6;          // Çok daha açık gri
+  --terminal-bright: #ffffff;       // Pure white
+  --terminal-accent: #cc88ff;       // Parlak mor
+  --terminal-highlight: #ffff00;    // Çok parlak sarı
   
   --retro-font: 'VT323', 'Courier New', monospace;
+  --retro-font-mono: 'Share Tech Mono', monospace;
+  --retro-font-title: 'Orbitron', monospace;
   --retro-font-size: 16px;
   --retro-line-height: 1.2;
 }
@@ -433,7 +438,9 @@ $shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
   font-family: var(--retro-font);
   font-size: var(--retro-font-size);
   line-height: var(--retro-line-height);
-  color: var(--terminal-text);
+  color: var(--terminal-text); // Pure white default text
+  background: var(--terminal-bg); // Koyu arka plan
+  min-height: 100vh;
   
   // Terminal Section Base
   .terminal-section,
@@ -441,16 +448,17 @@ $shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
   .files-terminal,
   .help-terminal {
     background: var(--terminal-surface);
-    border: 2px solid var(--terminal-border);
-    border-radius: 8px;
+    border: 3px solid var(--terminal-border); // Daha kalın border
+    border-radius: 12px; // Daha yumuşak köşeler
     margin-bottom: 20px;
     box-shadow: 
-      0 0 20px rgba(0, 255, 65, 0.1),
-      inset 0 0 20px rgba(0, 0, 0, 0.5);
+      0 0 40px rgba(0, 0, 0, 0.8),
+      0 0 80px rgba(0, 255, 136, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
     position: relative;
     overflow: hidden;
 
-    // CRT Scan Lines Effect
+    // CRT Scan Lines Effect - Çok hafif
     &::before {
       content: '';
       position: absolute;
@@ -461,46 +469,54 @@ $shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
       background: repeating-linear-gradient(
         0deg,
         transparent,
-        transparent 1px,
-        rgba(0, 255, 65, 0.02) 2px
+        transparent 4px,
+        rgba(0, 255, 136, 0.008) 5px
       );
       pointer-events: none;
       z-index: 1;
+      animation: scanlines 0.1s linear infinite;
     }
   }
 
-  // Section Headers
+  // Section Headers - ÇOK PARLAK
   .section-header {
-    background: linear-gradient(135deg, #0d1b2a, #1b263b);
-    border-bottom: 1px solid var(--terminal-border);
-    padding: 12px 20px;
+    background: linear-gradient(135deg, #364c70, #2a3f5f);
+    border-bottom: 2px solid var(--terminal-border);
+    padding: 15px 25px; // Daha fazla padding
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 18px;
+    gap: 12px;
+    font-size: 20px; // Daha büyük font
     position: relative;
     z-index: 2;
 
     .terminal-prompt {
-      color: var(--terminal-prompt);
-      text-shadow: 0 0 5px currentColor;
+      color: var(--terminal-highlight); // Çok parlak sarı
+      text-shadow: 0 0 12px currentColor;
+      font-weight: bold;
+      font-size: 22px;
     }
 
     .command-text {
       color: var(--terminal-command);
-      text-shadow: 0 0 5px currentColor;
+      text-shadow: 0 0 12px currentColor;
+      font-weight: bold;
+      font-family: var(--retro-font-title);
+      letter-spacing: 1px;
     }
 
     .cursor-blink {
       color: var(--terminal-success);
+      text-shadow: 0 0 15px currentColor;
       animation: blink 1s infinite;
+      font-size: 24px; // Daha büyük cursor
     }
   }
 
   .terminal-header {
-    background: linear-gradient(135deg, #0d1b2a, #1b263b);
-    border-bottom: 1px solid var(--terminal-border);
-    padding: 10px 20px;
+    background: linear-gradient(135deg, #364c70, #2a3f5f);
+    border-bottom: 2px solid var(--terminal-border);
+    padding: 15px 25px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -508,64 +524,80 @@ $shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
     z-index: 2;
 
     .window-title {
-      color: var(--terminal-text);
-      font-size: 16px;
-      text-shadow: 0 0 5px currentColor;
+      color: var(--terminal-bright); // Pure white
+      font-size: 20px; // Daha büyük
+      text-shadow: 0 0 12px var(--terminal-success);
       letter-spacing: 1px;
+      font-weight: bold;
+      font-family: var(--retro-font-title);
     }
 
     .terminal-close-btn {
-      background: none;
-      border: 1px solid var(--terminal-error);
+      background: rgba(255, 85, 119, 0.2);
+      border: 2px solid var(--terminal-error);
       color: var(--terminal-error);
-      width: 24px;
-      height: 24px;
+      width: 32px; // Daha büyük
+      height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       transition: all 0.3s ease;
       font-family: var(--retro-font);
-      font-size: 18px;
+      font-size: 22px; // Daha büyük
+      font-weight: bold;
+      border-radius: 4px;
+      text-shadow: 0 0 8px currentColor;
 
       &:hover {
         background: var(--terminal-error);
         color: var(--terminal-bg);
-        box-shadow: 0 0 10px var(--terminal-error);
+        box-shadow: 
+          0 0 15px var(--terminal-error),
+          0 0 30px rgba(255, 85, 119, 0.5);
+        transform: scale(1.1);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+
+      span {
+        line-height: 1;
       }
     }
   }
 
-  // Upload Terminal
+  // Upload Terminal - ÇOK PARLAK YAZILAR
   .upload-terminal {
     position: relative;
-    padding: 40px 20px;
-    min-height: 300px;
+    padding: 50px 30px; // Daha fazla padding
+    min-height: 350px;
     cursor: pointer;
     transition: all 0.3s ease;
-    background: radial-gradient(circle at center, rgba(0, 255, 65, 0.05), transparent);
+    background: radial-gradient(circle at center, rgba(0, 255, 136, 0.08), transparent);
 
     &:hover {
-      background: radial-gradient(circle at center, rgba(0, 255, 65, 0.08), transparent);
+      background: radial-gradient(circle at center, rgba(0, 255, 136, 0.12), transparent);
       
       .terminal-border {
         border-color: var(--terminal-success);
-        box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+        box-shadow: 0 0 30px rgba(0, 255, 136, 0.4);
       }
     }
 
     &.drag-over {
-      background: radial-gradient(circle at center, rgba(0, 255, 65, 0.15), rgba(51, 204, 255, 0.05));
+      background: radial-gradient(circle at center, rgba(0, 255, 136, 0.2), rgba(85, 204, 255, 0.1));
       
       .terminal-border {
         border-color: var(--terminal-command);
-        box-shadow: 0 0 30px rgba(51, 204, 255, 0.5);
+        box-shadow: 0 0 40px rgba(85, 204, 255, 0.6);
         animation: borderPulse 1s infinite;
       }
 
       .ascii-art {
         color: var(--terminal-command);
-        text-shadow: 0 0 10px currentColor;
+        text-shadow: 0 0 15px currentColor;
       }
     }
 
@@ -579,26 +611,26 @@ $shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
 
     .terminal-border {
       position: absolute;
-      top: 10px;
-      left: 10px;
-      right: 10px;
-      bottom: 10px;
-      border: 1px dashed var(--terminal-dim);
+      top: 15px;
+      left: 15px;
+      right: 15px;
+      bottom: 15px;
+      border: 2px dashed var(--terminal-border);
       transition: all 0.3s ease;
       pointer-events: none;
 
       .border-corner {
         position: absolute;
-        color: var(--terminal-dim);
-        font-size: 20px;
+        color: var(--terminal-border);
+        font-size: 24px; // Daha büyük
         background: var(--terminal-surface);
-        padding: 2px;
+        padding: 4px;
         transition: color 0.3s ease;
 
-        &.tl { top: -12px; left: -8px; }
-        &.tr { top: -12px; right: -8px; }
-        &.bl { bottom: -12px; left: -8px; }
-        &.br { bottom: -12px; right: -8px; }
+        &.tl { top: -15px; left: -12px; }
+        &.tr { top: -15px; right: -12px; }
+        &.bl { bottom: -15px; left: -12px; }
+        &.br { bottom: -15px; right: -12px; }
       }
     }
 
@@ -609,22 +641,26 @@ $shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 20px;
+      gap: 25px;
       text-align: center;
     }
 
-    // ASCII Art
+    // ASCII Art - ÇOK PARLAK
     .ascii-upload,
     .processing-ascii {
       .ascii-art,
       .ascii-spinner {
         font-family: 'Courier New', monospace;
-        font-size: 12px;
+        font-size: 14px; // Daha büyük
         line-height: 1;
         color: var(--terminal-success);
-        text-shadow: 0 0 8px currentColor;
+        text-shadow: 
+          0 0 8px currentColor,
+          0 0 15px currentColor,
+          0 0 25px currentColor;
         margin: 0;
         white-space: pre;
+        font-weight: bold;
       }
     }
 
@@ -632,28 +668,36 @@ $shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
       .message-line {
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-size: 18px;
-        margin-bottom: 8px;
+        gap: 12px;
+        font-size: 20px; // Çok daha büyük
+        margin-bottom: 12px;
 
         .prompt {
-          color: var(--terminal-prompt);
-          text-shadow: 0 0 5px currentColor;
+          color: var(--terminal-highlight); // Çok parlak sarı
+          text-shadow: 0 0 15px currentColor;
+          font-weight: bold;
+          font-family: var(--retro-font-mono);
         }
 
         .message {
-          color: var(--terminal-text);
-          text-shadow: 0 0 5px currentColor;
+          color: var(--terminal-bright); // Pure white
+          text-shadow: 0 0 8px var(--terminal-success);
           letter-spacing: 1px;
+          font-weight: 600;
+          font-family: var(--retro-font-mono);
+          -webkit-font-smoothing: antialiased;
 
           &.processing {
             color: var(--terminal-command);
+            text-shadow: 0 0 12px currentColor;
           }
         }
 
         .dots {
-          color: var(--terminal-command);
+          color: var(--terminal-accent);
+          text-shadow: 0 0 8px currentColor;
           animation: dots 1.5s infinite;
+          font-size: 24px;
         }
       }
     }
@@ -662,46 +706,53 @@ $shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
       .info-line {
         display: flex;
         align-items: center;
-        gap: 8px;
-        margin-bottom: 6px;
-        font-size: 14px;
+        gap: 12px;
+        margin-bottom: 10px;
+        font-size: 17px; // Daha büyük
 
         .label {
-          color: var(--terminal-prompt);
-          text-shadow: 0 0 3px currentColor;
-          min-width: 80px;
+          color: var(--terminal-highlight); // Parlak sarı
+          text-shadow: 0 0 10px currentColor;
+          min-width: 100px;
+          font-weight: bold;
+          font-family: var(--retro-font-mono);
         }
 
         .formats,
         .size {
-          color: var(--terminal-text);
-          text-shadow: 0 0 3px currentColor;
+          color: var(--terminal-bright); // Pure white
+          text-shadow: 0 0 5px var(--terminal-success);
+          font-weight: 600;
+          -webkit-font-smoothing: antialiased;
         }
       }
     }
 
     .progress-display {
       width: 100%;
-      max-width: 400px;
+      max-width: 450px; // Daha geniş
 
       .progress-line {
         .progress-label {
-          color: var(--terminal-prompt);
-          text-shadow: 0 0 5px currentColor;
-          margin-right: 10px;
+          color: var(--terminal-highlight); // Parlak sarı
+          text-shadow: 0 0 12px currentColor;
+          margin-right: 15px;
+          font-weight: bold;
+          font-size: 18px; // Daha büyük
+          font-family: var(--retro-font-mono);
         }
 
         .ascii-progress {
           display: flex;
           align-items: center;
-          gap: 10px;
-          margin-top: 8px;
+          gap: 15px;
+          margin-top: 12px;
 
           .progress-bar {
             position: relative;
-            width: 200px;
+            width: 250px; // Daha geniş
             font-family: 'Courier New', monospace;
-            font-size: 12px;
+            font-size: 14px; // Daha büyük
             overflow: hidden;
 
             .filled {
@@ -709,21 +760,25 @@ $shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
               top: 0;
               left: 0;
               color: var(--terminal-success);
-              text-shadow: 0 0 5px currentColor;
+              text-shadow: 0 0 12px currentColor;
               white-space: nowrap;
               overflow: hidden;
+              font-weight: bold;
             }
 
             .empty {
               color: var(--terminal-dim);
+              font-weight: bold;
             }
           }
 
           .percentage {
             color: var(--terminal-success);
-            text-shadow: 0 0 5px currentColor;
-            font-size: 16px;
-            min-width: 40px;
+            text-shadow: 0 0 15px currentColor;
+            font-size: 20px; // Daha büyük
+            min-width: 50px;
+            font-weight: bold;
+            font-family: var(--retro-font-mono);
           }
         }
       }
@@ -738,27 +793,34 @@ $shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
     }
   }
 
-  // Status Terminal
+  // Status Terminal - ÇOK PARLAK
   .status-terminal {
     .status-content {
-      padding: 15px 20px;
+      padding: 20px 30px; // Daha fazla padding
 
       .status-line {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 15px;
+        font-size: 18px; // Daha büyük
 
         .prompt {
-          color: var(--terminal-prompt);
-          text-shadow: 0 0 5px currentColor;
+          color: var(--terminal-highlight);
+          text-shadow: 0 0 12px currentColor;
+          font-weight: bold;
+          font-family: var(--retro-font-mono);
         }
 
         .status-text {
-          color: var(--terminal-text);
-          text-shadow: 0 0 5px currentColor;
+          color: var(--terminal-bright); // Pure white
+          text-shadow: 0 0 8px var(--terminal-success);
+          font-weight: 600;
+          -webkit-font-smoothing: antialiased;
+          letter-spacing: 0.5px;
 
           &.active {
             color: var(--terminal-command);
+            text-shadow: 0 0 15px currentColor;
             animation: textPulse 2s infinite;
           }
         }
@@ -766,176 +828,220 @@ $shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
     }
   }
 
-  // Files Terminal
+  // Files Terminal - ÇOK PARLAK YAZILAR
   .files-terminal {
     .files-content {
       padding: 0;
 
       .file-header {
-        background: rgba(0, 255, 65, 0.1);
-        border-bottom: 1px solid var(--terminal-border);
-        padding: 10px 20px;
+        background: rgba(0, 255, 136, 0.2); // Daha parlak arka plan
+        border-bottom: 2px solid var(--terminal-border);
+        padding: 15px 25px; // Daha fazla padding
         display: grid;
-        grid-template-columns: 30px 1fr 80px 100px 60px 40px;
-        gap: 15px;
-        font-size: 14px;
-        color: var(--terminal-prompt);
-        text-shadow: 0 0 3px currentColor;
+        grid-template-columns: 40px 1fr 100px 120px 80px 50px; // Daha geniş columns
+        gap: 20px; // Daha fazla gap
+        font-size: 16px; // Daha büyük font
+        color: var(--terminal-highlight); // Parlak sarı
+        text-shadow: 0 0 8px currentColor;
         font-weight: bold;
+        font-family: var(--retro-font-mono);
       }
 
       .file-entry {
-        padding: 12px 20px;
+        padding: 18px 25px; // Daha fazla padding
         display: grid;
-        grid-template-columns: 30px 1fr 80px 100px 60px 40px;
-        gap: 15px;
+        grid-template-columns: 40px 1fr 100px 120px 80px 50px;
+        gap: 20px;
         align-items: center;
-        border-bottom: 1px solid rgba(51, 51, 51, 0.3);
+        border-bottom: 1px solid rgba(74, 111, 165, 0.3);
         transition: all 0.3s ease;
         position: relative;
+        font-size: 15px; // Daha büyük font
 
         &:hover {
-          background: rgba(0, 255, 65, 0.05);
-        }
-
-        &.processing {
-          background: rgba(51, 204, 255, 0.05);
-
-          .processing-icon {
-            animation: spin 1s linear infinite;
-            color: var(--terminal-command);
-            text-shadow: 0 0 5px currentColor;
-          }
+          background: rgba(0, 255, 136, 0.15);
+          border-color: var(--terminal-success);
         }
 
         .col-icon {
-          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
 
           .file-type-icon {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            background: var(--terminal-dim);
-            color: var(--terminal-bg);
-            text-align: center;
-            line-height: 20px;
-            font-size: 12px;
+            color: var(--terminal-accent);
             font-weight: bold;
+            font-size: 18px; // Daha büyük
+            text-shadow: 0 0 8px currentColor;
+          }
+
+          .processing-icon {
+            color: var(--terminal-command);
+            font-size: 18px; // Daha büyük
+            font-weight: bold;
+            text-shadow: 0 0 12px currentColor;
+            animation: processingRotate 1.5s linear infinite;
           }
         }
 
         .col-name {
           .filename {
-            color: var(--terminal-text);
-            text-shadow: 0 0 3px currentColor;
+            color: var(--terminal-bright); // Pure white
+            text-shadow: 0 0 8px var(--terminal-success);
+            font-weight: 600;
+            font-size: 16px; // Daha büyük
+            -webkit-font-smoothing: antialiased;
+            letter-spacing: 0.3px;
           }
         }
 
         .col-size {
           .file-size {
-            color: var(--terminal-dim);
+            color: var(--terminal-accent); // Parlak mor
             font-family: 'Courier New', monospace;
-            font-size: 12px;
+            font-size: 14px; // Daha büyük
+            font-weight: bold;
+            text-shadow: 0 0 5px currentColor;
           }
         }
 
         .col-date {
           .upload-date {
-            color: var(--terminal-dim);
-            font-size: 12px;
+            color: var(--terminal-command); // Parlak mavi
+            font-size: 14px; // Daha büyük
+            font-weight: 600;
+            text-shadow: 0 0 5px currentColor;
+            font-family: var(--retro-font-mono);
           }
         }
 
         .col-status {
-          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
 
           .status-indicator {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            text-align: center;
-            line-height: 20px;
-            font-size: 12px;
+            font-size: 18px; // Daha büyük
             font-weight: bold;
+            text-shadow: 0 0 8px currentColor;
+            transition: all 0.3s ease;
 
             &.ready {
-              background: var(--terminal-success);
-              color: var(--terminal-bg);
-              box-shadow: 0 0 8px var(--terminal-success);
+              color: var(--terminal-success);
+              text-shadow: 0 0 12px currentColor;
             }
 
             &.processing {
-              background: var(--terminal-command);
-              color: var(--terminal-bg);
-              animation: statusBlink 1s infinite;
+              color: var(--terminal-command);
+              text-shadow: 0 0 15px currentColor;
+              animation: processingRotate 2s linear infinite;
             }
 
             &.error {
-              background: var(--terminal-error);
-              color: var(--terminal-bg);
+              color: var(--terminal-error);
+              text-shadow: 0 0 12px currentColor;
+              animation: errorBlink 1s ease-in-out infinite alternate;
             }
           }
         }
 
         .col-action {
-          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
 
           .delete-btn {
-            background: none;
-            border: 1px solid var(--terminal-error);
+            background: rgba(255, 85, 119, 0.15);
+            border: 2px solid rgba(255, 85, 119, 0.6);
             color: var(--terminal-error);
-            width: 20px;
-            height: 20px;
+            width: 32px; // Daha büyük
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
             font-family: var(--retro-font);
-            font-size: 14px;
+            font-size: 20px; // Daha büyük
+            font-weight: bold;
+            border-radius: 4px;
+            text-shadow: 0 0 8px currentColor;
 
             &:hover {
+              background: rgba(255, 85, 119, 0.4);
+              color: var(--terminal-bright);
+              border-color: var(--terminal-error);
+              box-shadow: 
+                0 0 12px var(--terminal-error),
+                0 0 25px rgba(255, 85, 119, 0.4);
+              transform: scale(1.15);
+            }
+
+            &:active {
+              transform: scale(0.95);
               background: var(--terminal-error);
-              color: var(--terminal-bg);
-              box-shadow: 0 0 8px var(--terminal-error);
+            }
+
+            span {
+              line-height: 1;
             }
           }
 
           .processing-indicator {
+            color: var(--terminal-warning);
+            font-size: 20px; // Daha büyük
+            text-shadow: 0 0 12px currentColor;
+            animation: processingPulse 1.5s ease-in-out infinite alternate;
+          }
+        }
+
+        // Processing row highlight - Daha parlak
+        &.processing {
+          background: rgba(85, 221, 255, 0.1);
+          border-color: rgba(85, 221, 255, 0.4);
+          
+          .filename {
             color: var(--terminal-command);
-            animation: spin 1s linear infinite;
+            text-shadow: 0 0 8px currentColor;
           }
         }
       }
     }
   }
 
-  // Help Terminal
+  // Help Terminal - ÇOK PARLAK
   .help-terminal {
     .help-content {
-      padding: 20px;
+      padding: 30px;
 
       .help-section {
-        margin-bottom: 20px;
+        margin-bottom: 25px;
 
         .help-title {
-          color: var(--terminal-prompt);
-          text-shadow: 0 0 5px currentColor;
-          font-size: 16px;
-          margin-bottom: 8px;
-          border-bottom: 1px solid var(--terminal-dim);
-          padding-bottom: 4px;
+          color: var(--terminal-highlight); // Parlak sarı
+          text-shadow: 0 0 12px currentColor;
+          font-size: 20px; // Daha büyük
+          font-weight: bold;
+          margin-bottom: 15px;
+          border-bottom: 2px solid var(--terminal-border);
+          padding-bottom: 8px;
+          font-family: var(--retro-font-title);
         }
 
         .help-item {
-          color: var(--terminal-text);
-          text-shadow: 0 0 3px currentColor;
-          margin-bottom: 4px;
-          padding-left: 10px;
+          color: var(--terminal-bright); // Pure white
+          text-shadow: 0 0 5px var(--terminal-success);
+          margin-bottom: 8px;
+          padding-left: 15px;
+          font-weight: 500;
+          font-size: 16px; // Daha büyük
+          -webkit-font-smoothing: antialiased;
+          letter-spacing: 0.3px;
 
           .status-ok {
             color: var(--terminal-success);
-            text-shadow: 0 0 5px currentColor;
+            text-shadow: 0 0 12px currentColor;
+            font-weight: bold;
           }
         }
       }
@@ -943,74 +1049,134 @@ $shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
   }
 }
 
-// Animations
+// Animations - Daha belirgin
 @keyframes blink {
   0%, 50% { opacity: 1; }
   51%, 100% { opacity: 0; }
 }
 
-@keyframes borderPulse {
-  0% { box-shadow: 0 0 20px rgba(51, 204, 255, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(51, 204, 255, 0.6); }
-  100% { box-shadow: 0 0 20px rgba(51, 204, 255, 0.3); }
-}
-
-@keyframes processingGlow {
-  from { 
-    text-shadow: 0 0 8px var(--terminal-command);
-    color: var(--terminal-command);
-  }
-  to { 
-    text-shadow: 0 0 15px var(--terminal-command);
-    color: var(--terminal-success);
-  }
+@keyframes scanlines {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
 }
 
 @keyframes dots {
-  0%, 20% { opacity: 0; }
-  50% { opacity: 1; }
-  100% { opacity: 0; }
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
+  100% { content: ''; }
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+@keyframes borderPulse {
+  0%, 100% { 
+    box-shadow: 0 0 30px rgba(85, 204, 255, 0.4); 
+  }
+  50% { 
+    box-shadow: 0 0 50px rgba(85, 204, 255, 0.8); 
+  }
+}
+
+@keyframes processingGlow {
+  0% {
+    text-shadow: 
+      0 0 8px currentColor,
+      0 0 15px currentColor,
+      0 0 25px currentColor;
+  }
+  100% {
+    text-shadow: 
+      0 0 15px currentColor,
+      0 0 25px currentColor,
+      0 0 40px currentColor;
+  }
 }
 
 @keyframes textPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8; 
+    transform: scale(1.02);
+  }
 }
 
-@keyframes statusBlink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0.5; }
+@keyframes processingRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes processingPulse {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes errorBlink {
+  0% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+// Enhanced processing animation
+.retro-upload-container {
+  .file-entry.processing {
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(85, 221, 255, 0.15) 50%,
+        transparent 100%
+      );
+      animation: scanLine 2s linear infinite;
+      pointer-events: none;
+    }
+  }
+}
+
+@keyframes scanLine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 // Responsive Design
 @media (max-width: 768px) {
   .retro-upload-container {
     .upload-terminal {
-      padding: 30px 15px;
-      min-height: 250px;
+      padding: 40px 20px;
+      min-height: 300px;
 
       .ascii-upload,
       .processing-ascii {
         .ascii-art,
         .ascii-spinner {
-          font-size: 10px;
+          font-size: 12px;
         }
       }
 
       .upload-messages {
         .message-line {
-          font-size: 16px;
+          font-size: 18px;
         }
       }
 
       .format-info {
         .info-line {
-          font-size: 12px;
+          font-size: 15px;
         }
       }
     }
@@ -1019,25 +1185,25 @@ $shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
       .files-content {
         .file-header,
         .file-entry {
-          grid-template-columns: 25px 1fr 60px 70px 40px 30px;
-          gap: 10px;
-          padding: 8px 15px;
-          font-size: 12px;
+          grid-template-columns: 30px 1fr 70px 80px 50px 40px;
+          gap: 15px;
+          padding: 12px 20px;
+          font-size: 14px;
         }
       }
     }
 
     .help-terminal {
       .help-content {
-        padding: 15px;
+        padding: 20px;
 
         .help-section {
           .help-title {
-            font-size: 14px;
+            font-size: 18px;
           }
 
           .help-item {
-            font-size: 12px;
+            font-size: 15px;
           }
         }
       }
@@ -1048,15 +1214,15 @@ $shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
 @media (max-width: 480px) {
   .retro-upload-container {
     .section-header {
-      font-size: 14px;
-      padding: 10px 15px;
+      font-size: 16px;
+      padding: 12px 20px;
     }
 
     .terminal-header {
-      padding: 8px 15px;
+      padding: 12px 20px;
 
       .window-title {
-        font-size: 14px;
+        font-size: 16px;
       }
     }
 
@@ -1064,8 +1230,8 @@ $shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
       .files-content {
         .file-header,
         .file-entry {
-          grid-template-columns: 1fr 50px 30px;
-          gap: 8px;
+          grid-template-columns: 1fr 60px 35px;
+          gap: 10px;
 
           .col-size,
           .col-date,
@@ -1084,5 +1250,68 @@ $shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.15);
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+// Button Animations
+@keyframes uploadPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+@keyframes uploadBounce {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes processingRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// Button focus states
+.retro-upload-container {
+  button:focus {
+    outline: 2px solid var(--terminal-success);
+    outline-offset: 2px;
+  }
+  
+  .delete-btn:focus {
+    outline-color: var(--terminal-error);
+  }
+  
+  .terminal-close-btn:focus {
+    outline-color: var(--terminal-error);
+  }
+}
+
+// Responsive button adjustments
+@media (max-width: 768px) {
+  .retro-upload-container {
+    .action-button {
+      padding: 10px 16px;
+      font-size: 14px;
+    }
+    
+    .terminal-close-btn,
+    .delete-btn {
+      width: 32px;
+      height: 32px;
+      font-size: 18px;
+    }
   }
 }

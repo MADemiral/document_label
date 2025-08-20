@@ -333,6 +333,7 @@ export class ApiService {
   isValidQuery(query: string, minLength: number = 3): boolean {
     return Boolean(query && typeof query === 'string' && query.trim().length >= minLength);
   }
+  
 
   /**
    * Handle API errors
@@ -348,6 +349,31 @@ export class ApiService {
       return 'Sunucu hatası. Lütfen daha sonra tekrar deneyin.';
     } else {
       return `${operation} başarısız oldu. Lütfen tekrar deneyin.`;
+    }
+  }
+
+  // ==================== Delete Document ====================
+    /**
+   * Delete document 
+   */
+
+  deleteDocument(documentId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/delete-document/${documentId}`, this.httpOptions).pipe(
+      retry(2),
+      timeout(10000),
+      catchError(error => {
+        console.error('Delete document error:', error);
+        return of({ success: false });
+      })
+    );
+  }
+  async deleteDocumentAsync(documentId: number): Promise<any> {
+    try {
+      const response = await this.http.delete(`${this.baseUrl}/documents/${documentId}`, this.httpOptions).toPromise();
+      return response;
+    } catch (error) {
+      console.error('Delete document error:', error);
+      return { success: false };
     }
   }
 }

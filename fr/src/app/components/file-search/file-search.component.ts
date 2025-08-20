@@ -6,17 +6,29 @@ import { debounceTime, distinctUntilChanged, switchMap, catchError, takeUntil } 
 import { ApiService } from '../../service/api.service';
 import { FileViewComponent, DocumentViewData } from '../file-view/file-view.component';
 import { LabelSuggestion, LabelSuggestionsResponse } from '../../interfaces/file-search/file-search-response.interface';
+import { ConfirmationConfig, ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
+// ⚡ FIX: Updated import - updated interface
+import { DoomConfig, DoomReadyComponent } from '../doom-captcha/doom-captcha.component';
 
 @Component({
   selector: 'app-file-search',
   standalone: true,
-  imports: [CommonModule, FormsModule, FileViewComponent], // FileViewComponent eklendi
+  imports: [
+    CommonModule, 
+    FormsModule, 
+    FileViewComponent, 
+    ConfirmationDialogComponent,
+    DoomReadyComponent
+  ],
   templateUrl: './file-search.component.html',
   styleUrls: ['./file-search.component.scss']
 })
 export class FileSearchComponent implements OnInit, OnDestroy {
   
+  // Timeout for temporary messages
+  private messageTimeout: any = null;
+
   // Service injection
   private apiService = inject(ApiService);
   
@@ -45,6 +57,22 @@ export class FileSearchComponent implements OnInit, OnDestroy {
   showFileView = signal<boolean>(false);
   selectedDocument = signal<DocumentViewData | null>(null);
   isFileViewModal = signal<boolean>(true);
+
+  // DELETE DIALOG SIGNALS
+  documentToDelete = signal<DocumentViewData | null>(null);
+  showDeleteDialog = signal<boolean>(false);
+
+  // Dialog config signal for confirmation dialog
+  dialogConfig = signal<ConfirmationConfig>({
+    title: '',
+    message: '',
+    confirmText: '',
+    cancelText: '',
+    type: 'info',
+    showDetails: false,
+    details: {},
+    isProcessing: false
+  });
   
   // Configuration signals
   enableAutoComplete = signal<boolean>(true);
@@ -72,6 +100,14 @@ export class FileSearchComponent implements OnInit, OnDestroy {
   showPreview = signal<boolean>(true);
   sortBy = signal<'relevance' | 'date' | 'name' | 'size'>('relevance');
   sortOrder = signal<'asc' | 'desc'>('desc');
+
+  // ⚡ NEW: DOOM CAPTCHA SIGNALS - FIXED INTERFACE
+  showDoomCaptcha = signal<boolean>(false);
+  doomConfig = signal<DoomConfig>({
+    documentTitle: '',
+    documentId: '',
+    isProcessing: false
+  });
   
   // Computed properties
   showAdvancedFilters = computed(() => this.showAdvancedFiltersSignal());
@@ -694,8 +730,8 @@ export class FileSearchComponent implements OnInit, OnDestroy {
     this.showFileView.set(false);
     this.selectedDocument.set(null);
     
-    // Re-enable body scroll
-    document.body.style.overflow = 'auto';
+    // ⚡ FIX: Re-enable body scroll with window.document
+    window.document.body.style.overflow = 'auto';
   }
   
   /**
@@ -708,49 +744,210 @@ export class FileSearchComponent implements OnInit, OnDestroy {
   }
   
   /**
-   * Handle file view delete document
+   * Handle file view delete document - CUSTOM DIALOG
    */
-  onFileViewDeleteDocument(document: DocumentViewData): void {
-    console.log('🗑️ Delete document:', document.document_id);
-
-    if (confirm(`"${document.title}" dökümanını silmek istediğinizden emin misiniz?`)) {
-      // TODO: API call to delete document
-      this.deleteDocumentFromResults(document.document_id);
+  onFileViewDeleteDialog(documentData: DocumentViewData): void {
+    console.log('🗑️ Delete requested for document:', documentData.document_id);
+    
+    // Set document to delete
+    this.documentToDelete.set(documentData);
+    
+    // Configure dialog
+    this.dialogConfig.set({
+      title: 'CRITICAL OPERATION - DELETE CONFIRMATION',
+      message: `You are about to <strong>PERMANENTLY DELETE</strong> the document:<br><br>"<strong>${documentData.title}</strong>"<br><br>This action <strong>CANNOT BE UNDONE</strong>!`,
+      confirmText: 'DELETE PERMANENTLY',
+      cancelText: 'CANCEL OPERATION',
+      type: 'danger',
+      showDetails: true,
+      details: {
+        documentId: documentData.document_id,
+        title: documentData.title,
+        size: `${documentData.size} bytes`,
+        type: documentData.file_type?.toUpperCase() || 'UNKNOWN',
+        status: 'MARKED FOR DELETION'
+      },
+      isProcessing: false
+    });
+    
+    // Show dialog
+    this.showDeleteDialog.set(true);
+  }
+  
+  /**
+   * Handle dialog confirmation - FIX
+   */
+  onDeleteConfirmed(): void {
+    const documentData = this.documentToDelete();
+    if (!documentData) return;
+    
+    console.log('✅ Delete confirmed for:', documentData.document_id);
+    
+    // Show processing state
+    this.dialogConfig.update(config => ({
+      ...config,
+      isProcessing: true
+    }));
+    
+    // Perform delete
+    this.deleteDocumentFromSystem(documentData);
+  }
+  
+  /**
+   * Handle dialog cancellation
+   */
+  onDeleteCancelled(): void {
+    console.log('❌ Delete cancelled by user');
+    this.closeDeleteDialog();
+  }
+  
+  /**
+   * Handle dialog close
+   */
+  onDeleteDialogClosed(): void {
+    this.closeDeleteDialog();
+  }
+  
+  /**
+   * Close delete dialog
+   */
+  private closeDeleteDialog(): void {
+    this.showDeleteDialog.set(false);
+    this.documentToDelete.set(null);
+    this.dialogConfig.update(config => ({
+      ...config,
+      isProcessing: false
+    }));
+  }
+  
+  // ==================== DOOM CAPTCHA METHODS ====================
+  
+  /**
+   * Show REAL DOOM captcha - FIXED VARIABLE NAMES AND INTERFACE
+   */
+  onFileViewDeleteDocument(documentData: DocumentViewData): void {
+    console.log('🎮 === DOOM DELETE STARTED ===');
+    console.log('🎮 Document:', documentData);
+    console.log('🎮 Document ID:', documentData.document_id);
+    console.log('🎮 Document Title:', documentData.title);
+    
+    // Set document to delete
+    this.documentToDelete.set(documentData);
+    console.log('🎮 Document to delete set:', this.documentToDelete());
+    
+    // ⚡ FIX: Configure DOOM with correct interface
+    const doomConfigData: DoomConfig = {
+      documentTitle: documentData.title ?? `Document ${documentData.document_id}`,
+      documentId: String(documentData.document_id), // Convert to string
+      isProcessing: false
+    };
+    
+    console.log('🎮 Setting DOOM Config:', doomConfigData);
+    this.doomConfig.set(doomConfigData);
+    console.log('🎮 DOOM Config after set:', this.doomConfig());
+    
+    // Show DOOM captcha
+    console.log('🎮 Current showDoomCaptcha before:', this.showDoomCaptcha());
+    this.showDoomCaptcha.set(true);
+    console.log('🎮 showDoomCaptcha after set:', this.showDoomCaptcha());
+    
+    // ⚡ FIX: Use window.document instead of parameter 'document'
+    window.document.body.style.overflow = 'hidden';
+    console.log('🎮 Body overflow set to hidden');
+    
+    // Force change detection
+    setTimeout(() => {
+      console.log('🎮 After timeout - showDoomCaptcha:', this.showDoomCaptcha());
+      console.log('🎮 After timeout - doomConfig:', this.doomConfig());
+      
+      // ⚡ FIX: Use window.document for DOM queries
+      const doomComponent = window.document.querySelector('app-doom-ready');
+      console.log('🎮 DOOM component in DOM:', doomComponent);
+      
+      const doomOverlay = window.document.querySelector('.doom-overlay');
+      console.log('🎮 DOOM overlay in DOM:', doomOverlay);
+      
+    }, 100);
+    
+    console.log('🎮 === DOOM DELETE END ===');
+  }
+  
+  /**
+   * Handle doom captcha confirmation - FIXED
+   */
+  onDoomConfirmed(): void {
+    const documentData = this.documentToDelete();
+    if (!documentData) return;
+    
+    console.log('🎮 REAL DOOM captcha completed - deleting document!');
+    
+    this.doomConfig.update(config => ({
+      ...config,
+      isProcessing: true
+    }));
+    
+    this.deleteDocumentFromSystem(documentData);
+  }
+  
+  /**
+   * Handle doom captcha cancelled
+   */
+  onDoomCancelled(): void {
+    console.log('🎮 DOOM captcha cancelled');
+    this.closeDoomCaptcha();
+  }
+  
+  /**
+   * ⚡ NEW: Handle doom captcha closed
+   */
+  onDoomClosed(): void {
+    console.log('🎮 DOOM captcha closed');
+    this.closeDoomCaptcha();
+  }
+  
+  /**
+   * Close doom captcha
+   */
+  private closeDoomCaptcha(): void {
+    this.showDoomCaptcha.set(false);
+    this.documentToDelete.set(null);
+    this.doomConfig.update(config => ({
+      ...config,
+      isProcessing: false
+    }));
+    
+    // ⚡ FIX: Restore body scroll with window.document
+    window.document.body.style.overflow = 'auto';
+  }
+  
+  /**
+   * Updated delete method - FIX PARAMETER NAME
+   */
+  private async deleteDocumentFromSystem(documentData: DocumentViewData): Promise<void> {
+    try {
+      console.log('🔄 Deleting document after DOOM success:', documentData.document_id);
+      
+      // API CALL - FIXED
+      await this.apiService.deleteDocument(documentData.document_id).toPromise();
+      
+      // SUCCESS
+      this.deleteDocumentFromResults(documentData.document_id);
       this.closeFileView();
+      this.closeDoomCaptcha();
+      
+      this.showTemporaryMessage('🎮 DOOM Mission Complete! Document eliminated! 💀');
+      
+    } catch (error) {
+      console.error('❌ Delete error after DOOM:', error);
+      this.showTemporaryMessage('❌ DOOM Mission Complete but Delete Failed!');
+      
+      this.doomConfig.update(config => ({
+        ...config,
+        isProcessing: false
+      }));
     }
   }
   
-  /**
-   * Handle file view download document
-   */
-  onFileViewDownloadDocument(document: DocumentViewData): void {
-    console.log('📥 Download document:', document.document_id);
-    this.downloadDocument(document);
-  }
-  
-  /**
-   * Handle file view share document
-   */
-  onFileViewShareDocument(document: DocumentViewData): void {
-    console.log('📤 Share document:', document.document_id);
-    this.shareDocument(document);
-  }
-  
-  /**
-   * Handle label click in file view
-   */
-  onFileViewLabelClick(label: string): void {
-    console.log('🏷️ Search by label from file view:', label);
-    
-    // Close file view
-    this.closeFileView();
-    
-    // Set search query to label and perform search
-    this.searchQuery.set(label);
-    this.searchType.set('label');
-    this.performDocumentSearch();
-  }
-
   // ==================== DOCUMENT ACTION METHODS ====================
   
   /**
@@ -772,25 +969,25 @@ export class FileSearchComponent implements OnInit, OnDestroy {
   }
   
   /**
-   * Download document
+   * Download document - FIX PARAMETER NAME
    */
-  private downloadDocument(doc: DocumentViewData): void {
+  public downloadDocument(docData: DocumentViewData): void {
     try {
       // Create blob from content
-      const blob = new Blob([doc.content], { type: 'text/plain;charset=utf-8' });
+      const blob = new Blob([docData.content], { type: 'text/plain;charset=utf-8' });
       
       // Create download link
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = window.document.createElement('a');
       link.href = url;
-      link.download = `${doc.title || `document_${doc.document_id}`}.txt`;
+      link.download = `${docData.title || `document_${docData.document_id}`}.txt`;
       
       // Trigger download
-      document.body.appendChild(link);
+      window.document.body.appendChild(link);
       link.click();
       
       // Cleanup
-      document.body.removeChild(link);
+      window.document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
       this.showTemporaryMessage('✅ Döküman indirildi!');
@@ -802,12 +999,12 @@ export class FileSearchComponent implements OnInit, OnDestroy {
   }
   
   /**
-   * Share document
+   * Share document - FIX PARAMETER NAME
    */
-  public shareDocument(document: DocumentViewData): void {
+  public shareDocument(documentData: DocumentViewData): void {
     try {
       // Create shareable link
-      const shareUrl = `${window.location.origin}/document/${document.document_id}`;
+      const shareUrl = `${window.location.origin}/document/${documentData.document_id}`;
       
       // Copy to clipboard
       navigator.clipboard.writeText(shareUrl).then(() => {
@@ -894,11 +1091,18 @@ export class FileSearchComponent implements OnInit, OnDestroy {
   /**
    * Show temporary message
    */
-  private showTemporaryMessage(message: string): void {
+  private showTemporaryMessage(message: string, duration: number = 3000): void {
     this.saveSuccessSignal.set(message);
-    setTimeout(() => {
+    
+    // Clear any existing timeout
+    if (this.messageTimeout) {
+      clearTimeout(this.messageTimeout);
+    }
+    
+    // Set new timeout
+    this.messageTimeout = setTimeout(() => {
       this.saveSuccessSignal.set('');
-    }, 3000);
+    }, duration);
   }
   
   /**
@@ -1207,5 +1411,42 @@ export class FileSearchComponent implements OnInit, OnDestroy {
    */
   trackByDocumentId(index: number, document: any): any {
     return document.document_id || index;
+  }
+  
+  // ==================== FILE VIEW EVENT HANDLERS ====================
+  
+  /**
+   * Handle file view download document
+   */
+  onFileViewDownloadDocument(documentData: DocumentViewData): void {
+    console.log('📥 Download requested from file view:', documentData.document_id);
+    this.downloadDocument(documentData);
+  }
+  
+  /**
+   * Handle file view share document
+   */
+  onFileViewShareDocument(documentData: DocumentViewData): void {
+    console.log('📤 Share requested from file view:', documentData.document_id);
+    this.shareDocument(documentData);
+  }
+  
+  /**
+   * Handle file view label click
+   */
+  onFileViewLabelClick(labelData: string | { label_name: string }): void {
+    const labelName = typeof labelData === 'string' 
+      ? labelData 
+      : labelData.label_name;
+      
+    console.log('🏷️ Label clicked from file view:', labelName);
+    
+    // Close file view first
+    this.closeFileView();
+    
+    // Search with the label
+    this.searchQuery.set(labelName);
+    this.searchType.set('label');
+    this.performManualSearch();
   }
 }

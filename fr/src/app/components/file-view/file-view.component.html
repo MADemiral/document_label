@@ -72,9 +72,11 @@
         
         <button 
           class="action-btn delete-btn"
+          [disabled]="isLoading()"
           (click)="onDeleteDocument()"
           title="Sil">
-          <i class="fas fa-trash"></i>
+          <i class="fas fa-trash" *ngIf="!isLoading()"></i>
+          <i class="fas fa-spinner fa-spin" *ngIf="isLoading()"></i>
         </button>
         
         <button 

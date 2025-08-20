@@ -1,7 +1,7 @@
 import { Component, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router'; // Bu import'u ekleyin
-import { BootService } from '../../service/boot.service.service'; // Bu import'u ekleyin
+import { BootService } from '../../service/boot.service'; // Bu import'u ekleyin
 import { FileUploadComponent } from '../file-upload/file-upload.component';
 import { DocumentAnalysisComponent } from '../document-analysis/document-analysis.component';
 import { FileSearchComponent } from '../file-search/file-search.component';

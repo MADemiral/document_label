@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd, Event, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
-import { BootService } from './service/boot.service.service';
+import { BootService } from './service/boot.service';
 
 @Component({
   selector: 'app-root',

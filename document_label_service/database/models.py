@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, Text, TIMESTAMP, ForeignKey, String
 from sqlalchemy.dialects.postgresql import BYTEA
 from sqlalchemy.orm import relationship
-from .db import Base
+from db import Base
 from datetime import datetime
 
 class Document(Base):

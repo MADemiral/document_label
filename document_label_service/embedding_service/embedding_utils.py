@@ -72,3 +72,14 @@ def semantic_search(query: str, top_k=3):
             documents.sort(key=lambda x: x["score"], reverse=True)
 
     return documents
+
+def delete_document_embedding(document_id: int):
+    collection.delete(where = {"document_id": document_id})
+    print(f"Deleted embedding for document {document_id}")
+
+def delete_all_document_embeddings():
+    all_data = collection.get()
+    if all_data['ids']:
+        collection.delete(ids=all_data['ids'])
+        print(f"{len(all_data['ids'])} döküman silindi")
+    print("Deleted all document embeddings")

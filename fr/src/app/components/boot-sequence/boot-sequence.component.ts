@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { BootService } from '../../service/boot.service.service';
-import { AudioService } from '../../service/sound.service.service';
+import { BootService } from '../../service/boot.service';
+import { AudioService } from '../../service/sound.service';
 
 
 interface BootStep {

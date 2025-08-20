@@ -4,8 +4,8 @@ Write-Host "Starting project..." -ForegroundColor Green
 Set-Location "d:\staj\document_label\"
 
 # Start Docker Compose (with full path and proper arguments)
-Write-Host "Starting Docker services..." -ForegroundColor Yellow
-Start-Process "docker-compose" -ArgumentList "up", "-d" -WorkingDirectory "D:\staj\document_label\" -WindowStyle Normal
+# Write-Host "Starting Docker services..." -ForegroundColor Yellow
+# Start-Process "docker-compose" -ArgumentList "up", "-d" -WorkingDirectory "D:\staj\document_label\" -WindowStyle Normal
 
 # Wait a bit for Docker to start
 Start-Sleep -Seconds 5

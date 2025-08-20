@@ -1,5 +1,5 @@
-from .models import Document, Label
-from .db import SessionLocal
+from models import Document, Label
+from db import SessionLocal
 from sqlalchemy import text
 from sqlalchemy.orm import joinedload
 import logging
@@ -7,7 +7,7 @@ from typing import Optional
 
 logger = logging.getLogger(__name__)
 
-def create_document(title: str, content: str, summary: str, file: Optional[bytes] = None):
+def create_document_db(title: str, content: str, summary: str, file: Optional[bytes] = None):
     """Create a new document with optional file bytes"""
     db = get_db_session()
     try:
@@ -66,6 +66,22 @@ def search_labels_by_name(query: str, limit: int = 10):
     except Exception as e:
         logger.error(f"Error searching labels: {e}")
         return []
+    finally:
+        session.close()
+
+def delete_document_by_id(document_id: int):
+    """Delete document by ID"""
+    session = SessionLocal()
+    try:
+        document = session.query(Document).get(document_id)
+        if document:
+            session.delete(document)
+            session.commit()
+            return True
+        return False
+    except Exception as e:
+        logger.error(f"Error deleting document: {e}")
+        return False
     finally:
         session.close()
 
@@ -157,5 +173,21 @@ def search_documents_by_label_db(label_name: str, limit: int = 10):
     except Exception as e:
         logger.error(f"Error searching documents by label: {e}")
         return []
+    finally:
+        session.close()
+
+def delete_all_documents_db():
+    """Delete all documents from database"""
+    session = SessionLocal()
+    try:
+        deleted_count = session.query(Document).delete()
+        session.commit()
+        logger.info(f"Successfully deleted {deleted_count} documents")
+        return deleted_count
+    except Exception as e:
+        logger.error(f"Error deleting all documents: {str(e)}")
+        logger.error(f"Error type: {type(e)}")
+        session.rollback()
+        raise e  # Hatayı tekrar fırlat ki detayını görebilesin
     finally:
         session.close()
