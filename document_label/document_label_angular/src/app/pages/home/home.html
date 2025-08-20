@@ -1,0 +1,24 @@
+<header class="site-header">
+  <div class="logo">
+    <img src="src/assets/image.png" alt="DocumentLabel Logo" />
+    <span class="brand">DocumentLabel</span>
+  </div>
+
+  <nav class="nav-links">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+    <a routerLink="/arsiv" routerLinkActive="active">Arşiv</a>
+  </nav>
+</header>
+
+<main class="hero-section">
+  <h1>Organize Your Documents Effortlessly</h1>
+  <p>Upload, label, and find your files in seconds with AI‑powered search.</p>
+</main>
+
+<section class="upload-section">
+  <h2>📤 Upload Your PDF</h2>
+  <form>
+    <input type="file" accept="application/pdf" />
+    <button type="submit">Upload</button>
+  </form>
+</section>
